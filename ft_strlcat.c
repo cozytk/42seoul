@@ -6,12 +6,11 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 06:50:32 by taekkim           #+#    #+#             */
-/*   Updated: 2020/03/19 15:12:05 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/04/06 17:44:18 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include <bsd/string.h>
 
 size_t	ft_strlcat(char *dst, const char *src, size_t size)
 {
