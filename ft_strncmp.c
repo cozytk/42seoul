@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/29 21:33:14 by taekkim           #+#    #+#             */
-/*   Updated: 2020/04/05 04:39:00 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/04/10 00:11:19 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	d2 = (unsigned char *)s2;
 	while (++i < n)
 	{
-		if (d1[i] - d2[i] != 0)
+		if ((d1[i] - d2[i] != 0) || (!(d1[i] && d2[i])))
 			return (d1[i] - d2[i]);
 	}
 	return (0);

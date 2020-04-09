@@ -6,7 +6,7 @@
 #    By: taekkim <taekkim@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/02/27 08:39:47 by taekkim           #+#    #+#              #
-#    Updated: 2020/04/06 18:00:51 by taekkim          ###   ########.fr        #
+#    Updated: 2020/04/10 00:01:09 by taekkim          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,11 +58,11 @@ OBJS	= $(SRCS:.c=.o)
 OBJS_B	= $(SRCS_B:.c=.o)
 RM		= rm -f
 LIBC	= ar -rcs
-CFLAGS	= gcc -Wall -Wextra -Werror
-INCS	= libft.h 
+CC		= gcc
+CFLAGS	= -Wall -Wextra -Werror
 
 .c.o :
-	${CFLAGS} -c $< -o ${<:.c=.o} -include ${INCS}
+	${CC} ${CFLAGS} -c $< -o ${<:.c=.o}
 
 $(NAME): ${OBJS}
 	${LIBC} $(NAME) $(OBJS)

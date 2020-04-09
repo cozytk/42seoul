@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/27 08:32:24 by taekkim           #+#    #+#             */
-/*   Updated: 2020/02/27 18:25:09 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/04/10 02:14:40 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,5 @@
 
 void	ft_bzero(void *s, size_t n)
 {
-	unsigned char	*p;
-
-	p = (unsigned char *)s;
-	while (n--)
-		*p++ = 0;
+	ft_memset(s, 0, n);
 }

@@ -6,7 +6,7 @@
 /*   By: taekkim <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/27 07:22:45 by taekkim           #+#    #+#             */
-/*   Updated: 2020/03/10 08:43:17 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/04/09 23:08:42 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ size_t	ft_strlen(const char *s)
 	size_t length;
 
 	length = 0;
-	while (s && s[length])
+	while (s[length])
 		length++;
 	return (length);
 }

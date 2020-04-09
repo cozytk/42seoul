@@ -6,7 +6,7 @@
 /*   By: taekkim <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/05 04:33:04 by taekkim           #+#    #+#             */
-/*   Updated: 2020/04/05 04:33:06 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/04/09 22:56:06 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void	*ft_memmove(void *dst, const void *src, size_t len)
 
 	a = (unsigned char *)dst;
 	b = (unsigned char *)src;
+	if (!(a || b))
+		return (dst);
 	if (dst < src)
 	{
 		while (len--)
