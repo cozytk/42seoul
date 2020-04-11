@@ -6,7 +6,7 @@
 /*   By: taekkim <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/05 04:24:37 by taekkim           #+#    #+#             */
-/*   Updated: 2020/04/10 03:13:31 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/04/11 17:46:27 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,33 +14,22 @@
 
 char	*ft_strnstr(const char *big, const char *little, size_t len)
 {
-	size_t	tri;
+	size_t	big_len;
 	size_t	lit_len;
 
 	if (*little == 0)
 		return ((char *)big);
+	else if (len == 0)
+		return (0);
+	big_len = ft_strlen(big);
 	lit_len = ft_strlen(little);
-	if ((big == little) && len >= (size_t)lit_len)
-		return ((char *)big);
-	while (len--)
+	if (len > big_len)
+		len = big_len;
+	while (len-- - lit_len + 1 && *big)
 	{
-		tri = 0;
-		while (*big++ == *little++ && len >= (size_t)lit_len)
-		{
-			tri++;
-			if (tri == lit_len)
-				return ((char *)(big - tri));
-		}
-		big -= tri;
-		little -= tri + 1;
+		if (ft_strncmp(big, little, lit_len) == 0)
+			return ((char *)big);
+		big++;
 	}
 	return (0);
 }
-/*
-int main(void)
-{
-	printf("%s\n", ft_strnstr("lorem ipsum dolor sit amet", "consectetur", 30));
-	printf("%s\n", strnstr("lorem ipsum dolor sit amet", "consectetur", 30));
-	return (0);
-}
-*/
