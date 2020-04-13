@@ -6,11 +6,24 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/01 03:19:28 by taekkim           #+#    #+#             */
-/*   Updated: 2020/04/05 04:37:18 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/04/13 19:24:42 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+
+void	ft_free(char **mat, int n)
+{
+	int i;
+
+	i = 0;
+	while (i < n)
+	{
+		free(mat[i]);
+		i++;
+	}
+	free(mat);
+}
 
 int		ft_row(const char *str, char c)
 {
@@ -19,7 +32,7 @@ int		ft_row(const char *str, char c)
 
 	i = 0;
 	row = 0;
-	while (str[i])
+	while (str && str[i])
 	{
 		while (str[i] && str[i] == c)
 			i++;
@@ -54,6 +67,11 @@ char	**ft_split(char const *s, char c)
 	int		j;
 	int		k;
 
+	if (ft_row(s, c) == 0)
+	{
+		printf("HI\n");
+		return (0);
+	}
 	if (!(dest = (char **)malloc(sizeof(char *) * (ft_row(s, c) + 1))))
 		return (0);
 	i = 0;
@@ -62,7 +80,10 @@ char	**ft_split(char const *s, char c)
 	{
 		j = 0;
 		if (!(dest[i] = (char *)malloc(sizeof(char) * (ft_vec(s, c) + 1))))
+		{
+			ft_free(dest, i);
 			return (0);
+		}
 		while (s[k] && (s[k] == c))
 			k++;
 		while (s[k] && (s[k] != c))

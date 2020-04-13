@@ -6,7 +6,7 @@
 #    By: taekkim <taekkim@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/02/27 08:39:47 by taekkim           #+#    #+#              #
-#    Updated: 2020/04/10 00:01:09 by taekkim          ###   ########.fr        #
+#    Updated: 2020/04/13 13:38:37 by taekkim          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,7 +62,7 @@ CC		= gcc
 CFLAGS	= -Wall -Wextra -Werror
 
 .c.o :
-	${CC} ${CFLAGS} -c $< -o ${<:.c=.o}
+	${CC} ${CFLAGS} -c $< -o ${<:.c=.o} -I.
 
 $(NAME): ${OBJS}
 	${LIBC} $(NAME) $(OBJS)
