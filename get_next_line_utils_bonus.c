@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/03 00:55:55 by taekkim           #+#    #+#             */
-/*   Updated: 2020/04/17 02:10:05 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/04/17 02:17:42 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		i;
 	int		j;
 
-	i = 0;
+	i = 0; 
 	j = 0;
 	if (!(dest = (char *)malloc(ft_strlen(s1) + ft_strlen(s2) + 1)))
 		return (0);
