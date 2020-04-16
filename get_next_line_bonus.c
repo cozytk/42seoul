@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/03 00:55:36 by taekkim           #+#    #+#             */
-/*   Updated: 2020/04/17 01:10:42 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/04/17 02:10:37 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	last_line(char **stack, char **line)
 	{
 		*line = ft_strdup(*stack);
 		free(*stack);
-		*stack = NULL;
+		*stack = (void *)0;
 	}
 	else
 		*line = ft_strdup("");
@@ -68,7 +68,7 @@ int		read_buff(int fd, char **stack, char **line)
 		temp = ft_strjoin(*stack, buff);
 		*stack = ft_strdup(temp);
 		free(temp);
-		temp = NULL;
+		temp = (void *)0;
 		if (res < BUFFER_SIZE && !(check_enter(*stack)))
 			break ;
 		if ((res = reached_next_line(stack, line)))
@@ -88,7 +88,7 @@ int		get_next_line(int fd, char **line)
 	int				res;
 
 	if (fd < 0 || (read(fd, stack[fd], 0) < 0) ||
-			BUFFER_SIZE <= 0 || line == NULL)
+			BUFFER_SIZE <= 0 || line == 0)
 		return (-1);
 	if (stack[fd] && (res = reached_next_line(&stack[fd], line)))
 		return (res);
