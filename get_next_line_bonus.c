@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/03 00:55:36 by taekkim           #+#    #+#             */
-/*   Updated: 2020/04/17 02:51:39 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/04/17 15:13:27 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,9 @@ int		read_buff(int fd, char **stack, char **line)
 	while ((res = read(fd, buff, BUFFER_SIZE)) > 0)
 	{
 		buff[res] = 0;
-		temp = ft_strjoin(*stack, buff);
-		*stack = ft_strdup(temp);
+		if ((!(temp = ft_strjoin(*stack, buff)) ||
+				!(*stack = ft_strdup(temp))))
+			return (-1);
 		free(temp);
 		temp = (void *)0;
 		if (res < BUFFER_SIZE && !(check_enter(*stack)))
