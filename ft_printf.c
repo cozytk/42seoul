@@ -6,11 +6,67 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/06 19:54:25 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/06 20:59:36 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/06 21:20:53 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+
+int		ft_unvalid(char *base)
+{
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	while (base[i])
+	{
+		if (base[i] == '-' || base[i] == '+')
+			return (0);
+		j = i + 1;
+		while (base[j])
+		{
+			if (base[i] == base[j])
+				return (0);
+			j++;
+		}
+		i++;
+	}
+	if (i <= 1)
+		return (0);
+	return (i);
+}
+
+void	ft_printing(int nbr, char *base, int length)
+{
+	unsigned int nb;
+
+	nb = 0;
+	if (nbr < 0)
+	{
+		write(1, "-", 1);
+		nb = nbr * -1;
+	}
+	else
+		nb = nbr;
+	if (nb >= (unsigned int)length)
+	{
+		ft_printing(nb / length, base, length);
+		ft_printing(nb % length, base, length);
+	}
+	if (nb < (unsigned int)length)
+		write(1, &base[nb % length], 1);
+}
+
+void	ft_putnbr_base(int nbr, char *base)
+{
+	int length;
+
+	length = ft_unvalid(base);
+	if (length == 0)
+		return ;
+	ft_printing(nbr, base, length);
+}
 
 int		ft_intlen(long long num, int sign)
 {
