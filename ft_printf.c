@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/06/06 19:54:25 by taekkim           #+#    #+#             */
+/*   Updated: 2020/06/06 20:59:36 by taekkim          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
 int		ft_intlen(long long num, int sign)
@@ -15,7 +27,7 @@ int		ft_intlen(long long num, int sign)
 	return (len);
 }
 
-char	*ft_itoa(int n)
+char	*ft_itoa(long long n)
 {
 	char		*arr;
 	int			sign;
@@ -45,22 +57,35 @@ char	*ft_itoa(int n)
 void	con_per(const char *fmt, va_list ap, int i)
 {
 	char *buff = strndup(fmt + i, 2);
+	char con = buff[1];
 
-	if ((strcmp(buff, "%s") == 0))
+	if (con == 's')
 	{
 		char *str = va_arg(ap, char *);
 		write(1, str, strlen(str));
 	}
-	else if ((strcmp(buff, "%d") == 0) || strcmp(buff, "%i") == 0)
+	else if ((con == 'd') || (con == 'i') || (con == 'u'))
 	{
-		int num = va_arg(ap, int);
+		long long num;
+		if (con == 'u')
+			num = va_arg(ap, unsigned int);
+		else
+			num = va_arg(ap, int);
 		char *str = ft_itoa(num);
 		write(1, str, strlen(str));
 	}
-	else if ((strcmp(buff, "%c") == 0))
+	else if (con == 'c')
 	{
-		char chr = va_arg(ap, char);
+		char chr = va_arg(ap, int);
 		write(1, &chr, 1);
+	}
+	else if (con == 'p')
+	{
+		unsigned long n = va_arg(ap, unsigned long);
+		printf("%lu\n", n);
+		unsigned long *ptr = &n; 
+		char *str =  ft_itoa(*ptr);
+		write(1, str, strlen(str));
 	}
 	free(buff);
 }
@@ -95,8 +120,8 @@ int	main(void)
 	//char *s2 = "Bye";
 
 	//ft_printf("Hello");
-	printf("I want you to say %i my lady %s wow %c\n", num1, s1, 'a');
-	ft_printf("I want you to say %i my lady %s wow %c\n", num1, s1, 'a');
+	printf("I want you to say %i my lady %s wow %p\n", num1, s1, s1);
+	ft_printf("I want you to say %i my lady %s wow %p\n", num1, s1, s1);
 	
 	return (0);
 }
