@@ -34,7 +34,10 @@ static int		ft_atoi(const char *nptr)
 
 	sign = 1;
 	result = 0;
-	while ((*nptr >= 9 && *nptr <= 13) || *nptr == 32)
+	if (!nptr)
+	    return (0);
+	while ((*nptr >= 9 && *nptr <= 13) || *nptr == 32 || *nptr == '0' ||
+	        *nptr == '*' || *nptr == '.')
 		nptr++;
 	if (*nptr == '+' || *nptr == '-')
 	{
@@ -53,7 +56,7 @@ static char		*ft_strndup(const char *s1, size_t n)
 	size_t	i;
 
 	i = 0;
-	if (!(p = (char *)malloc(ft_strlen(s1) + 1)))
+	if (!(p = (char *)malloc(ft_strlen(s1))))
 		return (0);
 	while (s1 && s1[i] && i < n)
 	{
@@ -63,7 +66,6 @@ static char		*ft_strndup(const char *s1, size_t n)
 	p[i] = '\0';
 	return (p);
 }
-
 
 static char		*ft_strdup(const char *s1)
 {
@@ -84,17 +86,19 @@ static char		*ft_strdup(const char *s1)
 
 static void		init_fmt(t_fmt	*fmt)
 {
+    fmt->digit = 0;
 	fmt->minus = 0;
+	fmt->minus_w = 0;
 	fmt->zero = 0;
-	fmt->width = 0;
+	fmt->width = -1;
 	fmt->dot = -1;
-	fmt->len = 0;
+	fmt->len = -1;
 	fmt->ast = 0;
 	fmt->ast_pos = 0;
 	fmt->spec = 0;
 }
 
-static int		ft_unvalid(char *base)
+static int		ft_unvalid(const char *base)
 {
 	int i;
 	int j;
@@ -146,7 +150,7 @@ static int		ft_putnbr_base(long long nbr, char *base)
 
 	length = ft_unvalid(base);
 	if (length == 0)
-		return ;
+		return (0);
 	ft_printing(nbr, base, length);
 }
 
@@ -162,7 +166,7 @@ static int		ft_intlen(long long num, int sign)
 	}
 	if (sign == -1)
 		len++;
-	return (len);
+	return ((int)len);
 }
 
 static char		*ft_itoa(long long n)
@@ -192,20 +196,20 @@ static char		*ft_itoa(long long n)
 	return (arr);
 }
 
-static void		minus_zero(char c, t_fmt *fmt)
+static int		minus_zero(char c, t_fmt *fmt)
 {
 	if ((c == '-' || c == '0'))
 	{
 		if (c == '-')
 			fmt->minus = 1;
-		else if (c == '0')
-			fmt->zero = 1;
+		else
+		    fmt->zero = 1;
 		return (1);
 	}
 	return (0);
 }
 
-static int		is_vaild_ast(char *buff, int i)
+static int		is_valid_ast(const char *buff, int i)
 {
 	if (i == 0)
 		return (1);
@@ -232,33 +236,38 @@ static int		ast_dot(char *buff, t_fmt *fmt)
 			if (fmt->dot != -1)
 				return (0);
 			fmt->dot = i;
-		} 
-		else if (!(is_digit(buff[i])))
+		}
+		else if (is_spec(buff[i]))
+		    return (1);
+		else if (!(ft_isdigit(buff[i])))
 			return (0);
+		fmt->digit = 1;
 		i++;
 	}
-	fmt->dot = 0;
 	return (1);
 }
-
-static int		num_ast(char *buff)
 
 static int		width_len(char *buff, t_fmt *fmt)
 {
 	char	*width;
 	char	*len;
 
-	if (!(fmt->dot))
+	width = 0;
+	len = 0;
+	if (fmt->dot == -1 && fmt->digit == 0)
+	    return (0);
+	else if (fmt->dot == -1 && fmt->digit == 1)
 		width = ft_strdup(buff);
-	else if (fmt->ast == 2 && fmt->dot == 1)
+	else if (fmt->ast == 2 && fmt->dot >= 0)
 		return (1);
-	else if (fmt->ast == 1 && fmt->dot == 1)
+	else if ((fmt->ast == 1 || fmt->ast == 10) && fmt->dot >= 0)
 	{
-		if (fmt->ast_pos == 1)
+		if (fmt->ast == 1)
 			fmt->width = 0;
-		else if (fmt->ast_pos == 10)
-			width = ft_strndup(buff, 
+		if (fmt->ast == 10)
+			width = ft_strndup(buff, fmt->dot);
 		len = ft_strdup(buff + fmt->dot + 1);
+    }
 	if (!(fmt->width = ft_atoi(width)))
 		return (0);
 	if (!(fmt->len = ft_atoi(len)))
@@ -270,13 +279,13 @@ static int		set_ast_pos(char *str)
 {
 	int		len;
 
-	len = strlen(str);
-	if (str[i] == '*')
+	len = ft_strlen(str);
+	if (str[0] == '*')
 		return (10);
-	else if (str[len - i] == '*')
+	else if (str[len - 1] == '*')
 		return (1);
 	else
-		return (-1)
+		return (-1);
 }
 
 static int		set_fmt(char *buff, t_fmt *fmt)
@@ -286,26 +295,86 @@ static int		set_fmt(char *buff, t_fmt *fmt)
 	if (!(ast_dot(buff, fmt)))
 		return (0);
 	if (fmt->ast == 1)
-		if ((fmt->ast_pos = set_ast_pos(buff)) < 0)
+		if ((fmt->ast = set_ast_pos(buff)) < 0)
 			return (0);
-	if (!(width_len(buff, fmt)))
+	if ((width_len(buff, fmt)) < 0)
 		return (0);
 	return (1);
 }
 
-static int		print_s(char *buff, va_list ap, t_fmt *fmt)
+static int      con_ast_s(va_list ap, t_fmt *fmt)
 {
-	char *str;
-
-	if (fmt->star)
-
-	str = va_arg(ap, char *);
-	write(1, str, strlen(str));
-	(void)buff;
-	(void)fmt;
+    if (fmt->ast == 1)
+    {
+        fmt->len = va_arg(ap, int);
+    }
+    else if (fmt->ast == 10)
+    {
+        fmt->width = va_arg(ap, int);
+    }
+    else if (fmt->ast == 2)
+    {
+        fmt->width = va_arg(ap, int);
+        fmt->len = va_arg(ap, int);
+    }
+    else
+        return (-1);
+    return (0);
 }
 
-static int		print_d_i_u(char *buff, va_list ap, t_fmt *fmt)
+static int      con_width_s(t_fmt *fmt, int len)
+{
+    fmt->width = fmt->width - len;
+    if (fmt->minus > 0)
+        fmt->minus_w = fmt->width;
+    else
+        while ((fmt->width)--)
+            write (1, " ", 1);
+    return (0);
+}
+
+//static int      ft_strclen(const char *s, char c)
+//{
+//    int i;
+//
+//    i = 0;
+//    while (s[i])
+//    {
+//        if (s[i] == 'c')
+//            return (i);
+//        i++;
+//    }
+//    return (i);
+//}
+
+static int		print_s(char *buff, va_list ap, t_fmt *fmt)
+{
+	char    *str;
+	int     len;
+	int     res;
+	va_list cp;
+
+    if (fmt->ast)
+        con_ast_s(ap, fmt);
+	va_copy(cp, ap);
+	res = 0;
+	len = ft_strlen(va_arg(cp, char *));
+	len = fmt->len < len ? fmt->len : len;
+	if (fmt->width > len)
+	    con_width_s(fmt, len);
+    str = va_arg(ap, char *);
+	write(1, str, len);
+	res += len;
+	if (fmt->minus_w)
+	{
+	    res += fmt->width;
+        while ((fmt->width)--)
+            write(1, " ", 1);
+    }
+	return (res);
+}
+
+static int		print_d_i_u(const char *buff, va_list ap, t_fmt *fmt)
 {
 	long long num;
 	char *str;
@@ -321,7 +390,7 @@ static int		print_d_i_u(char *buff, va_list ap, t_fmt *fmt)
 	(void)fmt;
 }
 	
-static int		print_c(char *buff, va_list ap, t_fmt *fmt)
+static int		print_c(const char *buff, va_list ap, t_fmt *fmt)
 {
 	char chr;
 
@@ -331,7 +400,7 @@ static int		print_c(char *buff, va_list ap, t_fmt *fmt)
 	(void)fmt;
 }
 	
-static int		print_p(char *buff, va_list ap, t_fmt *fmt)
+static int		print_p(const char *buff, va_list ap, t_fmt *fmt)
 {
 	unsigned long	n;
 
@@ -342,7 +411,7 @@ static int		print_p(char *buff, va_list ap, t_fmt *fmt)
 	(void)fmt;
 }
 	
-static int		print_hex(char *buff, va_list ap, t_fmt *fmt)
+static int		print_hex(const char *buff, va_list ap, t_fmt *fmt)
 {
 	unsigned int	num;
 
@@ -355,7 +424,7 @@ static int		print_hex(char *buff, va_list ap, t_fmt *fmt)
 	(void)fmt;
 }
 
-static int		print_per(char *buff, va_list ap, t_fmt *fmt)
+static int		print_per(const char *buff, va_list ap, t_fmt *fmt)
 {
 	char per;
 
@@ -379,13 +448,14 @@ static int		sort_spec(char *buff, va_list ap, t_fmt *fmt)
 		print_hex(buff, ap, fmt);
 	else if (fmt->spec == '%')
 		print_per(buff, ap, fmt);
+	return (0);
 }
 
 static int		con_per(char *f, va_list ap, t_fmt *fmt)
 {
 	char *buff;
 	int end;
-	
+
 	init_fmt(fmt);
 	end = find_spec(f);
 	buff = strndup(f + 1, end);
@@ -492,8 +562,9 @@ int	main(void)
 	//char *s2 = "Bye";
 
 	//ft_printf("Hello");
-	printf("I want you to say %i my lady %6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
-	ft_printf("I want you to say %i my lady %6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
-	
+    printf("printf, I want you to say %i my lady %10.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
+    ft_printf("ft_printf, I want you to say %i my lady %10.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
+    printf("printf, I want you to say %i my lady %-6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
+    ft_printf("ft_printf, I want you to say %i my lady %-6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
 	return (0);
 }
