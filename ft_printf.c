@@ -12,434 +12,14 @@
 
 #include "ft_printf.h"
 
-static int		ft_isdigit(int c)
-{
-	return (c >= '0' && c <= '9');
-}
-
-static size_t	ft_strlen(const char *s)
-{
-	size_t length;
-
-	length = 0;
-	while (s[length])
-		length++;
-	return (length);
-}
-
-static int		ft_atoi(const char *nptr)
-{
-	int			sign;
-	int			result;
-
-	sign = 1;
-	result = 0;
-	if (!nptr)
-	    return (0);
-	while ((*nptr >= 9 && *nptr <= 13) || *nptr == 32 || *nptr == '0' ||
-	        *nptr == '*' || *nptr == '.')
-		nptr++;
-	if (*nptr == '+' || *nptr == '-')
-	{
-		if (*nptr == '-')
-			sign = -1;
-		nptr++;
-	}
-	while (ft_isdigit(*nptr))
-		result = result * 10 + *nptr++ - '0';
-	return (result * sign);
-}
-
-static char		*ft_strndup(const char *s1, size_t n)
-{
-	char	*p;
-	size_t	i;
-
-	i = 0;
-	if (!(p = (char *)malloc(ft_strlen(s1))))
-		return (0);
-	while (s1 && s1[i] && i < n)
-	{
-		p[i] = s1[i];
-		i++;
-	}
-	p[i] = '\0';
-	return (p);
-}
-
-static char		*ft_strdup(const char *s1)
-{
-	char	*p;
-	int		i;
-
-	i = 0;
-	if (!(p = (char *)malloc(ft_strlen(s1) + 1)))
-		return (0);
-	while (s1 && s1[i])
-	{
-		p[i] = s1[i];
-		i++;
-	}
-	p[i] = '\0';
-	return (p);
-}
-
-static void		init_fmt(t_fmt	*fmt)
-{
-    fmt->digit = 0;
-	fmt->minus = 0;
-	fmt->minus_w = 0;
-	fmt->zero = 0;
-	fmt->width = -1;
-	fmt->dot = -1;
-	fmt->len = -1;
-	fmt->ast = 0;
-	fmt->ast_pos = 0;
-	fmt->spec = 0;
-}
-
-static int		ft_unvalid(const char *base)
-{
-	int i;
-	int j;
-
-	i = 0;
-	j = 0;
-	while (base[i])
-	{
-		if (base[i] == '-' || base[i] == '+')
-			return (0);
-		j = i + 1;
-		while (base[j])
-		{
-			if (base[i] == base[j])
-				return (0);
-			j++;
-		}
-		i++;
-	}
-	if (i <= 1)
-		return (0);
-	return (i);
-}
-
-static int		ft_printing(long long nbr, char *base, int length)
-{
-	long long nb;
-
-	nb = 0;
-	if (nbr < 0)
-	{
-		write(1, "-", 1);
-		nb = nbr * -1;
-	}
-	else
-		nb = nbr;
-	if (nb >= (long long)length)
-	{
-		ft_printing(nb / length, base, length);
-		ft_printing(nb % length, base, length);
-	}
-	if (nb < (long long)length)
-		write(1, &base[nb % length], 1);
-}
-
-static int		ft_putnbr_base(long long nbr, char *base)
-{
-	int length;
-
-	length = ft_unvalid(base);
-	if (length == 0)
-		return (0);
-	ft_printing(nbr, base, length);
-}
-
-static int		ft_intlen(long long num, int sign)
-{
-	long long len;
-
-	len = 1;
-	while (num >= 10)
-	{
-		len++;
-		num = num / 10;
-	}
-	if (sign == -1)
-		len++;
-	return ((int)len);
-}
-
-static char		*ft_itoa(long long n)
-{
-	char		*arr;
-	int			sign;
-	int			len;
-	long long	num;
-
-	sign = n >= 0 ? 1 : -1;
-	num = (long long)n;
-	if (num < 0)
-		num = -num;
-	len = ft_intlen(num, sign);
-	if (!(arr = (char *)malloc(sizeof(char) * len + 1)))
-		return (0);
-	arr[len] = '\0';
-	if (num == 0)
-		arr[0] = '0';
-	while (num > 0)
-	{
-		arr[--len] = num % 10 + '0';
-		num = num / 10;
-	}
-	if (sign == -1)
-		arr[0] = '-';
-	return (arr);
-}
-
-static int		minus_zero(char c, t_fmt *fmt)
-{
-	if ((c == '-' || c == '0'))
-	{
-		if (c == '-')
-			fmt->minus = 1;
-		else
-		    fmt->zero = 1;
-		return (1);
-	}
-	return (0);
-}
-
-static int		is_valid_ast(const char *buff, int i)
-{
-	if (i == 0)
-		return (1);
-	else if (buff[i - 1] == '.')
-		return (1);
-	return (0);
-}
-
-static int		ast_dot(char *buff, t_fmt *fmt)
-{
-	int i;
-
-	i = 0;
-	while (buff[i])
-	{
-		if (buff[i] == '*')
-		{
-			if (!(is_valid_ast(buff, i)) || fmt->ast > 1)
-				return (0);
-			(fmt->ast)++;
-		}
-		else if (buff[i] == '.')
-		{
-			if (fmt->dot != -1)
-				return (0);
-			fmt->dot = i;
-		}
-		else if (is_spec(buff[i]))
-		    return (1);
-		else if (!(ft_isdigit(buff[i])))
-			return (0);
-		fmt->digit = 1;
-		i++;
-	}
-	return (1);
-}
-
-static int		width_len(char *buff, t_fmt *fmt)
-{
-	char	*width;
-	char	*len;
-
-	width = 0;
-	len = 0;
-	if (fmt->dot == -1 && fmt->digit == 0)
-	    return (0);
-	else if (fmt->dot == -1 && fmt->digit == 1)
-		width = ft_strdup(buff);
-	else if (fmt->ast == 2 && fmt->dot >= 0)
-		return (1);
-	else if ((fmt->ast == 1 || fmt->ast == 10) && fmt->dot >= 0)
-	{
-		if (fmt->ast == 1)
-			fmt->width = 0;
-		if (fmt->ast == 10)
-			width = ft_strndup(buff, fmt->dot);
-		len = ft_strdup(buff + fmt->dot + 1);
-    }
-	if (!(fmt->width = ft_atoi(width)))
-		return (0);
-	if (!(fmt->len = ft_atoi(len)))
-		return (0);
-	return (1);
-}
-
-static int		set_ast_pos(char *str)
-{
-	int		len;
-
-	len = ft_strlen(str);
-	if (str[0] == '*')
-		return (10);
-	else if (str[len - 1] == '*')
-		return (1);
-	else
-		return (-1);
-}
-
-static int		set_fmt(char *buff, t_fmt *fmt)
-{
-	if (minus_zero(buff[0], fmt))
-		buff++;
-	if (!(ast_dot(buff, fmt)))
-		return (0);
-	if (fmt->ast == 1)
-		if ((fmt->ast = set_ast_pos(buff)) < 0)
-			return (0);
-	if ((width_len(buff, fmt)) < 0)
-		return (0);
-	return (1);
-}
-
-static int      con_ast_s(va_list ap, t_fmt *fmt)
-{
-    if (fmt->ast == 1)
-    {
-        fmt->len = va_arg(ap, int);
-    }
-    else if (fmt->ast == 10)
-    {
-        fmt->width = va_arg(ap, int);
-    }
-    else if (fmt->ast == 2)
-    {
-        fmt->width = va_arg(ap, int);
-        fmt->len = va_arg(ap, int);
-    }
-    else
-        return (-1);
-    return (0);
-}
-
-static int      con_width_s(t_fmt *fmt, int len)
-{
-    fmt->width = fmt->width - len;
-    if (fmt->minus > 0)
-        fmt->minus_w = fmt->width;
-    else
-        while ((fmt->width)--)
-            write (1, " ", 1);
-    return (0);
-}
-
-//static int      ft_strclen(const char *s, char c)
-//{
-//    int i;
-//
-//    i = 0;
-//    while (s[i])
-//    {
-//        if (s[i] == 'c')
-//            return (i);
-//        i++;
-//    }
-//    return (i);
-//}
-
-static int		print_s(char *buff, va_list ap, t_fmt *fmt)
-{
-	char    *str;
-	int     len;
-	int     res;
-	va_list cp;
-
-    if (fmt->ast)
-        con_ast_s(ap, fmt);
-	va_copy(cp, ap);
-	res = 0;
-	len = ft_strlen(va_arg(cp, char *));
-	len = fmt->len < len ? fmt->len : len;
-	if (fmt->width > len)
-	    con_width_s(fmt, len);
-    str = va_arg(ap, char *);
-	write(1, str, len);
-	res += len;
-	if (fmt->minus_w)
-	{
-	    res += fmt->width;
-        while ((fmt->width)--)
-            write(1, " ", 1);
-    }
-	return (res);
-}
-
-static int		print_d_i_u(const char *buff, va_list ap, t_fmt *fmt)
-{
-	long long num;
-	char *str;
-
-	if (fmt->spec == 'u')
-		num = va_arg(ap, unsigned int);
-	else
-		num = va_arg(ap, int);
-	str = ft_itoa(num);
-	write(1, str, strlen(str));
-	free(str);
-	(void)buff;
-	(void)fmt;
-}
-	
-static int		print_c(const char *buff, va_list ap, t_fmt *fmt)
-{
-	char chr;
-
-	chr = va_arg(ap, int);
-	write(1, &chr, 1);
-	(void)buff;
-	(void)fmt;
-}
-	
-static int		print_p(const char *buff, va_list ap, t_fmt *fmt)
-{
-	unsigned long	n;
-
-	n = va_arg(ap, unsigned long);
-	write(1, "0x", 2);
-	ft_putnbr_base(n, "0123456789abcdef");
-	(void)buff;
-	(void)fmt;
-}
-	
-static int		print_hex(const char *buff, va_list ap, t_fmt *fmt)
-{
-	unsigned int	num;
-
-	num = va_arg(ap, unsigned int);
-	if (fmt->spec == 'x')
-		ft_putnbr_base(num, "0123456789abcdef");
-	else
-		ft_putnbr_base(num, "0123456789ABCDEF");
-	(void)buff;
-	(void)fmt;
-}
-
-static int		print_per(const char *buff, va_list ap, t_fmt *fmt)
-{
-	char per;
-
-	per = va_arg(ap, int);
-	write(1, &per, 1);
-	(void)buff;
-	(void)fmt;
-}
-	
 static int		sort_spec(char *buff, va_list ap, t_fmt *fmt)
 {
 	if (fmt->spec == 's')
 		print_s(buff, ap, fmt);
-	else if ((fmt->spec == 'd') || (fmt->spec == 'i') || (fmt->spec == 'u'))
-		print_d_i_u(buff, ap, fmt);
+	else if ((fmt->spec == 'd') || (fmt->spec == 'i'))
+		print_d_i(buff, ap, fmt);
+	else if (fmt->spec == 'u')
+	    print_u(buff, ap, fmt);
 	else if (fmt->spec == 'c')
 		print_c(buff, ap, fmt);
 	else if (fmt->spec == 'p')
@@ -453,8 +33,8 @@ static int		sort_spec(char *buff, va_list ap, t_fmt *fmt)
 
 static int		con_per(char *f, va_list ap, t_fmt *fmt)
 {
-	char *buff;
-	int end;
+	char    *buff;
+	int     end;
 
 	init_fmt(fmt);
 	end = find_spec(f);
@@ -470,36 +50,36 @@ static int		con_per(char *f, va_list ap, t_fmt *fmt)
 static int		find_per(va_list ap, char *f)
 {
 	int		i;
+	int     res;
+	int     printed;
 	t_fmt	fmt;
-//	int	res;
 
 	i = 0;
+	printed = 0;
 	while (f[i])
 	{
 		if (f[i] == '%')
-			i = i + con_per(f + i, ap,  &fmt);
+        {
+		    if ((res = con_per(f + i, ap, &fmt)) < 0)
+		        return (-1);
+            i = i + res;
+            printed += fmt.res;
+        }
 		else
-			write(1, (f + i), 1);
+        {
+            write(1, (f + i), 1);
+            printed++;
+        }
 		i++;
 	}
-	return (0);
-	//return (res);
-}
-
-static int		is_spec(char c)
-{
-	if (c == 'c' || c == 's' || c == 'd' || c == 'i' || c == 'u' || c == 'x'
-			|| c == 'X' || c == '%' || c == 'p')
-		return (1);
-	else
-		return (0);
+	return (printed);
 }
 
 
 static int		find_spec(char *f)
 {
-	char *str;
-	int i;
+	char    *str;
+	int     i;
 
 	str = strdup(f);
 	i = 1;
@@ -517,29 +97,6 @@ static int		find_spec(char *f)
 	return (0);
 }
 
-/*
-static int	check_fmt(char *f)
-{
-	int i;
-
-	if (!f)
-		return (0);
-	i = 0;
-	while (f[i])
-	{
-		if (f[i] == '%')
-		{
-			i++;
-			if (!(i = find_spec(f, i)))
-					return (0);
-		}
-		else
-			i++;
-	}
-	return (i);
-}
-*/
-
 static int		ft_printf(const char *fmt, ...)
 {
 	va_list		ap;
@@ -547,10 +104,9 @@ static int		ft_printf(const char *fmt, ...)
 	char		*f;
 
 	f = (char *)fmt;
-	/*if (!(check_fmt(f)))
-		return (0);*/
 	va_start(ap, fmt);
-	result = find_per(ap, f);
+	if ((result = find_per(ap, f)) < 0)
+	    return (-1);
 	va_end(ap);
 	return (result);
 }
@@ -559,12 +115,35 @@ int	main(void)
 {
 	char *s1 = "Hello";
 	int	num1 = 10;
+	int res = 0;
 	//char *s2 = "Bye";
 
 	//ft_printf("Hello");
-    printf("printf, I want you to say %i my lady %10.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
-    ft_printf("ft_printf, I want you to say %i my lady %10.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
-    printf("printf, I want you to say %i my lady %-6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
-    ft_printf("ft_printf, I want you to say %i my lady %-6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
+
+   // printf("printf, %03%, I want you to say %0*u my lady %-*.4s wow %-5.4c %p %x %X\n", num1, 5, 6, s1, 'a', s1, 100, 5678876);
+    //ft_printf("ft printf, %03%, I want you to say %0*u my lady %-*.4s wow %-5.4c %p %x %X\n", num1, 5, 6, s1, 'a', s1, 100, 5678876);
+    printf("%d\n", printf("%3c %-6.4s %16p %012x %014X %10d %-7u %0i\n", 'a', s1, s1, 300, 256, 745, 4623, 452, 4545));
+    ft_printf("%d\n", ft_printf("%3c %-6.4s %16p %012x %014X %10d %-7u %0i\n", 'a', s1, s1, 300, 256, 745, 4623, 452, 4545));
+    //printf("%d\n", ft_printf("\n", num1, s1, s1, 100, 5678876));
+    //printf("printf, I want you to say %010i my lady %-*.4s wow %p %x %X\n", num1, 6, s1, s1, 100, 5678876);
+    //ft_printf("ft printf, I want you to say %010i my lady %-*.4s wow %p %x %X\n", num1, 6, s1, s1, 100, 5678876);
+//    printf("printf, I want you to say %i my lady %*.*s wow %p %x %X\n", num1, 10, 3, s1, s1, 100, 5678876);
+//    ft_printf("ft printf, I want you to say %i my lady %*.*s wow %p %x %X\n", num1, 10, 3, s1, s1, 100, 5678876);
+//    printf("printf, I want you to say %i my lady %*.4s wow %p %x %X\n", num1, 10, s1, s1, 100, 5678876);
+//    ft_printf("ft_printf, I want you to say %i my lady %*.4s wow %p %x %X\n", num1, 10, s1, s1, 100, 5678876);
+//    printf("printf, I want you to say %i my lady %6.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
+//    ft_printf("ft_printf, I want you to say %i my lady %6.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
+//    printf("printf, I want you to say %i my lady %6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
+//    ft_printf("ft_printf, I want you to say %i my lady %6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
+//    printf("printf, I want you to say %i my lady %11.2s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
+//    ft_printf("ft printf, I want you to say %i my lady %11.2s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
+//    printf("printf, I want you to say %i my lady %*.*s wow %p %x %X\n", num1, 10, 3, s1, s1, 100, 5678876);
+//    ft_printf("ft printf, I want you to say %i my lady %*.*s wow %p %x %X\n", num1, 10, 3, s1, s1, 100, 5678876);
+//    printf("printf, I want you to say %i my lady %*.4s wow %p %x %X\n", num1, 10, s1, s1, 100, 5678876);
+//    ft_printf("ft_printf, I want you to say %i my lady %*.4s wow %p %x %X\n", num1, 10, s1, s1, 100, 5678876);
+//    printf("printf, I want you to say %i my lady %6.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
+//    ft_printf("ft_printf, I want you to say %i my lady %6.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
+//    printf("printf, I want you to say %i my lady %6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
+//    ft_printf("ft_printf, I want you to say %i my lady %6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
 	return (0);
 }
