@@ -1,54 +1,53 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: nel-alla <nel-alla@student.1337.ma>        +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/01/17 08:12:50 by nel-alla          #+#    #+#              #
+#    Updated: 2020/01/21 08:27:28 by nel-alla         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = libftprintf.a
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror -c -I$(INC_PATH)
+SRCS = 	ft_printf.c \
+		srcs/confirm.c \
+		srcs/hexical.c \
+		srcs/initialize.c \
+		srcs/print.c \
+		srcs/print2.c \
+		srcs/set.c
+		utils/util.c \
+		utils/util2.c
 
-SRC_PATH = ./srcs
-LIB_PATH = ./lib
-INC_PATH = ./include
-OBJ_PATH = ./obj
-OBJLIB_PATH = ./obj
+OBJECTS = ft_printf.o \
+		confirm.o \
+		hexical.o \
+		initialize.o \
+		print.o \
+		print2.o \
+		set.o \
+		util.o \
+		util2.o
 
-SRC_NAME = ft_printf.c \
-		print.c \
-		print2.c \
-		set.c \
-		initialize.c \
-		hexical.c \
-		confirm.c
-OBJ_NAME = $(SRC_NAME:.c=.o)
-LIB_NAME = util.c \
-		util2.c
-OBJLIB_NAME = $(LIB_NAME:.c=.o)
+INCLUDES = inc/ft_printf.h
 
-SRC = $(addprefix $(SRC_PATH)/, $(SRC_NAME))
-LIB = $(addprefix $(LIB_PATH)/, $(LIB_NAME))
-OBJ = $(addprefix $(OBJ_PATH)/, $(OBJ_NAME))
-OBJLIB = $(addprefix $(OBJLIB_PATH)/, $(OBJLIB_NAME))
 
-all : $(NAME)
+all: $(NAME)
 
-$(NAME) : $(OBJ) $(OBJLIB)
-	@ar rcs $(NAME) $(OBJ) $(OBJLIB)
-	@ranlib $(NAME)
+$(NAME): $(OBJECTS)
 
-$(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
-	@mkdir $(OBJ_PATH) 2> /dev/null || true
-	@$(CC) $(CFLAGS) -o $@ -c $<
-
-$(OBJLIB_PATH)/%.o: $(LIB_PATH)/%.c
-	@mkdir $(OBJLIB_PATH) 2> /dev/null || true
-	@$(CC) $(CFLAGS) -o $@ -c $<
+$(OBJECTS): $(SRCS) $(INCLUDES)
+	@gcc -Wextra -Werror -Wall -c $(SRCS)
+	@ar rcs $(NAME) $(OBJECTS)
 
 clean:
-	@rm -rf $(OBJ) $(OBJLIB)
-
+	rm -rf $(OBJECTS)
+	
 fclean: clean
-	@rm -rf ./obj $(NAME)
+	rm -rf $(NAME)
 
 re: fclean all
-
-norme:
-	@norminette $(SRC) $(LIB) $(INC)
-
-.PHONY: all clean fclean re norm
+bonus:
