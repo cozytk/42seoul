@@ -6,13 +6,13 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:14:08 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/18 10:14:37 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/20 15:48:14 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static int      con_ast(va_list ap, t_fmt *fmt)
+static int		con_ast(va_list ap, t_fmt *fmt)
 {
     if (fmt->ast == 1)
         fmt->len = va_arg(ap, int);
@@ -28,7 +28,7 @@ static int      con_ast(va_list ap, t_fmt *fmt)
     return (0);
 }
 
-static int      con_width_s(t_fmt *fmt)
+static int		con_width_s(t_fmt *fmt)
 {
     if (fmt->width > fmt->s_len)
         fmt->width = fmt->width - fmt->s_len;
