@@ -19,7 +19,7 @@ static int		sort_spec(char *buff, va_list ap, t_fmt *fmt)
 	else if ((fmt->spec == 'd') || (fmt->spec == 'i'))
 		print_d_i(buff, ap, fmt);
 	else if (fmt->spec == 'u')
-	    print_u(buff, ap, fmt);
+		print_u(buff, ap, fmt);
 	else if (fmt->spec == 'c')
 		print_c(ap, fmt);
 	else if (fmt->spec == 'p')
@@ -33,8 +33,8 @@ static int		sort_spec(char *buff, va_list ap, t_fmt *fmt)
 
 static int		con_per(char *f, va_list ap, t_fmt *fmt)
 {
-	char    *buff;
-	int     end;
+	char	*buff;
+	int		end;
 
 	init_fmt(fmt);
 	end = find_spec(f);
@@ -50,8 +50,8 @@ static int		con_per(char *f, va_list ap, t_fmt *fmt)
 static int		find_per(va_list ap, char *f)
 {
 	int		i;
-	int     res;
-	int     printed;
+	int		res;
+	int		printed;
 	t_fmt	fmt;
 
 	i = 0;
@@ -59,17 +59,17 @@ static int		find_per(va_list ap, char *f)
 	while (f[i])
 	{
 		if (f[i] == '%')
-        {
-		    if ((res = con_per(f + i, ap, &fmt)) < 0)
-		        return (-1);
-            i = i + res;
-            printed += fmt.res;
-        }
+		{
+			if ((res = con_per(f + i, ap, &fmt)) < 0)
+				return (-1);
+			i = i + res;
+			printed += fmt.res;
+		}
 		else
-        {
-            write(1, (f + i), 1);
-            printed++;
-        }
+		{
+			write(1, (f + i), 1);
+			printed++;
+		}
 		i++;
 	}
 	return (printed);
@@ -78,8 +78,8 @@ static int		find_per(va_list ap, char *f)
 
 static int		find_spec(char *f)
 {
-	char    *str;
-	int     i;
+	char	*str;
+	int		i;
 
 	str = strdup(f);
 	i = 1;
@@ -89,8 +89,7 @@ static int		find_spec(char *f)
 		{
 			free(str);
 			return (i);
-		}
-		else
+		} else
 			i++;
 	}
 	free(str);
@@ -103,10 +102,10 @@ static int		ft_printf(const char *fmt, ...)
 	int			result;
 	char		*f;
 
-	f = (char *)fmt;
+	f = (char *) fmt;
 	va_start(ap, fmt);
 	if ((result = find_per(ap, f)) < 0)
-	    return (-1);
+		return (-1);
 	va_end(ap);
 	return (result);
 }
