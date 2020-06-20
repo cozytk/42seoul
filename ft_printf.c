@@ -6,11 +6,11 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/06 19:54:25 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 16:45:55 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/21 07:50:39 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "include/ft_printf.h"
+#include "inc/ft_printf.h"
 
 int		sort_spec(va_list ap, t_fmt *fmt)
 {
@@ -110,8 +110,10 @@ int		ft_printf(const char *fmt, ...)
 	return (result);
 }
 
-int	main(void)
+int main(void)
 {
-	ft_printf("Hello World%s\n", "hello");
-	return (-2);
+	printf("|%32s|\n", "abc");
+	ft_printf("|%32s|\n", "abc");
+	
+	return (0);
 }

@@ -6,11 +6,11 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:13:46 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 16:25:35 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/20 18:55:33 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "include/ft_printf.h"
+#include "../inc/ft_printf.h"
 
 int		ft_isdigit(int c)
 {

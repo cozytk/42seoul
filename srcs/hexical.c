@@ -6,11 +6,11 @@
 /*   By: taekkim <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/20 16:39:48 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 16:42:22 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/20 18:54:37 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "include/ft_printf.h"
+#include "../inc/ft_printf.h"
 
 int		width_zero_d(t_fmt *fmt)
 {

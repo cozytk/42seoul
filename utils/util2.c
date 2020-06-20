@@ -6,11 +6,11 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:13:52 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 16:21:16 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/20 18:55:38 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "include/ft_printf.h"
+#include "../inc/ft_printf.h"
 
 int		ft_unvalid(const char *base)
 {

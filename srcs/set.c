@@ -6,11 +6,11 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:13:40 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 16:21:57 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/20 18:55:12 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "include/ft_printf.h"
+#include "../inc/ft_printf.h"
 
 int		minus_zero(char *s, t_fmt *fmt)
 {

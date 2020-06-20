@@ -6,11 +6,11 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:14:08 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 16:42:08 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/20 18:54:29 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "include/ft_printf.h"
+#include "../inc/ft_printf.h"
 
 int		con_ast_pos(t_fmt *fmt, int i)
 {

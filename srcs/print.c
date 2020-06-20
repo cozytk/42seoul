@@ -6,11 +6,11 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:13:20 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/18 10:13:28 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/20 18:54:57 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "include/ft_printf.h"
+#include "../inc/ft_printf.h"
 
 int		print_d_i(va_list ap, t_fmt *fmt)
 {

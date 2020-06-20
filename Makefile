@@ -6,7 +6,7 @@
 #    By: nel-alla <nel-alla@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/01/17 08:12:50 by nel-alla          #+#    #+#              #
-#    Updated: 2020/01/21 08:27:28 by nel-alla         ###   ########.fr        #
+#    Updated: 2020/06/21 07:43:58 by taekkim          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,9 +18,9 @@ SRCS = 	ft_printf.c \
 		srcs/initialize.c \
 		srcs/print.c \
 		srcs/print2.c \
-		srcs/set.c
-		utils/util.c \
-		utils/util2.c
+		srcs/set.c \
+		utils/util2.c \
+		utils/util.c
 
 OBJECTS = ft_printf.o \
 		confirm.o \
