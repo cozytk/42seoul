@@ -15,15 +15,15 @@
 static int		sort_spec(char *buff, va_list ap, t_fmt *fmt)
 {
 	if (fmt->spec == 's')
-		print_s(buff, ap, fmt);
+		print_s(ap, fmt);
 	else if ((fmt->spec == 'd') || (fmt->spec == 'i'))
 		print_d_i(buff, ap, fmt);
 	else if (fmt->spec == 'u')
 	    print_u(buff, ap, fmt);
 	else if (fmt->spec == 'c')
-		print_c(buff, ap, fmt);
+		print_c(ap, fmt);
 	else if (fmt->spec == 'p')
-		print_p(buff, ap, fmt);
+		print_p(ap, fmt);
 	else if (fmt->spec == 'x' || fmt->spec == 'X')
 		print_hex(buff, ap, fmt);
 	else if (fmt->spec == '%')
