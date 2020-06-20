@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/06 19:54:25 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/09 05:46:47 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/18 10:14:39 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,41 +109,4 @@ static int		ft_printf(const char *fmt, ...)
 	    return (-1);
 	va_end(ap);
 	return (result);
-}
-
-int	main(void)
-{
-	char *s1 = "Hello";
-	int	num1 = 10;
-	int res = 0;
-	//char *s2 = "Bye";
-
-	//ft_printf("Hello");
-
-   // printf("printf, %03%, I want you to say %0*u my lady %-*.4s wow %-5.4c %p %x %X\n", num1, 5, 6, s1, 'a', s1, 100, 5678876);
-    //ft_printf("ft printf, %03%, I want you to say %0*u my lady %-*.4s wow %-5.4c %p %x %X\n", num1, 5, 6, s1, 'a', s1, 100, 5678876);
-    printf("%d\n", printf("%3c %-6.4s %16p %012x %014X %10d %-7u %0i\n", 'a', s1, s1, 300, 256, 745, 4623, 452, 4545));
-    ft_printf("%d\n", ft_printf("%3c %-6.4s %16p %012x %014X %10d %-7u %0i\n", 'a', s1, s1, 300, 256, 745, 4623, 452, 4545));
-    //printf("%d\n", ft_printf("\n", num1, s1, s1, 100, 5678876));
-    //printf("printf, I want you to say %010i my lady %-*.4s wow %p %x %X\n", num1, 6, s1, s1, 100, 5678876);
-    //ft_printf("ft printf, I want you to say %010i my lady %-*.4s wow %p %x %X\n", num1, 6, s1, s1, 100, 5678876);
-//    printf("printf, I want you to say %i my lady %*.*s wow %p %x %X\n", num1, 10, 3, s1, s1, 100, 5678876);
-//    ft_printf("ft printf, I want you to say %i my lady %*.*s wow %p %x %X\n", num1, 10, 3, s1, s1, 100, 5678876);
-//    printf("printf, I want you to say %i my lady %*.4s wow %p %x %X\n", num1, 10, s1, s1, 100, 5678876);
-//    ft_printf("ft_printf, I want you to say %i my lady %*.4s wow %p %x %X\n", num1, 10, s1, s1, 100, 5678876);
-//    printf("printf, I want you to say %i my lady %6.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
-//    ft_printf("ft_printf, I want you to say %i my lady %6.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
-//    printf("printf, I want you to say %i my lady %6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
-//    ft_printf("ft_printf, I want you to say %i my lady %6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
-//    printf("printf, I want you to say %i my lady %11.2s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
-//    ft_printf("ft printf, I want you to say %i my lady %11.2s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
-//    printf("printf, I want you to say %i my lady %*.*s wow %p %x %X\n", num1, 10, 3, s1, s1, 100, 5678876);
-//    ft_printf("ft printf, I want you to say %i my lady %*.*s wow %p %x %X\n", num1, 10, 3, s1, s1, 100, 5678876);
-//    printf("printf, I want you to say %i my lady %*.4s wow %p %x %X\n", num1, 10, s1, s1, 100, 5678876);
-//    ft_printf("ft_printf, I want you to say %i my lady %*.4s wow %p %x %X\n", num1, 10, s1, s1, 100, 5678876);
-//    printf("printf, I want you to say %i my lady %6.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
-//    ft_printf("ft_printf, I want you to say %i my lady %6.*s wow %p %x %X\n", num1, 4, s1, s1, 100, 5678876);
-//    printf("printf, I want you to say %i my lady %6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
-//    ft_printf("ft_printf, I want you to say %i my lady %6s wow %p %x %X\n", num1, s1, s1, 100, 5678876);
-	return (0);
 }
