@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hexical.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
+/*   By: taekkim <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/06/18 10:13:07 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/18 10:14:40 by taekkim          ###   ########.fr       */
+/*   Created: 2020/06/20 16:39:48 by taekkim           #+#    #+#             */
+/*   Updated: 2020/06/20 16:42:22 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,11 @@ static int		print_minus_w(t_fmt *fmt)
 
 static char		*decimal_to_hex(long long n)
 {
-	char *str;
-	int position;
-	int mod;
+	char	*str;
+	int		position;
+	int		mod;
 
-	if (!(str = (char *) malloc(sizeof(char *) * 20)))
+	if (!(str = (char *)malloc(sizeof(char *) * 20)))
 		return (0);
 	position = 0;
 	while (1)
@@ -63,7 +63,7 @@ static char		*decimal_to_hex(long long n)
 		n = n / 16;
 		position++;
 		if (n == 0)
-			break;
+			break ;
 	}
 	return (str);
 }

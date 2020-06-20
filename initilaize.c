@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initilaize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
+/*   By: taekkim <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/06/18 10:14:46 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/18 10:14:47 by taekkim          ###   ########.fr       */
+/*   Created: 2020/06/20 16:35:52 by taekkim           #+#    #+#             */
+/*   Updated: 2020/06/20 16:36:30 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,11 @@ static char		*ft_itoa(long long n)
 	long long	num;
 
 	sign = n >= 0 ? 1 : -1;
-	num = (long long) n;
+	num = (long long)n;
 	if (num < 0)
 		num = -num;
 	len = ft_intlen(num, sign);
-	if (!(arr = (char *) malloc(sizeof(char) * len + 1)))
+	if (!(arr = (char *)malloc(sizeof(char) * len + 1)))
 		return (0);
 	arr[len] = '\0';
 	if (num == 0)

@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:13:52 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/18 10:13:53 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/20 16:21:16 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,15 @@ static int		ft_printing(long long nbr, char *base, int length)
 	{
 		write(1, "-", 1);
 		nb = nbr * -1;
-	} else
+	}
+	else
 		nb = nbr;
-	if (nb >= (long long) length)
+	if (nb >= (long long)length)
 	{
 		ft_printing(nb / length, base, length);
 		ft_printing(nb % length, base, length);
 	}
-	if (nb < (long long) length)
+	if (nb < (long long)length)
 		write(1, &base[nb % length], 1);
 }
 
@@ -79,7 +80,7 @@ static int		ft_intlen(long long num, int sign)
 	}
 	if (sign == -1)
 		len++;
-	return ((int) len);
+	return ((int)len);
 }
 
 static int		ft_intlen_2(long long n)

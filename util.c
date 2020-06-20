@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:13:46 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/18 10:13:47 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/20 16:25:35 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,11 @@ static int		ft_atoi(char *buff, t_fmt *fmt)
 
 static char		*ft_strndup(const char *s1, size_t n)
 {
-	char *p;
-	size_t i;
+	char	*p;
+	size_t	i;
 
 	i = 0;
-	if (!(p = (char *) malloc(ft_strlen(s1))))
+	if (!(p = (char *)malloc(ft_strlen(s1))))
 		return (0);
 	while (s1 && s1[i] && i < n)
 	{

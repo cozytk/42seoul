@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:13:40 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/18 10:13:41 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/20 16:21:57 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ static int		minus_zero(char *s, t_fmt *fmt)
 			if (s[1] == 0)
 				return (0);
 			fmt->minus = 1;
-		} else
+		}
+		else
 		{
 			if (fmt->spec == 'c' || fmt->spec == 's' || fmt->spec == 'p')
 				return (0);
@@ -42,12 +43,14 @@ static int		ast_dot(char *buff, t_fmt *fmt)
 		{
 			if (!(con_ast_pos(buff, fmt, i)))
 				return (0);
-		} else if (buff[i] == '.')
+		}
+		else if (buff[i] == '.')
 		{
 			if (fmt->dot >= 0)
 				return (0);
 			fmt->dot = i;
-		} else if (is_spec(buff[i]))
+		}
+		else if (is_spec(buff[i]))
 			return (1);
 		else if (!(ft_isdigit(buff[i])))
 			return (0);
