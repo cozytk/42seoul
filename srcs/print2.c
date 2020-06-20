@@ -18,7 +18,7 @@ int		print_s(va_list ap, t_fmt *fmt)
 		con_ast(ap, fmt);
 	va_copy(fmt->cp, ap);
 	fmt->s_len = ft_strlen(va_arg(fmt->cp, char *));
-	if (fmt->len != -1)
+	if (fmt->dot >= 0)
 		fmt->s_len = fmt->len < fmt->s_len ? fmt->len : fmt->s_len;
 	con_width_s(fmt);
 	fmt->str = va_arg(ap, char *);
