@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-static void		init_fmt(t_fmt *fmt)
+void		init_fmt(t_fmt *fmt)
 {
 	fmt->digit = 0;
 	fmt->minus = 0;
@@ -29,7 +29,7 @@ static void		init_fmt(t_fmt *fmt)
 	fmt->str = 0;
 }
 
-static int		is_spec(char c)
+int			is_spec(char c)
 {
 	if (c == 'c' || c == 's' || c == 'd' || c == 'i' || c == 'u' || c == 'x'
 		|| c == 'X' || c == '%' || c == 'p')
@@ -38,7 +38,7 @@ static int		is_spec(char c)
 		return (0);
 }
 
-static char		*ft_itoa(long long n)
+char		*ft_itoa(long long n)
 {
 	char		*arr;
 	int			sign;

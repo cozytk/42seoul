@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-static int		ft_unvalid(const char *base)
+int		ft_unvalid(const char *base)
 {
 	int i;
 	int j;
@@ -37,7 +37,7 @@ static int		ft_unvalid(const char *base)
 	return (i);
 }
 
-static int		ft_printing(long long nbr, char *base, int length)
+int		ft_printing(long long nbr, char *base, int length)
 {
 	long long nb;
 
@@ -58,7 +58,7 @@ static int		ft_printing(long long nbr, char *base, int length)
 		write(1, &base[nb % length], 1);
 }
 
-static int		ft_putnbr_base(long long nbr, char *base)
+int		ft_putnbr_base(long long nbr, char *base)
 {
 	int length;
 
@@ -68,7 +68,7 @@ static int		ft_putnbr_base(long long nbr, char *base)
 	ft_printing(nbr, base, length);
 }
 
-static int		ft_intlen(long long num, int sign)
+int		ft_intlen(long long num, int sign)
 {
 	long long len;
 
@@ -83,7 +83,7 @@ static int		ft_intlen(long long num, int sign)
 	return ((int)len);
 }
 
-static int		ft_intlen_2(long long n)
+int		ft_intlen_2(long long n)
 {
 	int len;
 

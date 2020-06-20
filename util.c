@@ -12,12 +12,12 @@
 
 #include "ft_printf.h"
 
-static int		ft_isdigit(int c)
+int		ft_isdigit(int c)
 {
 	return (c >= '0' && c <= '9');
 }
 
-static size_t	ft_strlen(const char *s)
+size_t	ft_strlen(const char *s)
 {
 	size_t length;
 
@@ -27,7 +27,7 @@ static size_t	ft_strlen(const char *s)
 	return (length);
 }
 
-static int		ft_atoi(char *buff, t_fmt *fmt)
+int		ft_atoi(char *buff, t_fmt *fmt)
 {
 	char *width;
 	char *len;
@@ -50,7 +50,7 @@ static int		ft_atoi(char *buff, t_fmt *fmt)
 	return (1);
 }
 
-static char		*ft_strndup(const char *s1, size_t n)
+char	*ft_strndup(const char *s1, size_t n)
 {
 	char	*p;
 	size_t	i;

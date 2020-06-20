@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-static int		print_d_i(const char *buff, va_list ap, t_fmt *fmt)
+int		print_d_i(const char *buff, va_list ap, t_fmt *fmt)
 {
 	if (fmt->zero && (fmt->len || fmt->dot >= 0))
 		return (0);
@@ -30,7 +30,7 @@ static int		print_d_i(const char *buff, va_list ap, t_fmt *fmt)
 	return (fmt->res);
 }
 
-static int		print_u(const char *buff, va_list ap, t_fmt *fmt)
+int		print_u(const char *buff, va_list ap, t_fmt *fmt)
 {
 	if (fmt->zero && (fmt->len || fmt->dot >= 0))
 		return (0);
@@ -47,7 +47,7 @@ static int		print_u(const char *buff, va_list ap, t_fmt *fmt)
 	free(fmt->str);
 }
 
-static int		print_c(va_list ap, t_fmt *fmt)
+int		print_c(va_list ap, t_fmt *fmt)
 {
 	char chr;
 
@@ -62,7 +62,7 @@ static int		print_c(va_list ap, t_fmt *fmt)
 	return (fmt->res);
 }
 
-static int		print_p(va_list ap, t_fmt *fmt)
+int		print_p(va_list ap, t_fmt *fmt)
 {
 	unsigned long n;
 

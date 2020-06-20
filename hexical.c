@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-static int		width_zero_d(t_fmt *fmt)
+int		width_zero_d(t_fmt *fmt)
 {
 	if (fmt->s_len >= fmt->width)
 		return (0);
@@ -33,7 +33,7 @@ static int		width_zero_d(t_fmt *fmt)
 	return (0);
 }
 
-static int		print_minus_w(t_fmt *fmt)
+int		print_minus_w(t_fmt *fmt)
 {
 	if (fmt->minus_w)
 	{
@@ -44,7 +44,7 @@ static int		print_minus_w(t_fmt *fmt)
 	return (0);
 }
 
-static char		*decimal_to_hex(long long n)
+char	*decimal_to_hex(long long n)
 {
 	char	*str;
 	int		position;

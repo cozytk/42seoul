@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-static int		sort_spec(char *buff, va_list ap, t_fmt *fmt)
+int		sort_spec(char *buff, va_list ap, t_fmt *fmt)
 {
 	if (fmt->spec == 's')
 		print_s(ap, fmt);
@@ -31,7 +31,7 @@ static int		sort_spec(char *buff, va_list ap, t_fmt *fmt)
 	return (0);
 }
 
-static int		con_per(char *f, va_list ap, t_fmt *fmt)
+int		con_per(char *f, va_list ap, t_fmt *fmt)
 {
 	char	*buff;
 	int		end;
@@ -47,7 +47,7 @@ static int		con_per(char *f, va_list ap, t_fmt *fmt)
 	return (end);
 }
 
-static int		find_per(va_list ap, char *f)
+int		find_per(va_list ap, char *f)
 {
 	int		i;
 	int		res;
@@ -75,7 +75,7 @@ static int		find_per(va_list ap, char *f)
 	return (printed);
 }
 
-static int		find_spec(char *f)
+int		find_spec(char *f)
 {
 	char	*str;
 	int		i;
@@ -96,7 +96,7 @@ static int		find_spec(char *f)
 	return (0);
 }
 
-static int		ft_printf(const char *fmt, ...)
+int		ft_printf(const char *fmt, ...)
 {
 	va_list		ap;
 	int			result;
@@ -108,4 +108,10 @@ static int		ft_printf(const char *fmt, ...)
 		return (-1);
 	va_end(ap);
 	return (result);
+}
+
+int	main(void)
+{
+	ft_printf("Hello World%s\n", "hello");
+	return (-2);
 }

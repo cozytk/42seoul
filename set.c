@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-static int		minus_zero(char *s, t_fmt *fmt)
+int		minus_zero(char *s, t_fmt *fmt)
 {
 	if ((s[0] == '-' || s[0] == '0'))
 	{
@@ -32,7 +32,7 @@ static int		minus_zero(char *s, t_fmt *fmt)
 	return (1);
 }
 
-static int		ast_dot(char *buff, t_fmt *fmt)
+int		ast_dot(char *buff, t_fmt *fmt)
 {
 	int i;
 
@@ -41,7 +41,7 @@ static int		ast_dot(char *buff, t_fmt *fmt)
 	{
 		if (buff[i] == '*')
 		{
-			if (!(con_ast_pos(buff, fmt, i)))
+			if (!(con_ast_pos(fmt, i)))
 				return (0);
 		}
 		else if (buff[i] == '.')
@@ -60,7 +60,7 @@ static int		ast_dot(char *buff, t_fmt *fmt)
 	return (1);
 }
 
-static int		width_len(char *buff, t_fmt *fmt)
+int		width_len(char *buff, t_fmt *fmt)
 {
 	if (fmt->digit == 0)
 		return (1);
@@ -71,7 +71,7 @@ static int		width_len(char *buff, t_fmt *fmt)
 	return (1);
 }
 
-static int		set_fmt(char *buff, t_fmt *fmt)
+int		set_fmt(char *buff, t_fmt *fmt)
 {
 	if (!(minus_zero(buff, fmt)))
 		return (0);
