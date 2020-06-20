@@ -1,5 +1,7 @@
 
-#include "ft_printf"
+#include "ft_printf.h"
+
+int	main(void)
 
 static int      width_zero_d(t_fmt *fmt)
 {

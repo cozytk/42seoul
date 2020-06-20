@@ -3,15 +3,15 @@
 
 static int		ft_isdigit(int c)
 {
-    return (c >= '0' && c <= '9');
+	return (c >= '0' && c <= '9');
 }
 
 static size_t	ft_strlen(const char *s)
 {
-    size_t length;
+	size_t length;
 
-    length = 0;
-    while (s[length])
+	length = 0;
+	while (s[length])
         length++;
     return (length);
 }

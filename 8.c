@@ -45,11 +45,18 @@ static char		*ft_itoa(long long n)
     if (num == 0)
         arr[0] = '0';
     while (num > 0)
-    {
-        arr[--len] = num % 10 + '0';
+	{
+    	arr[--len] = num % 10 + '0';
         num = num / 10;
     }
     if (sign == -1)
         arr[0] = '-';
     return (arr);
+}
+
+int	main(void)
+{
+	int		arr;
+	int		*pointer;
+
 }
