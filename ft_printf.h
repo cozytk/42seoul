@@ -53,7 +53,7 @@ int		ft_putnbr_base(long long nbr, char *base);
 int		ft_intlen(long long num, int sign);
 char	*ft_itoa(long long n);
 int		con_per(char *f, va_list ap, t_fmt *fmt);
-int		sort_spec(char *buff, va_list ap, t_fmt *fmt);
+int		sort_spec(va_list ap, t_fmt *fmt);
 int		con_width_s(t_fmt *fmt);
 int		find_per(va_list ap, char *f);
 int		is_spec(char c);
