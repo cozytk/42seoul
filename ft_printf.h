@@ -40,12 +40,12 @@ typedef	struct	s_fmt
 int     con_ast_pos(t_fmt *fmt, int i);
 int		print_minus_w(t_fmt *fmt);
 int		print_c(va_list ap, t_fmt *fmt);
-int		print_d_i(const char *buff, va_list ap, t_fmt *fmt);
-int		print_u(const char *buff, va_list ap, t_fmt *fmt);
+int		print_d_i(va_list ap, t_fmt *fmt);
+int		print_u(va_list ap, t_fmt *fmt);
 int		print_s(va_list ap, t_fmt *fmt);
 int		print_p(va_list ap, t_fmt *fmt);
-int		print_hex(const char *buff, va_list ap, t_fmt *fmt);
-int		print_per(const char *buff, va_list ap, t_fmt *fmt);
+int		print_hex(va_list ap, t_fmt *fmt);
+int		print_per(va_list ap, t_fmt *fmt);
 void	init_fmt(t_fmt *fmt);
 int		ft_unvalid(const char *base);
 int		ft_printing(long long nbr, char *base, int length);

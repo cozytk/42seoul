@@ -56,6 +56,7 @@ int		ft_printing(long long nbr, char *base, int length)
 	}
 	if (nb < (long long)length)
 		write(1, &base[nb % length], 1);
+	return (0);
 }
 
 int		ft_putnbr_base(long long nbr, char *base)
@@ -66,6 +67,7 @@ int		ft_putnbr_base(long long nbr, char *base)
 	if (length == 0)
 		return (0);
 	ft_printing(nbr, base, length);
+	return (0);
 }
 
 int		ft_intlen(long long num, int sign)

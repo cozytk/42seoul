@@ -28,7 +28,7 @@ int		print_s(va_list ap, t_fmt *fmt)
 	return (fmt->res);
 }
 
-int		print_hex(const char *buff, va_list ap, t_fmt *fmt)
+int		print_hex(va_list ap, t_fmt *fmt)
 {
 	unsigned int num;
 
@@ -51,7 +51,7 @@ int		print_hex(const char *buff, va_list ap, t_fmt *fmt)
 	return (fmt->res);
 }
 
-int		print_per(const char *buff, va_list ap, t_fmt *fmt)
+int		print_per(va_list ap, t_fmt *fmt)
 {
 	if (fmt->ast)
 		con_ast(ap, fmt);
