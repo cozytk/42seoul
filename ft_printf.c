@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/06 19:54:25 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/21 07:50:39 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/21 09:07:39 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,12 +108,4 @@ int		ft_printf(const char *fmt, ...)
 		return (-1);
 	va_end(ap);
 	return (result);
-}
-
-int main(void)
-{
-	printf("|%32s|\n", "abc");
-	ft_printf("|%32s|\n", "abc");
-	
-	return (0);
 }
