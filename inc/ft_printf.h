@@ -6,7 +6,7 @@
 /*   By: taekkim <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/20 16:36:40 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 16:39:29 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/21 09:56:01 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@
 # include <stdarg.h>
 # include <stdio.h>
 # include <string.h>
+
+# undef NULL
+# define NULL "(null)"
 
 typedef	struct	s_fmt
 {

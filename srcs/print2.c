@@ -6,7 +6,7 @@
 /*   By: taekkim <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/20 16:34:05 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 18:55:04 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/06/21 09:50:28 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,21 @@
 
 int		print_s(va_list ap, t_fmt *fmt)
 {
+	char *str;
+
 	if (fmt->ast)
 		con_ast(ap, fmt);
 	va_copy(fmt->cp, ap);
-	fmt->s_len = ft_strlen(va_arg(fmt->cp, char *));
-	if (fmt->len != -1)
+	str = va_arg(fmt->cp, char *);
+	if (!str)
+		return (-1);
+	fmt->s_len = ft_strlen(str);
+	if (fmt->dot >= 0)
 		fmt->s_len = fmt->len < fmt->s_len ? fmt->len : fmt->s_len;
 	con_width_s(fmt);
 	fmt->str = va_arg(ap, char *);
+	if (!(fmt->str))
+		return (-1);
 	write(1, fmt->str, fmt->s_len);
 	fmt->res += fmt->s_len;
 	print_minus_w(fmt);
