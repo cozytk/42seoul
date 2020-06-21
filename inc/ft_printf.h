@@ -33,8 +33,9 @@ typedef	struct	s_fmt
 	int			s_len;
 	char		spec;
 	char		*str;
+	char		*str_d_l;
+	char		*num_d_l;
 	long long	num;
-	va_list		cp;
 }				t_fmt;
 
 int     con_ast_pos(t_fmt *fmt, int i);
@@ -53,6 +54,7 @@ int		ft_putnbr_base(long long nbr, char *base);
 int		ft_intlen(long long num, int sign);
 char	*ft_itoa(long long n);
 int		con_per(char *f, va_list ap, t_fmt *fmt);
+int		con_d_l(t_fmt *fmt);
 int		sort_spec(va_list ap, t_fmt *fmt);
 int		con_width_s(t_fmt *fmt);
 int		find_per(va_list ap, char *f);
@@ -66,6 +68,7 @@ int		con_ast(va_list ap, t_fmt *fmt);
 int		ft_printf(const char *fmt, ...);
 int		ft_isdigit(int c);
 int		ft_intlen_2(long long n);
+int		num_neg(t_fmt *fmt);
 size_t	ft_strlen(const char *s);
 int		ft_atoi(char *buff, t_fmt *fmt);
 char	*ft_strndup(const char *s1, size_t n);

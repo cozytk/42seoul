@@ -27,6 +27,8 @@ void		init_fmt(t_fmt *fmt)
 	fmt->num = 0;
 	fmt->s_len = 0;
 	fmt->str = 0;
+	fmt->str_d_l = 0;
+	fmt->num_d_l = 0;
 }
 
 int			is_spec(char c)

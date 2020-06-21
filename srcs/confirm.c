@@ -57,3 +57,40 @@ int		con_width_s(t_fmt *fmt)
 	}
 	return (0);
 }
+
+int		con_d_l(t_fmt *fmt)
+{
+	int		diff;
+	int		i;
+	int		j;
+
+	if (fmt->s_len >= fmt->len)
+		return (0);
+	diff = fmt->len - fmt->s_len;
+	fmt->s_len = fmt->len;
+	fmt->str = ft_itoa(fmt->num);
+	if (!(fmt->str_d_l = (char *)malloc(fmt->s_len + diff + 1)))
+		return (-1);
+	i = 0;
+	while (diff--)
+		fmt->str_d_l[i++] = '0';
+	fmt->num_d_l = ft_itoa(fmt->num);
+	j = 0;
+	while (fmt->num_d_l[j])
+		fmt->str_d_l[i++] = fmt->num_d_l[j++];
+	fmt->str_d_l[i] = '\0';
+	fmt->str = ft_strndup(fmt->str_d_l, i);
+	free(fmt->str_d_l);
+	free(fmt->num_d_l);
+	return (1);
+}
+
+int		num_neg(t_fmt *fmt)
+{
+	if (fmt->num >= 0)
+		return (0);
+	write(1, "-", 1);
+	fmt->res += 1;
+	fmt->num *= -1;
+	return (1);
+}

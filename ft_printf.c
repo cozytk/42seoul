@@ -109,3 +109,10 @@ int		ft_printf(const char *fmt, ...)
 	va_end(ap);
 	return (result);
 }
+
+int	main(void)
+{
+	printf("|%.5d|\n", -2);
+	ft_printf("|%.5d|\n", -2);
+	return (0);
+}

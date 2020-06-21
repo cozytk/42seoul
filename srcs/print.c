@@ -18,11 +18,12 @@ int		print_d_i(va_list ap, t_fmt *fmt)
 		return (0);
 	if (fmt->ast)
 		con_ast(ap, fmt);
-	va_copy(fmt->cp, ap);
-	fmt->s_len = ft_intlen_2(va_arg(fmt->cp, int));
-	width_zero_d(fmt);
 	fmt->num = va_arg(ap, int);
-	fmt->str = ft_itoa(fmt->num);
+	num_neg(fmt);
+	fmt->s_len = ft_intlen_2(fmt->num);
+	if (!(con_d_l(fmt)))
+		fmt->str = ft_itoa(fmt->num);
+	width_zero_d(fmt);
 	write(1, fmt->str, fmt->s_len);
 	fmt->res += fmt->s_len;
 	print_minus_w(fmt);
@@ -36,10 +37,11 @@ int		print_u(va_list ap, t_fmt *fmt)
 		return (0);
 	if (fmt->ast)
 		con_ast(ap, fmt);
-	va_copy(fmt->cp, ap);
-	fmt->s_len = ft_intlen_2(va_arg(fmt->cp, unsigned int));
-	width_zero_d(fmt);
 	fmt->num = va_arg(ap, unsigned int);
+	fmt->s_len = ft_intlen_2(fmt->num);
+	if (!(con_d_l(fmt)))
+		fmt->str = ft_itoa(fmt->num);
+	width_zero_d(fmt);
 	fmt->str = ft_itoa(fmt->num);
 	write(1, fmt->str, fmt->s_len);
 	fmt->res += fmt->s_len;

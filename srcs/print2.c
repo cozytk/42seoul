@@ -14,21 +14,15 @@
 
 int		print_s(va_list ap, t_fmt *fmt)
 {
-	char *str;
-
 	if (fmt->ast)
 		con_ast(ap, fmt);
-	va_copy(fmt->cp, ap);
-	str = va_arg(fmt->cp, char *);
-	if (!str)
-		str = "(null)";
-	fmt->s_len = ft_strlen(str);
-	if (fmt->dot >= 0)
-		fmt->s_len = fmt->len < fmt->s_len ? fmt->len : fmt->s_len;
-	con_width_s(fmt);
 	fmt->str = va_arg(ap, char *);
 	if (!(fmt->str))
 		fmt->str = "(null)";
+	fmt->s_len = ft_strlen(fmt->str);
+	if (fmt->dot >= 0)
+		fmt->s_len = fmt->len < fmt->s_len ? fmt->len : fmt->s_len;
+	con_width_s(fmt);
 	write(1, fmt->str, fmt->s_len);
 	fmt->res += fmt->s_len;
 	print_minus_w(fmt);
@@ -43,11 +37,10 @@ int		print_hex(va_list ap, t_fmt *fmt)
 		return (0);
 	if (fmt->ast)
 		con_ast(ap, fmt);
-	va_copy(fmt->cp, ap);
-	fmt->str = decimal_to_hex(va_arg(fmt->cp, unsigned int));
+	num = va_arg(ap, unsigned int);
+	fmt->str = decimal_to_hex(num);
 	fmt->s_len = ft_strlen(fmt->str);
 	width_zero_d(fmt);
-	num = va_arg(ap, int);
 	if (fmt->spec == 'x')
 		ft_putnbr_base(num, "0123456789abcdef");
 	else
