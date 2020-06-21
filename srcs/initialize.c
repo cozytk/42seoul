@@ -66,3 +66,25 @@ char		*ft_itoa(long long n)
 		arr[0] = '-';
 	return (arr);
 }
+
+int		width_neg_d(t_fmt *fmt)
+{
+	char *temp;
+
+	temp = fmt->str;
+	fmt->str = ft_strndup(temp + 1, ft_strlen(fmt->str) - 1);
+	free(temp);
+	fmt->num *= -1;
+	fmt->s_len--;
+	write(1, "-", 1);
+	fmt->res++;
+	return (1);
+}
+
+int		no_len(t_fmt *fmt)
+{
+	if (!(fmt->len == 0 && fmt->num == 0))
+		return (0);
+	fmt->str[0] = ' ';
+	return (0);
+}

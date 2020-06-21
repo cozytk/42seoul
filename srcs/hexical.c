@@ -22,6 +22,8 @@ int		width_zero_d(t_fmt *fmt)
 	else
 	{
 		fmt->res += fmt->width;
+		if (fmt->zero && fmt->num < 0)
+			width_neg_d(fmt);
 		while ((fmt->width)--)
 		{
 			if (fmt->zero)

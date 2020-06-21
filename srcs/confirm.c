@@ -66,13 +66,14 @@ int		con_d_l(t_fmt *fmt)
 
 	if (fmt->s_len >= fmt->len)
 		return (0);
+	fmt->zero = 0;
 	diff = fmt->len - fmt->s_len;
-	fmt->s_len = fmt->len;
+	fmt->s_len = fmt->num >= 0 ? fmt->len : fmt->len + 1;
 	fmt->str = ft_itoa(fmt->num);
 	if (!(fmt->str_d_l = (char *)malloc(fmt->s_len + diff + 1)))
 		return (-1);
 	i = 0;
-	num_neg(fmt, &i);
+	num_neg(fmt, &i, &diff);
 	while (diff--)
 		fmt->str_d_l[i++] = '0';
 	fmt->num_d_l = ft_itoa(fmt->num);
@@ -86,12 +87,13 @@ int		con_d_l(t_fmt *fmt)
 	return (1);
 }
 
-int		num_neg(t_fmt *fmt, int *i)
+int		num_neg(t_fmt *fmt, int *i, int *diff)
 {
 	if (fmt->num >= 0)
 		return (0);
 	fmt->str_d_l[0] = '-';
 	fmt->num *= -1;
 	*i += 1;
+	*diff += 1;
 	return (1);
 }

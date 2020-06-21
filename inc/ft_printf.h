@@ -68,11 +68,13 @@ int		con_ast(va_list ap, t_fmt *fmt);
 int		ft_printf(const char *fmt, ...);
 int		ft_isdigit(int c);
 int		ft_intlen_2(long long n);
-int		num_neg(t_fmt *fmt, int *i);
+int		num_neg(t_fmt *fmt, int *i, int *diff);
 size_t	ft_strlen(const char *s);
 int		ft_atoi(char *buff, t_fmt *fmt);
 char	*ft_strndup(const char *s1, size_t n);
 int		width_zero_d(t_fmt *fmt);
 char	*decimal_to_hex(long long n);
+int		width_neg_d(t_fmt *uufmt);
+int		no_len(t_fmt *fmt);
 
 #endif
