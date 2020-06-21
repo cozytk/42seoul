@@ -66,7 +66,6 @@ int		con_d_l(t_fmt *fmt)
 
 	if (fmt->s_len >= fmt->len)
 		return (0);
-	fmt->zero = 0;
 	diff = fmt->len - fmt->s_len;
 	fmt->s_len = fmt->num >= 0 ? fmt->len : fmt->len + 1;
 	fmt->str = ft_itoa(fmt->num);
