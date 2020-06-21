@@ -83,7 +83,7 @@ int		width_neg_d(t_fmt *fmt)
 
 int		no_len(t_fmt *fmt)
 {
-	if (!(fmt->len == 0 && fmt->num == 0 && fmt->dot))
+	if (!(fmt->len == 0 && fmt->num == 0 && fmt->dot >= 0))
 		return (0);
 	fmt->str[0] = ' ';
 	return (0);

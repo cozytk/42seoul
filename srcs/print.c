@@ -14,8 +14,6 @@
 
 int		print_d_i(va_list ap, t_fmt *fmt)
 {
-	/*if (fmt->zero && (fmt->len || fmt->dot >= 0))
-		return (0);*/
 	if (fmt->zero && fmt->dot >= 0)
 		fmt->zero = 0;
 	if (fmt->ast)
