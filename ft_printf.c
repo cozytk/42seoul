@@ -112,7 +112,17 @@ int		ft_printf(const char *fmt, ...)
 
 int	main(void)
 {
-	printf("|%.5d|\n", -2);
-	ft_printf("|%.5d|\n", -2);
+	printf("|%.6d|\n", -3);
+	ft_printf("|%.6d|\n", -3);
+	printf("|%07d|\n", -54);
+	ft_printf("|%07d|\n", -54);
+	printf("|%10.5d|\n", -216);
+	ft_printf("|%10.5d|\n", -216);
+	printf("|%3.7d|\n", -2375);
+	ft_printf("|%3.7d|\n", -2375);
+	printf("|%-10.5d|\n", -216);
+	ft_printf("|%-10.5d|\n", -216);
+	printf("|%-3.7d|\n", -2375);
+	ft_printf("|%-3.7d|\n", -2375);
 	return (0);
 }

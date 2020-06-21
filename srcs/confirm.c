@@ -72,6 +72,7 @@ int		con_d_l(t_fmt *fmt)
 	if (!(fmt->str_d_l = (char *)malloc(fmt->s_len + diff + 1)))
 		return (-1);
 	i = 0;
+	num_neg(fmt, &i);
 	while (diff--)
 		fmt->str_d_l[i++] = '0';
 	fmt->num_d_l = ft_itoa(fmt->num);
@@ -85,12 +86,12 @@ int		con_d_l(t_fmt *fmt)
 	return (1);
 }
 
-int		num_neg(t_fmt *fmt)
+int		num_neg(t_fmt *fmt, int *i)
 {
 	if (fmt->num >= 0)
 		return (0);
-	write(1, "-", 1);
-	fmt->res += 1;
+	fmt->str_d_l[0] = '-';
 	fmt->num *= -1;
+	*i += 1;
 	return (1);
 }
