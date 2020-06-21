@@ -35,14 +35,17 @@ int		print_d_i(va_list ap, t_fmt *fmt)
 
 int		print_u(va_list ap, t_fmt *fmt)
 {
-	if (fmt->zero && (fmt->len || fmt->dot >= 0))
-		return (0);
+	if (fmt->zero && fmt->dot >= 0)
+		fmt->zero = 0;
 	if (fmt->ast)
 		con_ast(ap, fmt);
 	fmt->num = va_arg(ap, unsigned int);
+	if (fmt->len == 0 && fmt->width <= 0 && fmt->dot >= 0)
+		return (0);
 	fmt->s_len = ft_intlen_2(fmt->num);
 	if (!(con_d_l(fmt)))
 		fmt->str = ft_itoa(fmt->num);
+	no_len(fmt);
 	width_zero_d(fmt);
 	write(1, fmt->str, fmt->s_len);
 	fmt->res += fmt->s_len;
