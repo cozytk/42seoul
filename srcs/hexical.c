@@ -6,11 +6,27 @@
 /*   By: taekkim <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/20 16:39:48 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 18:54:37 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/07/24 01:15:57 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_printf.h"
+
+int		con_width_p(t_fmt *fmt)
+{
+	if (fmt->s_len >= fmt->width)
+		return (0);
+	fmt->width -= fmt->s_len;
+	if (fmt->minus)
+		fmt->minus_w = fmt->width;
+	else
+	{
+		fmt->res += fmt->width;
+		while ((fmt->width)--)
+			write(1, " ", 1);
+	}
+	return (0);
+}
 
 int		width_zero_d(t_fmt *fmt)
 {
@@ -46,26 +62,41 @@ int		print_minus_w(t_fmt *fmt)
 	return (0);
 }
 
-char	*decimal_to_hex(long long n)
+int		hex_len(long long n)
 {
-	char	*str;
-	int		position;
-	int		mod;
+	int res;
 
-	if (!(str = (char *)malloc(sizeof(char *) * 20)))
-		return (0);
-	position = 0;
+	res = 0;
+	while (n >= 16)
+	{
+		n = n / 16;
+		res++;
+	}
+	return (res);
+}
+
+int		decimal_to_hex(t_fmt *fmt)
+{
+	int		mod;
+	int		len;
+
+	len = hex_len(fmt->num);
+	if (!(fmt->str = (char *)malloc(len + 2)))
+		return (-1);
+	fmt->str[len + 1] = 0;
 	while (1)
 	{
-		mod = n % 16;
+		mod = fmt->num % 16;
 		if (mod < 10)
-			str[position] = 48 + mod;
+			fmt->str[len] = 48 + mod;
+		else if (fmt->spec == 'X')
+			fmt->str[len] = 65 + (mod - 10);
 		else
-			str[position] = 65 + (mod - 10);
-		n = n / 16;
-		position++;
-		if (n == 0)
+			fmt->str[len] = 97 + (mod - 10);
+		fmt->num = fmt->num / 16;
+		len--;
+		if (fmt->num == 0)
 			break ;
 	}
-	return (str);
+	return (0);
 }

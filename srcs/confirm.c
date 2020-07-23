@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:14:08 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 18:54:29 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/07/24 00:56:59 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,16 @@ int		con_ast(va_list ap, t_fmt *fmt)
 	}
 	else
 		return (-1);
+	if (fmt->width < 0)
+	{
+		fmt->minus = 1;
+		fmt->width = fmt->width * -1;
+	}
+	if (fmt->len < 0)
+	{
+		fmt->dot = -1;
+		fmt->minus_l = 1;
+	}
 	return (0);
 }
 
@@ -51,7 +61,7 @@ int		con_width_s(t_fmt *fmt)
 		fmt->minus_w = fmt->width;
 	else
 	{
-		fmt->res += fmt->s_len;
+		fmt->res += fmt->width;
 		while ((fmt->width)--)
 			write(1, " ", 1);
 	}
@@ -64,11 +74,11 @@ int		con_d_l(t_fmt *fmt)
 	int		i;
 	int		j;
 
-	if (fmt->s_len >= fmt->len)
+	if (fmt->num_len >= fmt->len)
 		return (0);
 	diff = fmt->len - fmt->s_len;
 	fmt->s_len = fmt->num >= 0 ? fmt->len : fmt->len + 1;
-	fmt->str = ft_itoa(fmt->num);
+	fmt->str_temp = ft_itoa(fmt->num);
 	if (!(fmt->str_d_l = (char *)malloc(fmt->s_len + diff + 1)))
 		return (-1);
 	i = 0;
@@ -81,6 +91,7 @@ int		con_d_l(t_fmt *fmt)
 		fmt->str_d_l[i++] = fmt->num_d_l[j++];
 	fmt->str_d_l[i] = '\0';
 	fmt->str = ft_strndup(fmt->str_d_l, i);
+	free(fmt->str_temp);
 	free(fmt->str_d_l);
 	free(fmt->num_d_l);
 	return (1);

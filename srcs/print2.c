@@ -6,7 +6,7 @@
 /*   By: taekkim <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/20 16:34:05 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/21 10:12:57 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/07/24 00:57:14 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,25 @@ int		print_s(va_list ap, t_fmt *fmt)
 
 int		print_hex(va_list ap, t_fmt *fmt)
 {
-	unsigned int num;
+	char *str;
 
-	if (fmt->zero && (fmt->len || fmt->dot >= 0))
-		return (0);
 	if (fmt->ast)
 		con_ast(ap, fmt);
-	num = va_arg(ap, unsigned int);
-	fmt->str = decimal_to_hex(num);
+	if (fmt->zero && fmt->dot >= 0 && !(fmt->minus_l))
+		fmt->zero = 0;
+	fmt->num = va_arg(ap, unsigned int);
+	if (no_num_and_len(fmt))
+		return (fmt->res);
+	decimal_to_hex(fmt);
 	fmt->s_len = ft_strlen(fmt->str);
+	con_hex(fmt, &str);
+	fmt->s_len = ft_strlen(str);
 	width_zero_d(fmt);
-	if (fmt->spec == 'x')
-		ft_putnbr_base(num, "0123456789abcdef");
-	else
-		ft_putnbr_base(num, "0123456789ABCDEF");
-	fmt->res += fmt->s_len;
+	write(1, str, ft_strlen(str));
+	fmt->res += ft_strlen(str);
 	print_minus_w(fmt);
 	free(fmt->str);
+	free(str);
 	return (fmt->res);
 }
 

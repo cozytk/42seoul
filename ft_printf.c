@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/06 19:54:25 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/21 10:06:42 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/07/24 00:57:45 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int		con_per(char *f, va_list ap, t_fmt *fmt)
 
 	init_fmt(fmt);
 	end = find_spec(f);
-	buff = strndup(f + 1, end);
+	buff = ft_strndup(f + 1, end);
 	fmt->spec = buff[end - 1];
 	if (!(set_fmt(buff, fmt)))
 		return (-1);
@@ -80,7 +80,7 @@ int		find_spec(char *f)
 	char	*str;
 	int		i;
 
-	str = strdup(f);
+	str = ft_strndup(f, ft_strlen(f));
 	i = 1;
 	while (str[i])
 	{
@@ -108,23 +108,4 @@ int		ft_printf(const char *fmt, ...)
 		return (-1);
 	va_end(ap);
 	return (result);
-}
-
-int	main(void)
-{
-//	printf("|%.6d|\n", -3);
-//	ft_printf("|%.6d|\n", -3);
-	printf("|%.0d|\n", 0);
-	printf("|%.d|\n", 0);
-	ft_printf("|%.0d|\n", 0);
-	ft_printf("|%.d|\n", 0);
-//	printf("|%10.5d|\n", -216);
-//	ft_printf("|%10.5d|\n", -216);
-//	printf("|%3.7d|\n", -2375);
-//	ft_printf("|%3.7d|\n", -2375);
-//	printf("|%-10.5d|\n", -216);
-//	ft_printf("|%-10.5d|\n", -216);
-//	printf("|%-3.7d|\n", -2375);
-//	ft_printf("|%-3.7d|\n", -2375);
-	return (0);
 }

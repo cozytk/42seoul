@@ -6,35 +6,25 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:13:52 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 18:55:38 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/07/24 00:57:27 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_printf.h"
 
-int		ft_unvalid(const char *base)
+int		no_num_and_len(t_fmt *fmt)
 {
-	int i;
-	int j;
-
-	i = 0;
-	j = 0;
-	while (base[i])
+	if (fmt->len == 0 && fmt->num == 0)
 	{
-		if (base[i] == '-' || base[i] == '+')
-			return (0);
-		j = i + 1;
-		while (base[j])
+		if (fmt->width)
 		{
-			if (base[i] == base[j])
-				return (0);
-			j++;
+			fmt->res += fmt->width;
+			while (fmt->width--)
+				write(1, " ", 1);
 		}
-		i++;
+		return (1);
 	}
-	if (i <= 1)
-		return (0);
-	return (i);
+	return (0);
 }
 
 int		ft_printing(long long nbr, char *base, int length)
@@ -56,17 +46,6 @@ int		ft_printing(long long nbr, char *base, int length)
 	}
 	if (nb < (long long)length)
 		write(1, &base[nb % length], 1);
-	return (0);
-}
-
-int		ft_putnbr_base(long long nbr, char *base)
-{
-	int length;
-
-	length = ft_unvalid(base);
-	if (length == 0)
-		return (0);
-	ft_printing(nbr, base, length);
 	return (0);
 }
 
@@ -95,6 +74,21 @@ int		ft_intlen_2(long long n)
 		len++;
 		n = n * -1;
 	}
+	while (n >= 10)
+	{
+		n = n / 10;
+		len++;
+	}
+	return (len);
+}
+
+int		ft_numlen(long long n)
+{
+	int len;
+
+	len = 1;
+	if (n < 0)
+		n = n * -1;
 	while (n >= 10)
 	{
 		n = n / 10;

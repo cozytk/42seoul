@@ -6,7 +6,7 @@
 /*   By: taekkim <taekkim@student.42seoul.k>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/18 10:13:40 by taekkim           #+#    #+#             */
-/*   Updated: 2020/06/20 18:55:12 by taekkim          ###   ########.fr       */
+/*   Updated: 2020/07/24 00:57:16 by taekkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,11 @@ int		set_fmt(char *buff, t_fmt *fmt)
 {
 	if (!(minus_zero(buff, fmt)))
 		return (0);
-	if (fmt->minus || fmt->zero)
+	if (fmt->zero)
 		buff++;
+	else if (fmt->minus)
+		while (*buff == '-')
+			buff++;
 	if (!(ast_dot(buff, fmt)))
 		return (0);
 	if (!(width_len(buff, fmt)))
