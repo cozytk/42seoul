@@ -9,7 +9,6 @@ RUN rm -f latest.tar.gz
 RUN mv wordpress /etc/
 
 COPY wp-config.php /etc/wordpress/
-COPY wordpress.sql /tmp/
 COPY launch-wordpress.sh /tmp/
 COPY entrypoint.sh /tmp/
 
