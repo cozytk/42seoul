@@ -1,16 +1,7 @@
-FROM alpine:latest
+FROM alpine
 
-LABEL Description="vsftpd Docker image based on Alpine. Supports passive mode and virtual users." \
-	License="Apache License 2.0" \
-	Usage="docker run --rm -it --name vsftpd -p [HOST_CONNECTION_PORTS]:20-22 -p [HOST_FTP_PORTS]:21100-21104 lhauspie/vsftpd-alpine" \
-	Version="${VERSION}"
-
-# RUN apk update and install dependencies
-RUN apk update \
-		&& apk upgrade \
-		&& apk --update --no-cache add \
-				bash \
-				vsftpd
+RUN apk update upgrade \
+		&& apk --no-cache add bash vsftpd
 
 ENV FTP_USER=admin \
     FTP_PASS=admin \

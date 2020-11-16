@@ -1,6 +1,6 @@
-FROM alpine:latest
+FROM alpine
 
-RUN apk update && apk add influxdb
+RUN apk --update add influxdb
 
 EXPOSE 8086
 

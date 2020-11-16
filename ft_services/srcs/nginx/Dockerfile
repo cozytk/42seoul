@@ -1,16 +1,21 @@
-FROM alpine:latest
+FROM alpine
+
+COPY nginx.conf index.html setup.sh ./
 
 RUN apk update
-RUN apk add nginx
-RUN apk add openssh
-RUN apk add openssl
+RUN apk add nginx openssl openssh
+RUN	mv nginx.conf /etc/nginx
+RUN mkdir -p /run/nginx
+RUN mkdir /www && \
+	mv index.html /www
 
-COPY default.conf /etc/nginx/conf.d/
-COPY entrypoint.sh /tmp/
-COPY ./ssl_key/jwon.crt /etc/nginx/ssl/
-COPY ./ssl_key/jwon.key /etc/nginx/ssl/
-COPY 42logo.png /var/lib/nginx/html/
-COPY index.htm /var/lib/nginx/html/
+RUN openssl req -new -newkey rsa:2048 -nodes -days 365 -x509 \
+	-subj "/C=KR/ST=SEOUL/L=city/O=42/OU=cadet/CN=taekkim" \
+	-keyout /etc/ssl/private/taekkim.key -out /etc/ssl/certs/taekkim.crt
 
-EXPOSE 80 443 22
-ENTRYPOINT ["sh", "/tmp/entrypoint.sh"]
+RUN ssh-keygen -A && \
+	adduser -D admin && \
+	echo "admin:admin" | chpasswd
+
+EXPOSE 22 80 443
+ENTRYPOINT ["sh", "/setup.sh"]
