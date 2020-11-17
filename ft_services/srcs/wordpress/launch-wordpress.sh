@@ -1,4 +1,4 @@
 #!/bin/sh
 
 sleep 5
-mysql --host=mysql-service --user=admin --password=admin wordpress
+mysql --host=mysql-service --user=admin --password=admin wordpress < /tmp/wordpress.sql

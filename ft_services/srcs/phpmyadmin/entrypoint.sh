@@ -1,3 +1,3 @@
 #!/bin/sh
-
-php -S 0.0.0.0:5000 -t /etc/phpmyadmin/
+php-fpm7 &
+nginx -g 'daemon off;'

@@ -25,7 +25,7 @@ $i = 0;
  * First server
  */
 $i++;
-/* Authentication type */
+/* authentication type */
 $cfg['Servers'][$i]['auth_type'] = 'cookie';
 /* Server parameters */
 $cfg['Servers'][$i]['host'] = 'mysql-service';
@@ -39,7 +39,7 @@ $cfg['Servers'][$i]['AllowNoPassword'] = false;
  * phpMyAdmin configuration storage settings.
  */
 
-$cfg['PmaAbsoluteUri'] = 'https://nginx-service/phpmyadmin/';
+$cfg['PmaAbsoluteUri'] = 'http://nginx-service/phpmyadmin/';
 
 /* User used to manipulate with storage */
 // $cfg['Servers'][$i]['controlhost'] = '';
