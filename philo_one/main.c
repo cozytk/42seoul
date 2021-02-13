@@ -16,6 +16,7 @@ int init(void)
 		return (0);
 	while (++i < philo_num)
 		spoon[i] = (pthread_t)1;
+	spoon[i] = (pthread_t)0;
 	return (1);
 }
 
@@ -68,42 +69,38 @@ void argv_to_num(char **argv)
 	sleep_time = ft_atoi(argv[4]);
 	must_eat_num = ft_atoi(argv[5]);
 }
-//
-//void create_pthreads(void)
-//{
-//	int num;
-//	int res;
-//
-//	num = philo_num;
-//	while (num--)
-//		pthread_create(res, NULL, t_function, NULL);
-//}
-//
-//void *t_function(void *data)
-//{
-//	(void)data;
-//
-//
-//}
 
-int main(int argc, char *argv[])
+void *func(void *data)
 {
-	struct timeval time;
-	pthread_mutex_t mutex_lock;
-	int before;
-	int after;
+	int *num = (int *)data;
+	int i = 10;
+	while (i--)
+	{
+		sleep(1);
+		printf("%d\n", i);
+	}
+	printf("%d\n", *num);
+	return (NULL);
+}
+
+int main(int argc, char *argv[]
+{
+	pthread_t p_thread[2];
+	int result;
+	int n1 = 1;
+	int n2 = 2;
 
 	if (!(argc == 5 || argc == 6))
 		return (ft_write("Arguments error", 2));
 	argv_to_num(argv);
-	gettimeofday(&time, NULL);
-	before = time.tv_usec;
-	printf("%d %d %d %d %d\n", philo_num, die_time, eat_time, sleep_time, must_eat_num);
-	gettimeofday(&time, NULL);
-	usleep(100000);
-	after = time.tv_usec;
-	printf("%d\n", after - before);
-//	pthread_mutex_init(&mutex_lock, NULL);
-//	create_pthreads();
+	pthread_create(&p_thread[0], NULL, func, &n1);
+	pthread_create(&p_thread[1], NULL, func, &n2);
+	int i = 5;
+	while (i--)
+	{
+		usleep(1000);
+		printf("%d\n", i);
+	}
+	pause();
 	return (0);
 }
