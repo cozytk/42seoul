@@ -1,23 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_one.h                                        :+:      :+:    :+:   */
+/*   philo_two.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jujeong <jujeong@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/13 16:25:03 by jujeong           #+#    #+#             */
-/*   Updated: 2020/08/15 16:36:18 by jujeong          ###   ########.fr       */
+/*   Updated: 2020/08/15 16:50:02 by jujeong          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_ONE_H
-# define PHILO_ONE_H
+#ifndef PHILO_TWO_H
+# define PHILO_TWO_H
 
 # include <unistd.h>
 # include <stdio.h>
 # include <pthread.h>
 # include <stdlib.h>
 # include <sys/time.h>
+# include <semaphore.h>
 
 # define FORK 0
 # define EAT 1
@@ -42,7 +43,6 @@ typedef struct		s_stat
 {
 	t_data			*philo;
 	long			start_time;
-	int				fork;
 	int				dead;
 	int				number_of_philo;
 	int				time_to_die;
@@ -50,8 +50,8 @@ typedef struct		s_stat
 	int				time_to_sleep;
 	int				must_eat;
 	int				argc;
-	pthread_mutex_t	write_lock;
-	pthread_mutex_t	fork_lock;
+	sem_t			*write_lock;
+	sem_t			*fork_lock;
 }					t_stat;
 
 size_t				ft_strlen(const char *str);
