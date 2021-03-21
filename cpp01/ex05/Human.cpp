@@ -1,5 +1,11 @@
-//
-// Created by taekkim on 2021/03/20.
-//
-
 #include "Human.hpp"
+
+const std::string	Human::identify() const
+{
+	return (brain.identify());
+}
+
+const Brain&		Human::getBrain() const
+{
+	return (brain);
+}

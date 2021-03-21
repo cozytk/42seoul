@@ -1,5 +1,9 @@
-//
-// Created by taekkim on 2021/03/20.
-//
-
 #include "Brain.hpp"
+
+const std::string Brain::identify() const
+{
+	std::stringstream addr;
+
+	addr << this;
+	return (addr.str());
+}

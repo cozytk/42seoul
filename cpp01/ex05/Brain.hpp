@@ -1,15 +1,14 @@
-#ifndef CPP_BRAIN_HPP
-#define CPP_BRAIN_HPP
+#ifndef cpp_brain_hpp
+#define cpp_brain_hpp
 
 #include <iostream>
 #include <string>
+#include <sstream>
 
 class Brain
 {
-
 public:
-	std::string identify();
-
+	const std::string identify() const;
 };
 
 
