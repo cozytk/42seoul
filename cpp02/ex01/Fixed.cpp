@@ -21,6 +21,18 @@ Fixed::Fixed(const Fixed& copy)
 	// *this = copy;
 }
 
+Fixed::Fixed(int const val)
+{
+	std::cout << "Int constructor called" << std::endl;
+	this->val = val << bits;
+}
+
+Fixed::Fixed(float const val)
+{
+	std::cout << "Float constructor called" << std::endl;
+	this->val = roundf(val*(1 << bits));
+}
+
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
@@ -40,6 +52,10 @@ Fixed& Fixed::operator=(const Fixed& obj)
 	std::cout<<"Assignation operator called\n";
 	val = obj.getRawBits();
 	return (*this);
+}
+std::ostream& operator<<(std::ostream &os, const Fixed &ref)
+{
+	return (os<<ref.toFloat());
 }
 
 /* ************************************************************************** */
@@ -70,3 +86,13 @@ void    Fixed::setRawBits(int const _val)
 /* ************************************************************************** */
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
+int     Fixed::toInt(void) const
+{
+	return (val>>bits);
+}
+
+float   Fixed::toFloat(void) const
+{
+	return ((float)val/(1<<bits));
+}
+
