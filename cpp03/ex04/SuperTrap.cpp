@@ -1,4 +1,4 @@
-#include "Fixed.hpp"
+#include "SuperTrap.hpp"
 
 /* ************************************************************************** */
 /* ---------------------------- STATIC VARIABLE ----------------------------- */
@@ -9,36 +9,61 @@
 /* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::Fixed() : val(0)
+
+SuperTrap::SuperTrap()
 {
-	std::cout << "Default constructor called\n";
+	name = "NEW";
+	hp = 100;
+	maxHp = 100;
+	ep = 120;
+	maxEp = 120;
+	lv = 1;
+	MAD = 60;
+	RAD = 20;
+	arm = 5;
+	type = "SUPR-TP";
 }
 
-Fixed::Fixed(const Fixed& copy)
+SuperTrap::SuperTrap(std::string _name)
+: ClapTrap(_name)//, NinjaTrap(_name), FragTrap(_name)
 {
-	std::cout << "Copy constructor called\n";
-	val = copy.getRawBits();
-	// *this = copy;
+	name = _name;
+	hp = 100;
+	maxHp = 100;
+	ep = 120;
+	maxEp = 120;
+	lv = 1;
+	MAD = 60;
+	RAD = 20;
+	arm = 5;
+	type = "SUPR-TP";
+}
+
+SuperTrap::SuperTrap(const SuperTrap& copy)
+: ClapTrap(copy)
+{
+	std::cout << "SUPR-TP, player " << name << " created by copy\n";
 }
 
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::~Fixed()
+
+SuperTrap::~SuperTrap()
 {
-	std::cout<<"Destructor called\n";
+	std::cout << "SUPR-TP, Exit " << name << "'s default info!" << std::endl;
 }
 
 /* ************************************************************************** */
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Fixed& Fixed::operator=(const Fixed& obj)
+SuperTrap& SuperTrap::operator=(const SuperTrap& obj)
 {
 	if (this == &obj)
 		return (*this);
-	std::cout<<"Assignation operator called\n";
-	val = obj.getRawBits();
+	this->ClapTrap::operator=(obj);
+	std::cout << "SUPR-TP, player " << name << " allocated\n";
 	return (*this);
 }
 
@@ -46,27 +71,28 @@ Fixed& Fixed::operator=(const Fixed& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-int     Fixed::getRawBits(void) const
-{
-	std::cout << "getRawBits member function called\n";
-	return (val);
-}
+
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
 
-void    Fixed::setRawBits(int const _val)
-{
-	val = _val;
-}
+
 
 /* ************************************************************************** */
 /* ------------------------------- EXCEPTION -------------------------------- */
 /* ************************************************************************** */
 
-/* exception code */
-
 /* ************************************************************************** */
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
+
+unsigned int SuperTrap::rangedAttack(std::string const &target)
+{
+	return (FragTrap::rangedAttack(target));
+}
+
+unsigned int SuperTrap::meleeAttack(std::string const &target)
+{
+	return (NinjaTrap::meleeAttack(target));
+}

@@ -1,44 +1,66 @@
-#include "Fixed.hpp"
-
-/* ************************************************************************** */
-/* ---------------------------- STATIC VARIABLE ----------------------------- */
-/* ************************************************************************** */
-
-/* static variable code */
+#include "../ex02/FragTrap.hpp"
 
 /* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::Fixed() : val(0)
+
+FragTrap::FragTrap()
 {
-	std::cout << "Default constructor called\n";
+	name = "NEW";
+	hp = 100;
+	maxHp = 100;
+	ep = 100;
+	maxEp = 100;
+	lv = 1;
+	MAD = 30;
+	RAD = 20;
+	arm = 5;
+	type = "FR4G-TP";
+	std::cout << type << ", NEW player created\n";
 }
 
-Fixed::Fixed(const Fixed& copy)
+FragTrap::FragTrap(std::string _name)
+: ClapTrap(_name)
 {
-	std::cout << "Copy constructor called\n";
-	val = copy.getRawBits();
-	// *this = copy;
+
+	name = _name;
+	hp = 100;
+	maxHp = 100;
+	ep = 100;
+	maxEp = 100;
+	lv = 1;
+	MAD = 30;
+	RAD = 20;
+	arm = 5;
+	type = "FR4G-TP";
+	std::cout << type << ", player " << name << " created\n";
+}
+
+FragTrap::FragTrap(const FragTrap& copy)
+: ClapTrap(copy)
+{
+	std::cout << type << ", player " << name << " created by copy\n";
 }
 
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::~Fixed()
+
+FragTrap::~FragTrap()
 {
-	std::cout<<"Destructor called\n";
+	std::cout << type << ", player " << name << " deleted\n";
 }
 
 /* ************************************************************************** */
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Fixed& Fixed::operator=(const Fixed& obj)
+FragTrap& FragTrap::operator=(const FragTrap& obj)
 {
 	if (this == &obj)
 		return (*this);
-	std::cout<<"Assignation operator called\n";
-	val = obj.getRawBits();
+	this->ClapTrap::operator=(obj);
+	std::cout << type << ", player " << name << " allocated\n";
 	return (*this);
 }
 
@@ -46,20 +68,13 @@ Fixed& Fixed::operator=(const Fixed& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-int     Fixed::getRawBits(void) const
-{
-	std::cout << "getRawBits member function called\n";
-	return (val);
-}
+
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
 
-void    Fixed::setRawBits(int const _val)
-{
-	val = _val;
-}
+
 
 /* ************************************************************************** */
 /* ------------------------------- EXCEPTION -------------------------------- */
@@ -70,3 +85,24 @@ void    Fixed::setRawBits(int const _val)
 /* ************************************************************************** */
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
+
+unsigned int FragTrap::vaulthunter_dot_exe(std::string const & target)
+{
+	std::string	attack[5] = {"pinch", "punch", "slap", "kick", "shot"};
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> dis(0, 4);
+	int	damage[5] = {3, 10, 15, 20, 50};
+	int	i;
+
+	if (ep < 25)
+	{
+		std::cout << "Not enough energy.\n";
+		return (0);
+	}
+	ep -= 25;
+	i = dis(gen);
+	std::cout << name << " funny attacks " << target << " with " << attack[i] \
+			 << " causing " << damage[i] << " points of damage!\n";
+	return (damage[i]);
+}

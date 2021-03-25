@@ -1,4 +1,4 @@
-#include "Fixed.hpp"
+#include "SuperTrap.hpp"
 
 /* ************************************************************************** */
 /* ---------------------------- STATIC VARIABLE ----------------------------- */
@@ -9,36 +9,46 @@
 /* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::Fixed() : val(0)
+
+SuperTrap::SuperTrap() {}
+SuperTrap::SuperTrap(std::string _name)
+: ClapTrap(_name), FragTrap(_name), NinjaTrap(_name)
 {
-	std::cout << "Default constructor called\n";
+	hp = FragTrap::hp;
+	maxHp = FragTrap::maxHp;
+	ep = NinjaTrap::ep;
+	maxEp = NinjaTrap::maxEp;
+	lv = 1;
+	name = _name;
+	MAD = NinjaTrap::MAD;
+	RAD = FragTrap::RAD;
+	arm = FragTrap::arm;
+	type = "SUPR-TP";
 }
 
-Fixed::Fixed(const Fixed& copy)
+SuperTrap::SuperTrap(const SuperTrap& copy)
 {
-	std::cout << "Copy constructor called\n";
-	val = copy.getRawBits();
-	// *this = copy;
+	/* copy-constructor code */
 }
 
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::~Fixed()
+
+SuperTrap::~SuperTrap()
 {
-	std::cout<<"Destructor called\n";
+	/* destructor code */
 }
 
 /* ************************************************************************** */
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Fixed& Fixed::operator=(const Fixed& obj)
+SuperTrap& SuperTrap::operator=(const SuperTrap& obj)
 {
 	if (this == &obj)
 		return (*this);
-	std::cout<<"Assignation operator called\n";
-	val = obj.getRawBits();
+	/* overload= code */
 	return (*this);
 }
 
@@ -46,20 +56,13 @@ Fixed& Fixed::operator=(const Fixed& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-int     Fixed::getRawBits(void) const
-{
-	std::cout << "getRawBits member function called\n";
-	return (val);
-}
+/* getter code */
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
 
-void    Fixed::setRawBits(int const _val)
-{
-	val = _val;
-}
+/* setter code */
 
 /* ************************************************************************** */
 /* ------------------------------- EXCEPTION -------------------------------- */

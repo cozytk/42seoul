@@ -1,4 +1,4 @@
-#include "Fixed.hpp"
+#include "NinjaTrap.hpp"
 
 /* ************************************************************************** */
 /* ---------------------------- STATIC VARIABLE ----------------------------- */
@@ -9,36 +9,63 @@
 /* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::Fixed() : val(0)
+
+NinjaTrap::NinjaTrap()
 {
-	std::cout << "Default constructor called\n";
+	name = "NEW";
+	hp = 60;
+	maxHp = 60;
+	ep = 120;
+	maxEp = 120;
+	lv = 1;
+	MAD = 60;
+	RAD = 5;
+	arm = 0;
+	type = "NIJ4-TP";
+	std::cout << "NIJ4-TP, NEW player created\n";
 }
 
-Fixed::Fixed(const Fixed& copy)
+NinjaTrap::NinjaTrap(std::string _name)
+: ClapTrap(_name)
 {
-	std::cout << "Copy constructor called\n";
-	val = copy.getRawBits();
-	// *this = copy;
+	name = _name;
+	hp = 60;
+	maxHp = 60;
+	ep = 120;
+	maxEp = 120;
+	lv = 1;
+	MAD = 60;
+	RAD = 5;
+	arm = 0;
+	type = "NIJ4-TP";
+	std::cout << "NIJ4-TP, player " << name << " created\n";
+}
+
+NinjaTrap::NinjaTrap(const NinjaTrap& copy)
+: ClapTrap(copy)
+{
+	std::cout << "NIJ4-TP, player " << name << " created by copy\n";
 }
 
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::~Fixed()
+
+NinjaTrap::~NinjaTrap()
 {
-	std::cout<<"Destructor called\n";
+	std::cout << "NIJ4-TP, player " << name << " deleted\n";
 }
 
 /* ************************************************************************** */
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Fixed& Fixed::operator=(const Fixed& obj)
+NinjaTrap& NinjaTrap::operator=(const NinjaTrap& obj)
 {
 	if (this == &obj)
 		return (*this);
-	std::cout<<"Assignation operator called\n";
-	val = obj.getRawBits();
+	this->ClapTrap::operator=(obj);
+	std::cout << "NIJ4-TP, player " << name << " allocated\n";
 	return (*this);
 }
 
@@ -46,20 +73,13 @@ Fixed& Fixed::operator=(const Fixed& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-int     Fixed::getRawBits(void) const
-{
-	std::cout << "getRawBits member function called\n";
-	return (val);
-}
+/* getter code */
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
 
-void    Fixed::setRawBits(int const _val)
-{
-	val = _val;
-}
+/* setter code */
 
 /* ************************************************************************** */
 /* ------------------------------- EXCEPTION -------------------------------- */
@@ -70,3 +90,23 @@ void    Fixed::setRawBits(int const _val)
 /* ************************************************************************** */
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
+
+void   NinjaTrap::ninjaShoebox(FragTrap const & target) const
+{
+	std::cout << type << " to " << target.getType() << ' ' << name << " attack " << target.getName() << std::endl;
+}
+
+void   NinjaTrap::ninjaShoebox(ScavTrap const & target) const
+{
+	std::cout << type << " to " << target.getType() << ' ' << name << " attack " << target.getName() << std::endl;
+}
+
+void   NinjaTrap::ninjaShoebox(NinjaTrap const & target) const
+{
+	std::cout << type << " to " << target.getType() << ' ' << name << " attack " << target.getName() << std::endl;
+}
+
+void   NinjaTrap::ninjaShoebox(ClapTrap const & target) const
+{
+	std::cout << type << " to " << target.getType() << ' ' << name << " attack " << target.getName() << std::endl;
+}

@@ -1,4 +1,4 @@
-#include "Fixed.hpp"
+#include "ScavTrap.hpp"
 
 /* ************************************************************************** */
 /* ---------------------------- STATIC VARIABLE ----------------------------- */
@@ -9,36 +9,62 @@
 /* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::Fixed() : val(0)
+ScavTrap::ScavTrap()
 {
-	std::cout << "Default constructor called\n";
+	name = "NEW";
+	hp = 100;
+	maxHp = 100;
+	ep = 50;
+	maxEp = 50;
+	lv = 1;
+	MAD = 20;
+	RAD = 15;
+	arm = 3;
+	type = "SC4V-TP";
+	std::cout << "SC4V, NEW player created\n";
 }
 
-Fixed::Fixed(const Fixed& copy)
+ScavTrap::ScavTrap(std::string _name)
+: ClapTrap(_name)
 {
-	std::cout << "Copy constructor called\n";
-	val = copy.getRawBits();
-	// *this = copy;
+	name = _name;
+	hp = 100;
+	maxHp = 100;
+	ep = 50;
+	maxEp = 50;
+	lv = 1;
+	MAD = 20;
+	RAD = 15;
+	arm = 3;
+	type = "SC4V-TP";
+	std::cout << "SC4V, player " << name << " created\n";
+}
+
+ScavTrap::ScavTrap(const ScavTrap& copy)
+: ClapTrap(copy)
+{
+	std::cout << "SC4V, player " << name << " created by copy\n";
 }
 
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::~Fixed()
+
+ScavTrap::~ScavTrap()
 {
-	std::cout<<"Destructor called\n";
+	std::cout << "SC4V, player " << name << " deleted\n";
 }
 
 /* ************************************************************************** */
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Fixed& Fixed::operator=(const Fixed& obj)
+ScavTrap& ScavTrap::operator=(const ScavTrap& obj)
 {
 	if (this == &obj)
 		return (*this);
-	std::cout<<"Assignation operator called\n";
-	val = obj.getRawBits();
+	this->ClapTrap::operator=(obj);
+	std::cout << "SC4V, player " << name << " allocated\n";
 	return (*this);
 }
 
@@ -46,20 +72,13 @@ Fixed& Fixed::operator=(const Fixed& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-int     Fixed::getRawBits(void) const
-{
-	std::cout << "getRawBits member function called\n";
-	return (val);
-}
+/* getter code */
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
 
-void    Fixed::setRawBits(int const _val)
-{
-	val = _val;
-}
+/* setter code */
 
 /* ************************************************************************** */
 /* ------------------------------- EXCEPTION -------------------------------- */
@@ -70,3 +89,13 @@ void    Fixed::setRawBits(int const _val)
 /* ************************************************************************** */
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
+
+void ScavTrap::challengeNewcomer()
+{
+	std::string challenges[5] = {"Use weak hand", "Close your eyes", "Use foot", "No sounds", "No challenge"};
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> dis(0, 4);
+
+	std::cout << "Challenge! " << name << ", " << challenges[dis(gen)] << ".\n";
+}

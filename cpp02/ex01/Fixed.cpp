@@ -11,12 +11,12 @@
 /* ************************************************************************** */
 Fixed::Fixed() : val(0)
 {
-	std::cout << "default constructor called\n";
+	std::cout << "Default constructor called\n";
 }
 
 Fixed::Fixed(const Fixed& copy)
 {
-	std::cout << "copy constructor called\n";
+	std::cout << "Copy constructor called\n";
 	val = copy.getRawBits();
 	// *this = copy;
 }
@@ -64,7 +64,6 @@ std::ostream& operator<<(std::ostream &os, const Fixed &ref)
 
 int     Fixed::getRawBits(void) const
 {
-	std::cout << "getRawBits member function called\n";
 	return (val);
 }
 

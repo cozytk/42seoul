@@ -1,4 +1,4 @@
-#include "Fixed.hpp"
+#include "Dest.hpp"
 
 /* ************************************************************************** */
 /* ---------------------------- STATIC VARIABLE ----------------------------- */
@@ -9,57 +9,60 @@
 /* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::Fixed() : val(0)
+
+Dest::Dest() {}
+Dest::Dest(/* constructor parameter */)
+: Test(/, ...), /* constructor initialize list */
 {
-	std::cout << "Default constructor called\n";
+	/* constructor code */
 }
 
-Fixed::Fixed(const Fixed& copy)
+Dest::Dest(const Dest& copy)
+: Test(copy), /* copy-constructor initialize list */
 {
-	std::cout << "Copy constructor called\n";
-	val = copy.getRawBits();
-	// *this = copy;
+	/* copy-constructor code */
 }
 
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
-Fixed::~Fixed()
+
+Dest::~Dest()
 {
-	std::cout<<"Destructor called\n";
+	/* destructor code */
 }
 
 /* ************************************************************************** */
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Fixed& Fixed::operator=(const Fixed& obj)
+Dest& Dest::operator=(const Dest& obj)
 {
 	if (this == &obj)
 		return (*this);
-	std::cout<<"Assignation operator called\n";
-	val = obj.getRawBits();
+	this->Test::operator=(obj);
+	/* overload= code */
 	return (*this);
+}
+
+std::ostream&
+operator<<(std::ostream& out, const Dest& dest)
+{
+	/* ostream output overload code */
+	return (out);
 }
 
 /* ************************************************************************** */
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-int     Fixed::getRawBits(void) const
-{
-	std::cout << "getRawBits member function called\n";
-	return (val);
-}
+/* getter code */
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
 
-void    Fixed::setRawBits(int const _val)
-{
-	val = _val;
-}
+/* setter code */
 
 /* ************************************************************************** */
 /* ------------------------------- EXCEPTION -------------------------------- */
@@ -70,3 +73,4 @@ void    Fixed::setRawBits(int const _val)
 /* ************************************************************************** */
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
+
