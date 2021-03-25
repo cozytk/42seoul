@@ -12,6 +12,7 @@
 
 ClapTrap::ClapTrap() : type("CL4P-TP")
 {
+	name = "NEW";
 	std::cout << "CL4P-TP, Create default info !" << std::endl;
 }
 

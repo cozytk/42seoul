@@ -7,7 +7,7 @@
 # include "NinjaTrap.hpp"
 # include "FragTrap.hpp"
 
-class SuperTrap : public FragTrap, public NinjaTrap
+class SuperTrap : public virtual FragTrap, public virtual NinjaTrap
 {
 	private:
 		/* declare member variable */

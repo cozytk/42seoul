@@ -1,4 +1,4 @@
-#include "../ex02/FragTrap.hpp"
+#include "FragTrap.hpp"
 
 /* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
@@ -16,7 +16,7 @@ FragTrap::FragTrap()
 	RAD = 20;
 	arm = 5;
 	type = "FR4G-TP";
-	std::cout << type << ", NEW player created\n";
+	std::cout << "FR4G-TP, NEW player created\n";
 }
 
 FragTrap::FragTrap(std::string _name)
@@ -33,13 +33,13 @@ FragTrap::FragTrap(std::string _name)
 	RAD = 20;
 	arm = 5;
 	type = "FR4G-TP";
-	std::cout << type << ", player " << name << " created\n";
+	std::cout << "FR4G-TP, player " << name << " created\n";
 }
 
 FragTrap::FragTrap(const FragTrap& copy)
 : ClapTrap(copy)
 {
-	std::cout << type << ", player " << name << " created by copy\n";
+	std::cout << "FR4G-TP, player " << name << " created by copy\n";
 }
 
 /* ************************************************************************** */
@@ -48,7 +48,7 @@ FragTrap::FragTrap(const FragTrap& copy)
 
 FragTrap::~FragTrap()
 {
-	std::cout << type << ", player " << name << " deleted\n";
+	std::cout << "FR4G-TP, player " << name << " deleted\n";
 }
 
 /* ************************************************************************** */
@@ -60,7 +60,7 @@ FragTrap& FragTrap::operator=(const FragTrap& obj)
 	if (this == &obj)
 		return (*this);
 	this->ClapTrap::operator=(obj);
-	std::cout << type << ", player " << name << " allocated\n";
+	std::cout << "FR4G-TP, player " << name << " allocated\n";
 	return (*this);
 }
 

@@ -4,8 +4,8 @@
 #include <cstdlib>
 #include <iomanip>
 
-#include "FragTrap.hpp"
 #include "ClapTrap.hpp"
+#include "FragTrap.hpp"
 #include "ScavTrap.hpp"
 #include "NinjaTrap.hpp"
 #include "SuperTrap.hpp"

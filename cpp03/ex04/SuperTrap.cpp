@@ -22,10 +22,11 @@ SuperTrap::SuperTrap()
 	RAD = 20;
 	arm = 5;
 	type = "SUPR-TP";
+	std::cout << "SUPR-TP, " << name << " player  created\n";
 }
 
 SuperTrap::SuperTrap(std::string _name)
-: ClapTrap(_name)//, NinjaTrap(_name), FragTrap(_name)
+:ClapTrap(_name), FragTrap(_name), NinjaTrap(_name)
 {
 	name = _name;
 	hp = 100;
@@ -37,10 +38,11 @@ SuperTrap::SuperTrap(std::string _name)
 	RAD = 20;
 	arm = 5;
 	type = "SUPR-TP";
+	std::cout << "SUPR-TP, player " << name << " created\n";
 }
 
 SuperTrap::SuperTrap(const SuperTrap& copy)
-: ClapTrap(copy)
+: ClapTrap(copy), FragTrap(copy), NinjaTrap(copy)
 {
 	std::cout << "SUPR-TP, player " << name << " created by copy\n";
 }
