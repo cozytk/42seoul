@@ -141,7 +141,7 @@ unsigned int FragTrap::takeDamage(unsigned int amount)
 
 unsigned int FragTrap::beRepaired(unsigned int amount)
 {
-	std::cout << name << " repaired" << std::endl;
+	std::cout << name << " repaired " << amount << std::endl;
 	hp += amount;
 	if (hp > maxHp)
 		hp = maxHp;

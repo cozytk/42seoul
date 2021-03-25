@@ -130,7 +130,7 @@ unsigned int ClapTrap::takeDamage(unsigned int amount)
 
 unsigned int ClapTrap::beRepaired(unsigned int amount)
 {
-	std::cout << type << ' ' << name << " repaired" << std::endl;
+	std::cout << type << ' ' << name << " repaired " << amount << std::endl;
 	hp += amount;
 	if (hp > maxHp)
 		hp = maxHp;
