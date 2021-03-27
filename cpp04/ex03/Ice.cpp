@@ -42,12 +42,14 @@ Ice& Ice::operator=(const Ice& obj)
 
 AMateria*
 Ice::clone() const {
-	/* function body */
+	Ice *copy = new Ice(*this);
+	return (copy);
 }
 
 void
 Ice::use(ICharacter& target) {
-	/* function body */
+	AMateria::use(target);
+	std::coGut << "* shoots an ice bolt at " << target.getName() << " *\n";
 }
 
 /* ************************************************************************** */

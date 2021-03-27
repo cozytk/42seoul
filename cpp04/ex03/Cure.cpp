@@ -42,7 +42,7 @@ Cure& Cure::operator=(const Cure& obj)
 
 AMateria*
 Cure::clone() const {
-	Cure *copy = new Cure(this*);
+	Cure *copy = new Cure(*this);
 	return (copy);
 }
 
