@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="64da4c11-ff29-4b2b-84ad-f79a095a2f29" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../.cppgit/.status" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex00/Peon.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex00/Peon.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex00/Sorcerer.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex00/Sorcerer.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex00/Victim.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex00/Victim.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex00/main.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex00/main.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/.cppgit/.status" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/.cppgit/20210326_213709/Aweapon.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/.cppgit/20210326_213709/Aweapon.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/.cppgit/20210326_213709/PowerFist.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/.cppgit/20210326_213709/PowerFist.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/.cppgit/20210327_131957/Enemy.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/.cppgit/20210327_131957/Enemy.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/.cppgit/20210327_131957/RadScorpion.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/.cppgit/20210327_131957/RadScorpion.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/AWeapon.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/AWeapon.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/Character.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/Character.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/Enemy.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/Enemy.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/PlasmaRifle.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/PlasmaRifle.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/PowerFist.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/PowerFist.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/RadScorpion.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/RadScorpion.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/SuperMutant.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/SuperMutant.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/a.out" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/main.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ex01/main.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AssaultTerminator.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AssaultTerminator.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ISpaceMarine.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ISquad.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Squad.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Squad.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TacticalMarine.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TacticalMarine.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/a.out" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../.idea/cpp.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/cpp.iml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CMakeLists.txt" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="ProjectId" id="1qKi3mmMh0pVXbW3AwbSj2gKqw7" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="64da4c11-ff29-4b2b-84ad-f79a095a2f29" name="Default Changelist" comment="" />
+      <created>1616834485406</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1616834485406</updated>
+      <workItem from="1616834486732" duration="32000" />
+      <workItem from="1616834529926" duration="396000" />
+      <workItem from="1616834954838" duration="160000" />
+    </task>
+    <servers />
+  </component>
+</project>
