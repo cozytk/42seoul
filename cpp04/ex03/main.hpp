@@ -9,5 +9,3 @@
 #include "Cure.hpp"
 #include "Ice.hpp"
 #include "AMateria.hpp"
-#include "ICharacter.hpp"
-#include "IMateriaSource.hpp"

@@ -4,21 +4,24 @@
 # include <string>
 # include <iostream>
 
-class MateriaSource
+# include "IMateriaSource.hpp"
+
+class MateriaSource : public IMateriaSource
 {
 	private:
-		/* declare member variable */
+		int num;
+		AMateria *sources[4];
 	public:
 		MateriaSource();
-		MateriaSource(const std::string& /* parameter */, ...);
 		MateriaSource(const MateriaSource& copy);
 		MateriaSource& operator=(const MateriaSource& obj);
 		virtual ~MateriaSource();
 
-		/* declare member function */
-};
+		void learnMateria(AMateria *m);
+		AMateria* createMateria(std::string const & type);
 
-/* global operator overload */
-std::ostream&	operator<<(std::ostream& out, const MateriaSource& materiaSource);
+		int getNum() const;
+		AMateria *getSource(int i) const;
+};
 
 #endif

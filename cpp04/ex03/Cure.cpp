@@ -49,7 +49,7 @@ Cure::clone() const {
 void
 Cure::use(ICharacter& target) {
 	AMateria::use(target);
-	std::cout << "* shoots an ice bolt at "<< target.getName() <<" *\n";
+	std::cout << "* heals " << target.getName() << "’s wounds *\n";
 }
 
 /* ************************************************************************** */

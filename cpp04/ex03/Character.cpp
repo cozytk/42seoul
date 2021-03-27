@@ -1,26 +1,34 @@
 #include "Character.hpp"
 
 /* ************************************************************************** */
-/* ---------------------------- STATIC VARIABLE ----------------------------- */
-/* ************************************************************************** */
-
-/* static variable code */
-
-/* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Character::Character() {}
-Character::Character(/* constructor parameter */)
-: /* constructor initialize list */
+Character::Character()
+: name(0), _idx(0)
 {
-	/* constructor code */
+	for (int i = 0; i < 4; i++)
+		ivt[i] = 0;
+}
+
+Character::Character(std::string _name)
+: name(_name), _idx(0)
+{
+	for (int i = 0; i < 4; i++)
+		ivt[i] = 0;
 }
 
 Character::Character(const Character& copy)
-: /* copy-constructor initialize list */
 {
-	/* copy-constructor code */
+	name = copy.name;
+	_idx = copy._idx;
+	for (int i = 0; i < 4; i++)
+	{
+		if (copy.ivt[i] != 0)
+			ivt[i] = copy.ivt[i]->clone();
+		else
+			ivt[i] = 0;
+	}
 }
 
 /* ************************************************************************** */
@@ -29,7 +37,11 @@ Character::Character(const Character& copy)
 
 Character::~Character()
 {
-	/* destructor code */
+	for (int i = 0; i < 4; i++)
+	{
+		if (ivt[i])
+			delete ivt[i];
+	}
 }
 
 /* ************************************************************************** */
@@ -40,23 +52,35 @@ Character& Character::operator=(const Character& obj)
 {
 	if (this == &obj)
 		return (*this);
-	/* overload= code */
+	for (int i = 0 ; i < 4 ; i++)
+	{
+		if (obj.ivt[i] != 0)
+			delete ivt[i];
+	}
+	name = obj.name;
+	for (int i = 0 ; i < 4 ; i++)
+	{
+		if (obj.ivt[i] != 0)
+			ivt[i] = obj.ivt[i]->clone();
+		else
+			ivt[i] = NULL;
+	}
 	return (*this);
 }
 
-std::ostream&
-operator<<(std::ostream& out, const Character& character)
-{
-	/* ostream output overload code */
-	return (out);
-}
+
 
 /* ************************************************************************** */
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-/* getter code */
+std::string const & Character::getName() const {
+	return (name);
+}
 
+int Character::getIdx() const {
+	return (_idx);
+}
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
@@ -72,3 +96,33 @@ operator<<(std::ostream& out, const Character& character)
 /* ************************************************************************** */
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
+
+void
+Character::equip(AMateria* m) {
+	if (!m || _idx >= 3)
+		return ;
+	for (int i = 0; i < _idx; i++)
+	{
+		if (ivt[i] == m)
+			return ;
+	}
+	ivt[_idx] = m;
+	_idx++;
+}
+
+void
+Character::unequip(int idx) {
+	if (idx < 0 || _idx <= 0 || idx >= _idx)
+		return ;
+	for (int i = idx; i < _idx; i++)
+		ivt[i] = ivt[i + 1];
+	ivt[_idx] = 0;
+	_idx--;
+}
+
+void
+Character::use(int idx, ICharacter& target) {
+	if (idx < 0 || _idx <= idx)
+		return ;
+	ivt[idx]->use(target);
+}

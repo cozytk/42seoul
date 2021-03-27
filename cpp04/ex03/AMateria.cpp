@@ -11,21 +11,20 @@
 /* ************************************************************************** */
 
 AMateria::AMateria()
-: _xp(0), _type(0)
+: _type(0), _xp(0)
 {
 
 }
 
-AMateria::AMateria(std::string const & type);
-: _xp(0), _type(type)
+AMateria::AMateria(std::string const & type)
+: _type(type), _xp(0)
 {
 
 }
 
 AMateria::AMateria(const AMateria& copy)
-: /* copy-constructor initialize list */
+: _type(copy._type), _xp(copy._xp)
 {
-	/* copy-constructor code */
 }
 
 /* ************************************************************************** */
@@ -34,7 +33,6 @@ AMateria::AMateria(const AMateria& copy)
 
 AMateria::~AMateria()
 {
-	/* destructor code */
 }
 
 /* ************************************************************************** */
@@ -45,15 +43,9 @@ AMateria& AMateria::operator=(const AMateria& obj)
 {
 	if (this == &obj)
 		return (*this);
-	/* overload= code */
+	_xp = obj._xp;
+	_type = obj._type;
 	return (*this);
-}
-
-std::ostream&
-operator<<(std::ostream& out, const AMateria& aMateria)
-{
-	/* ostream output overload code */
-	return (out);
 }
 
 /* ************************************************************************** */
@@ -62,12 +54,12 @@ operator<<(std::ostream& out, const AMateria& aMateria)
 
 std::string const & AMateria::getType() const
 {
-
+	return (_type);
 }
 
 unsigned int AMateria::getXP() const
 {
-
+	return (_xp);
 }
 
 /* ************************************************************************** */

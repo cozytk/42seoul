@@ -10,17 +10,20 @@
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-MateriaSource::MateriaSource() {}
-MateriaSource::MateriaSource(/* constructor parameter */)
-: /* constructor initialize list */
+MateriaSource::MateriaSource()
+: num(0)
 {
-	/* constructor code */
+	for (int i = 0; i < 4; i++)
+		sources[i] = 0;
 }
 
 MateriaSource::MateriaSource(const MateriaSource& copy)
-: /* copy-constructor initialize list */
+: num(0)
 {
-	/* copy-constructor code */
+	for (int i = 0; i < num; i++)
+		learnMateria(copy.sources[i]->clone());
+	for (int i = num; i < 4; i++)
+		sources[i] = 0;
 }
 
 /* ************************************************************************** */
@@ -29,7 +32,11 @@ MateriaSource::MateriaSource(const MateriaSource& copy)
 
 MateriaSource::~MateriaSource()
 {
-	/* destructor code */
+	for (int i = 0; i < 4; i++)
+	{
+		if (sources[i])
+			delete sources[i];
+	}
 }
 
 /* ************************************************************************** */
@@ -40,35 +47,31 @@ MateriaSource& MateriaSource::operator=(const MateriaSource& obj)
 {
 	if (this == &obj)
 		return (*this);
-	/* overload= code */
+	for (int i = 0; i < num; i++)
+	{
+		if (sources[i])
+			delete sources[i];
+	}
+	for (int i = 0; i < obj.num; i++)
+		learnMateria(obj.sources[i]->clone());
 	return (*this);
 }
 
-std::ostream&
-operator<<(std::ostream& out, const MateriaSource& materiaSource)
+void
+MateriaSource::learnMateria(AMateria *m)
 {
-	/* ostream output overload code */
-	return (out);
+	if (num > 3 || !m)
+		return ;
+	sources[num] = m->clone();
+	num++;
 }
 
-/* ************************************************************************** */
-/* --------------------------------- GETTER --------------------------------- */
-/* ************************************************************************** */
-
-/* getter code */
-
-/* ************************************************************************** */
-/* --------------------------------- SETTER --------------------------------- */
-/* ************************************************************************** */
-
-/* setter code */
-
-/* ************************************************************************** */
-/* ------------------------------- EXCEPTION -------------------------------- */
-/* ************************************************************************** */
-
-/* exception code */
-
-/* ************************************************************************** */
-/* ---------------------------- MEMBER FUNCTION ----------------------------- */
-/* ************************************************************************** */
+AMateria*
+MateriaSource::createMateria(std::string const & type) {
+	for (int i = 0; i < num; i++)
+	{
+		if (sources[i]->getType() == type)
+			return (this->sources[i]->clone());
+	}
+	return (0);
+}

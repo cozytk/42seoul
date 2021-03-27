@@ -3,6 +3,8 @@
 
 # include <string>
 # include <iostream>
+class AMateria;
+#include "ICharacter.hpp"
 
 class AMateria
 {
@@ -12,9 +14,9 @@ class AMateria
 	public:
 		AMateria();
 		AMateria(std::string const & type);
-		AMateria(const AMateria& copy)
+		AMateria(const AMateria& copy);
 		virtual ~AMateria();
-		AMateria& operator=(const AMateria& obj)
+		AMateria& operator=(const AMateria& obj);
 
 		std::string const & getType() const;
 		unsigned int getXP() const;
