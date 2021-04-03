@@ -1,32 +1,21 @@
-#include "Bureaucrat.hpp"
+#include "Intern.hpp"
 
 /* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat::Bureaucrat()
-{
-}
+Intern::Intern() {}
 
-Bureaucrat::Bureaucrat(const std::string &_name, int _grade)
-: name(_name), grade(_grade)
+Intern::Intern(const Intern& copy)
 {
-	if (grade < 1)
-		throw GradeTooHighException();
-	else if (grade > 150)
-		throw GradeTooLowException();
-}
-
-Bureaucrat::Bureaucrat(const Bureaucrat& copy)
-: name(copy.name), grade(copy.grade)
-{
+	(void)copy;
 }
 
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat::~Bureaucrat()
+Intern::~Intern()
 {
 }
 
@@ -34,34 +23,18 @@ Bureaucrat::~Bureaucrat()
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat& Bureaucrat::operator=(const Bureaucrat& obj)
+Intern& Intern::operator=(const Intern& obj)
 {
 	if (this == &obj)
 		return (*this);
-	grade = obj.grade;
 	return (*this);
-}
-
-std::ostream&
-operator<<(std::ostream& out, const Bureaucrat& bureaucrat)
-{
-	out << bureaucrat.getName() << ", bureaucrat grade " << bureaucrat.getGrade() << ".";
-	return (out);
 }
 
 /* ************************************************************************** */
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-std::string Bureaucrat::getName() const
-{
-	return (name);
-}
-
-int Bureaucrat::getGrade() const
-{
-	return (grade);
-}
+/* getter code */
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
@@ -79,18 +52,26 @@ int Bureaucrat::getGrade() const
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-void Bureaucrat::incGrade()
+Form*   Intern::makeForm(std::string form, std::string target)
 {
-	std::cout << "increase grade\n";
-	if (grade <= 1)
-		throw GradeTooHighException();
-	grade--;
-}
+	std::string targets[3] = {"shrubbery creation", "robotomy request", "presidential pardon"};
+	Form *forms[3];
+	Form *obj = 0;
 
-void Bureaucrat::decGrade()
-{
-	std::cout << "decrease grade\n";
-	if (grade >= 150)
-		throw GradeTooLowException();
-	grade++;
+	forms[0] = new ShrubberryCreationForm(target);
+	forms[1] = new RobotomyRequestForm(target);
+	forms[2] = new PresidentialPardonForm(target);
+	for (int i = 0; i < 3; i++)
+	{
+		if (form == targets[i])
+		{
+			obj = forms[i];
+			std::cout << "Intern creates " << form << '\n';
+			continue ;
+		}
+		delete forms[i];
+	}
+	if (!obj)
+		std::cout << "Not a valid Intern : " << form << '\n';
+	return (obj);
 }

@@ -1,24 +1,23 @@
-#include "Bureaucrat.hpp"
+#include "Form.hpp"
 
 /* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat::Bureaucrat()
+Form::Form()
+: _name(0), _signed(0), _signGrade(0), _execGrade(0)
+{}
+Form::Form(const std::string & name, const int signGrade, const int execGrade)
+: _name(name), _signed(false), _signGrade(signGrade), _execGrade(execGrade)
 {
+	if (_signGrade < 1 || _execGrade < 1)
+		throw Form::GradeTooHighException();
+	if (_signGrade > 150 || _execGrade > 150)
+		throw Form::GradeTooLowException();
 }
 
-Bureaucrat::Bureaucrat(const std::string &_name, int _grade)
-: name(_name), grade(_grade)
-{
-	if (grade < 1)
-		throw GradeTooHighException();
-	else if (grade > 150)
-		throw GradeTooLowException();
-}
-
-Bureaucrat::Bureaucrat(const Bureaucrat& copy)
-: name(copy.name), grade(copy.grade)
+Form::Form(const Form& copy)
+: _name(copy.getName()), _signed(copy._signed), _signGrade(copy.getSignGrade()), _execGrade(copy.getExecGrade())
 {
 }
 
@@ -26,7 +25,7 @@ Bureaucrat::Bureaucrat(const Bureaucrat& copy)
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat::~Bureaucrat()
+Form::~Form()
 {
 }
 
@@ -34,18 +33,24 @@ Bureaucrat::~Bureaucrat()
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat& Bureaucrat::operator=(const Bureaucrat& obj)
+Form& Form::operator=(const Form& obj)
 {
 	if (this == &obj)
 		return (*this);
-	grade = obj.grade;
+	_signed = obj.getSigned();
 	return (*this);
 }
 
 std::ostream&
-operator<<(std::ostream& out, const Bureaucrat& bureaucrat)
+operator<<(std::ostream& out, const Form& form)
 {
-	out << bureaucrat.getName() << ", bureaucrat grade " << bureaucrat.getGrade() << ".";
+	out << "Form state : " << form.getName();
+	if (form.getSigned())
+		out << " signed.";
+	else
+		out << " not signed.";
+	out << "\ngrade require to sign is " << form.getSignGrade() <<
+	"\ngrade require to exec is " << form.getExecGrade() << ".";
 	return (out);
 }
 
@@ -53,14 +58,24 @@ operator<<(std::ostream& out, const Bureaucrat& bureaucrat)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-std::string Bureaucrat::getName() const
+std::string Form::getName() const
 {
-	return (name);
+	return (_name);
 }
 
-int Bureaucrat::getGrade() const
+bool Form::getSigned() const
 {
-	return (grade);
+	return (_signed);
+}
+
+int Form::getSignGrade() const
+{
+	return (_signGrade);
+}
+
+int Form::getExecGrade() const
+{
+	return (_execGrade);
 }
 
 /* ************************************************************************** */
@@ -79,18 +94,10 @@ int Bureaucrat::getGrade() const
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-void Bureaucrat::incGrade()
+void Form::beSigned(Bureaucrat & obj)
 {
-	std::cout << "increase grade\n";
-	if (grade <= 1)
-		throw GradeTooHighException();
-	grade--;
-}
-
-void Bureaucrat::decGrade()
-{
-	std::cout << "decrease grade\n";
-	if (grade >= 150)
+	if (_signGrade >= obj.getGrade())
+		_signed = true;
+	else
 		throw GradeTooLowException();
-	grade++;
 }

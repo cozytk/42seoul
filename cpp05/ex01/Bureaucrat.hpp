@@ -3,6 +3,9 @@
 
 # include <string>
 # include <iostream>
+# include "Form.hpp"
+
+class Form;
 
 class Bureaucrat
 {
@@ -21,6 +24,7 @@ class Bureaucrat
 		int getGrade() const;
 		void incGrade();
 		void decGrade();
+		void signForm(Form & form);
 
 		class GradeTooHighException : public std::runtime_error
 		{

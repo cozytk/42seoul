@@ -1,24 +1,20 @@
-#include "Bureaucrat.hpp"
+#include "PresidentialPardonForm.hpp"
 
 /* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat::Bureaucrat()
+PresidentialPardonForm::PresidentialPardonForm()
+: Form("Presidential Pardon", 25, 5)
+{}
+PresidentialPardonForm::PresidentialPardonForm(const std::string & target)
+: Form("Presidential Pardon", 25, 5)
 {
+	setTarget(target);
 }
 
-Bureaucrat::Bureaucrat(const std::string &_name, int _grade)
-: name(_name), grade(_grade)
-{
-	if (grade < 1)
-		throw GradeTooHighException();
-	else if (grade > 150)
-		throw GradeTooLowException();
-}
-
-Bureaucrat::Bureaucrat(const Bureaucrat& copy)
-: name(copy.name), grade(copy.grade)
+PresidentialPardonForm::PresidentialPardonForm(const PresidentialPardonForm& copy)
+: Form(copy)
 {
 }
 
@@ -26,7 +22,7 @@ Bureaucrat::Bureaucrat(const Bureaucrat& copy)
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat::~Bureaucrat()
+PresidentialPardonForm::~PresidentialPardonForm()
 {
 }
 
@@ -34,34 +30,19 @@ Bureaucrat::~Bureaucrat()
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat& Bureaucrat::operator=(const Bureaucrat& obj)
+PresidentialPardonForm& PresidentialPardonForm::operator=(const PresidentialPardonForm& obj)
 {
 	if (this == &obj)
 		return (*this);
-	grade = obj.grade;
+	this->Form::operator=(obj);
 	return (*this);
-}
-
-std::ostream&
-operator<<(std::ostream& out, const Bureaucrat& bureaucrat)
-{
-	out << bureaucrat.getName() << ", bureaucrat grade " << bureaucrat.getGrade() << ".";
-	return (out);
 }
 
 /* ************************************************************************** */
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-std::string Bureaucrat::getName() const
-{
-	return (name);
-}
-
-int Bureaucrat::getGrade() const
-{
-	return (grade);
-}
+/* getter code */
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
@@ -79,18 +60,8 @@ int Bureaucrat::getGrade() const
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-void Bureaucrat::incGrade()
-{
-	std::cout << "increase grade\n";
-	if (grade <= 1)
-		throw GradeTooHighException();
-	grade--;
-}
 
-void Bureaucrat::decGrade()
+void PresidentialPardonForm::action(void) const
 {
-	std::cout << "decrease grade\n";
-	if (grade >= 150)
-		throw GradeTooLowException();
-	grade++;
+	std::cout << getTarget() << " has been pardoned by Zafod Beeblebrox\n";
 }

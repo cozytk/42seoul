@@ -1,24 +1,21 @@
-#include "Bureaucrat.hpp"
+#include "ShrubberryCreationForm.hpp"
 
 /* ************************************************************************** */
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat::Bureaucrat()
+ShrubberryCreationForm::ShrubberryCreationForm()
+: Form("Shrubberry Creation", 145, 137)
+{}
+
+ShrubberryCreationForm::ShrubberryCreationForm(const std::string & target)
+: Form("Shrubberry Creation", 145, 137)
 {
+	setTarget(target);
 }
 
-Bureaucrat::Bureaucrat(const std::string &_name, int _grade)
-: name(_name), grade(_grade)
-{
-	if (grade < 1)
-		throw GradeTooHighException();
-	else if (grade > 150)
-		throw GradeTooLowException();
-}
-
-Bureaucrat::Bureaucrat(const Bureaucrat& copy)
-: name(copy.name), grade(copy.grade)
+ShrubberryCreationForm::ShrubberryCreationForm(const ShrubberryCreationForm& copy)
+: Form(copy)
 {
 }
 
@@ -26,7 +23,7 @@ Bureaucrat::Bureaucrat(const Bureaucrat& copy)
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat::~Bureaucrat()
+ShrubberryCreationForm::~ShrubberryCreationForm()
 {
 }
 
@@ -34,34 +31,19 @@ Bureaucrat::~Bureaucrat()
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Bureaucrat& Bureaucrat::operator=(const Bureaucrat& obj)
+ShrubberryCreationForm& ShrubberryCreationForm::operator=(const ShrubberryCreationForm& obj)
 {
 	if (this == &obj)
 		return (*this);
-	grade = obj.grade;
+	this->Form::operator=(obj);
 	return (*this);
-}
-
-std::ostream&
-operator<<(std::ostream& out, const Bureaucrat& bureaucrat)
-{
-	out << bureaucrat.getName() << ", bureaucrat grade " << bureaucrat.getGrade() << ".";
-	return (out);
 }
 
 /* ************************************************************************** */
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-std::string Bureaucrat::getName() const
-{
-	return (name);
-}
-
-int Bureaucrat::getGrade() const
-{
-	return (grade);
-}
+/* getter code */
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
@@ -79,18 +61,15 @@ int Bureaucrat::getGrade() const
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-void Bureaucrat::incGrade()
+void	ShrubberryCreationForm::action(void) const
 {
-	std::cout << "increase grade\n";
-	if (grade <= 1)
-		throw GradeTooHighException();
-	grade--;
-}
+	std::ofstream	file;
 
-void Bureaucrat::decGrade()
-{
-	std::cout << "decrease grade\n";
-	if (grade >= 150)
-		throw GradeTooLowException();
-	grade++;
+	file.open((getTarget() + "_shrubbery").c_str(), std::ofstream::trunc);
+	file << "    #    " << std::endl;
+	file << "   ###   " << std::endl;
+	file << "  #####  " << std::endl;
+	file << " ####### " << std::endl;
+	file << "    *    " << std::endl;
+	file.close();
 }
