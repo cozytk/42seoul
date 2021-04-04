@@ -1,38 +1,43 @@
-NAME = serialize
-
+NAME = identify
 CC = clang++
+RM = rm -rf
+INCLUDES = -I./includes/
+CFLAGS = -Wall -Wextra -Werror
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+MAIN_FILES = serialize main
+CMAKE-BUILD-DEBUG_FILES =
 
-SRC = serialize.cpp \
-	main.cpp \
+SRCS = $(addsuffix .cpp, $(MAIN_FILES))
+SRCS += $(addsuffix .cpp, $(CMAKE-BUILD-DEBUG_FILES))
 
-HEADER = serialize.hpp
+OBJS = $(addsuffix .o, $(MAIN_FILES))
+OBJS += $(addsuffix .o, $(CMAKE-BUILD-DEBUG_FILES))
 
-OBJ = $(SRC:.cpp=.o)
+GREEN = \033[0;32m
+RED = \033[0;31m
+RESET = \033[0m
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	@echo "\033[0;33mCompiling..."
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
-	@echo "\033[0m"
+${NAME}: ${OBJS}
+	@echo "$(GREEN)$(NAME) START$(RESET)"
+	@echo "$(RESET)Compiling ${NAME} to root."
+	@${CC} ${CFLAGS} ${INCLUDES} ${OBJS} -o ${NAME}
+	@echo "$(GREEN)DONE$(RESET)"
 
-.cpp.o:
-	@echo "\033[0;32mGenerating obj..."
-	$(CC) $(CFLAGS) -c $<
-	@echo "\033[0m"
+${OBJS}: ${SRCS}
+	@${CC} ${CFLAGS} ${INCLUDES} -c ${SRCS}
 
 clean:
-	@echo "\033[0;31mCleaning..."
-	rm -f $(OBJ)
-	@echo "\033[0m"
+	@echo "$(RESET)Cleaning your .o files$(RESET)"
+	@${RM} $(OBJS)
+	@echo "$(RED)clean DONE$(RESET)"
 
 fclean: clean
-	@echo "\033[0;31mRemoving executable..."
-	rm -f $(NAME)
-	@echo "\033[0m"
+	@echo "$(RESET)Removing $(NAME)"
+	@${RM} $(NAME)
+	@echo "$(RED)fclean DONE$(RESET)"
 
 re: fclean all
 
-.PHONY: all re clean fclean
+.PHONY:	all clean fclean re bonus

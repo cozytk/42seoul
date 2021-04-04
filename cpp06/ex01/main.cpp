@@ -14,4 +14,4 @@ int	main()
 	std::cout << "s2 : " << data->s2 << std::endl;
 	delete reinterpret_cast <Data *> (ptr);
 	return (0);
-}=r
+}
