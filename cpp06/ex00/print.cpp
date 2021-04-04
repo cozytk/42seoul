@@ -71,7 +71,7 @@ void	print_double(double d)
 	}
 }
 
-void	print_nan(std::string nan)
+void	print_nan(const std::string& nan)
 {
 	std::cout << "char: impossible" << std::endl;
 	std::cout << "int: impossible" << std::endl;
@@ -92,7 +92,7 @@ void	print_nan(std::string nan)
 	}
 }
 
-void	print_inv(void)
+void	print_inv()
 {
 	std::cout << "char: invalid" << std::endl;
 	std::cout << "int: invalid" << std::endl;

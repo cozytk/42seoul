@@ -13,7 +13,7 @@ void	print_char(char c);
 void	print_int(int n);
 void	print_float(float f);
 void	print_double(double d);
-void	print_nan(std::string nan);
-void	print_inv(void);
+void	print_nan(const std::string& nan);
+void	print_inv();
 
 #endif
