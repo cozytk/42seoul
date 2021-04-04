@@ -1,5 +1,0 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.17)
-project(convert)
-set(CMAKE_CXX_STANDARD 98)
-set(CMAKE_C_FLAGS "-Wall -Wextra -Werror")
-add_executable(convert main.cpp print.cpp verify.cpp)
