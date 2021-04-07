@@ -5,7 +5,7 @@
 int	main(void)
 {
 	Array<float> a(5);
-	std::cout << "Checking default Initialization for length [5] float Array:" << std::endl;
+	std::cout << "Checking default Initialization for length [" << a.size() << "] float Array:" << std::endl;
 	std::cout << std::setprecision(1) << std::fixed;
 	a.print();
 	std::cout << "changing default values..." << std::endl;
@@ -15,6 +15,7 @@ int	main(void)
 	std::cout << "------------------------------------------------------------" << std::endl;
 	Array<int> b(0);
 	std::cout << "Checking empty int Array:" << std::endl;
+	std::cout << "size : " <<  b.size() << std::endl;
 	b.print();
 	std::cout << "Trying to change value at [0]:" << std::endl;
 	try
@@ -27,7 +28,7 @@ int	main(void)
 	}
 	std::cout << "------------------------------------------------------------" << std::endl;
 	Array<size_t> c(10);
-	std::cout << "Checking default Initialization for length [10] size_t Array:" << std::endl;
+	std::cout << "Checking default Initialization for length [" << c.size() << "] size_t Array:" << std::endl;
 	c.print();
 	std::cout << "changing default values..." << std::endl;
 	for (int i = 0; i < 10; i++)
@@ -35,7 +36,7 @@ int	main(void)
 	c.print();
 
 	Array<std::string> d(5);
-	std::cout << "Checking default Initialization for length [5] string Array:" << std::endl;
+	std::cout << "Checking default Initialization for length [" << d.size() << "] string Array:" << std::endl;
 	d.print();
 	std::cout << "changing default values..." << std::endl;
 	d[0] = "Woow";
@@ -46,7 +47,7 @@ int	main(void)
 	d.print();
 	std::cout << "------------------------------------------------------------" << std::endl;
 	Array<char> e(5);
-	std::cout << "Checking default Initialization for length [5] char Array:" << std::endl;
+	std::cout << "Checking default Initialization for length [" << e.size() << "] char Array:" << std::endl;
 	e.print();
 	std::cout << "changing default values..." << std::endl;
 	e[0] = 'H';
