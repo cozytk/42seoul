@@ -2,6 +2,7 @@
 `C++ 98`
 
 RFC 7230 to 7235 (http 1.1) 번역 ▼
+
 https://giju.gitbook.io/rfc7231/
 
 #### 구현해야 하는 HEADER
@@ -26,14 +27,17 @@ https://giju.gitbook.io/rfc7231/
 ◦ WWW-Authenticate
 ```
 
-Mozilla에 정리된 헤더 ▼
+#### Mozilla에 정리된 헤더 ▼
+
 https://developer.mozilla.org/ko/docs/Web/HTTP/Headers
 
 
-CGI ▼
+#### CGI ▼
 
 개념 및 아파치에서의 CGI
+
 https://httpd.apache.org/docs/trunk/ko/howto/cgi.html
 
 Perl-CGI 동적 페이지 구성
+
 https://www.geeksforgeeks.org/perl-cgi-programming/
