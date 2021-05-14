@@ -1,7 +1,8 @@
 # webserv
 `C++ 98`
 
-기준 - rfc 7230 to 7235 (http 1.1)
+RFC 7230 to 7235 (http 1.1) 번역 ▼
+https://giju.gitbook.io/rfc7231/
 
 #### 구현해야 하는 HEADER
 ```
