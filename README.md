@@ -34,6 +34,9 @@ https://developer.mozilla.org/ko/docs/Web/HTTP/Headers
 
 #### CGI ▼
 
+개념
+http://www.mnuwer.dbasedeveloper.co.uk/dlearn/web/session01.htm
+
 개념 및 아파치에서의 CGI
 
 https://httpd.apache.org/docs/trunk/ko/howto/cgi.html
