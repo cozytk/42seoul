@@ -41,3 +41,7 @@ https://httpd.apache.org/docs/trunk/ko/howto/cgi.html
 Perl-CGI 동적 페이지 구성
 
 https://www.geeksforgeeks.org/perl-cgi-programming/
+
+헤더?
+
+https://docs.oracle.com/cd/E21043_01/doc.1111/e10726/toc.htm
