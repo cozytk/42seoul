@@ -28,3 +28,12 @@ https://giju.gitbook.io/rfc7231/
 
 Mozilla에 정리된 헤더 ▼
 https://developer.mozilla.org/ko/docs/Web/HTTP/Headers
+
+
+CGI ▼
+
+개념 및 아파치에서의 CGI
+https://httpd.apache.org/docs/trunk/ko/howto/cgi.html
+
+Perl-CGI 동적 페이지 구성
+https://www.geeksforgeeks.org/perl-cgi-programming/
