@@ -3,6 +3,7 @@
 
 RFC 7230 to 7235 (http 1.1) 번역 ▼
 
+https://roka88.dev/105
 https://giju.gitbook.io/rfc7231/
 
 #### 구현해야 하는 HEADER
