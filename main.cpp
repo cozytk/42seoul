@@ -9,9 +9,9 @@ std::string header = "HTTP/1.1 200 OK\n"
 
 std::string body = "<html>\n"
 	"<title>42</title>\n"
-	"<body>"
-	"<div>page 42</div>"
-	"</body>"
+	"<body>\n"
+	"<div>page 42</div>\n"
+	"</body>\n"
 	"</html>";
 
 int main()
@@ -41,6 +41,7 @@ int main()
 	{
 		std::cout << "----------wating--------------------------------" << std::endl;
 		socket_new = accept(socket_fd, (sockaddr *)&address, (socklen_t *)&addrlen);
+		std::cout << "accept; socket: " << socket_new << std::endl;
 		r_bytes = read(socket_new, buf, 10000);
 		std::cout << buf << std::endl;
 		write(socket_new, (header + body).c_str(), (header + body).length());
