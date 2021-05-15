@@ -1,6 +1,12 @@
 # webserv
 `C++ 98`
 
+TCP 통신 구조
+
+![](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=http%3A%2F%2Fcfile25.uf.tistory.com%2Fimage%2F996C94405A95011410F0B9)
+
+
+
 RFC 7230 to 7235 (http 1.1) 번역 ▼
 
 https://roka88.dev/105
