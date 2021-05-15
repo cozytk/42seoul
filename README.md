@@ -69,3 +69,26 @@ https://velog.io/@wijihoon123/Nginx%EB%9E%80-%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%8
 이벤트 기반 처리 (멀티 쓰레드 Worker)
 
 https://velog.io/@limprove89/%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EA%B8%B0%EB%B0%98-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D-%EC%93%B0%EB%A0%88%EB%93%9C
+
+
+
+
+
+
+
+
+
+## 보너스
+₩₩₩
+Your program can have workers define as:
+◦ a worker can be either processes or threads (and use fork for them)
+◦ a worker should not be spawn for each client and must able to take care of an
+infinite number of requests
+◦ workers are not mandatory
+◦ you can use fork, wait, waitpid, wait3, wait4, dup, dup2, pipe or pthread_create,
+pthread_detach, pthread_join, pthread_mutex_init, pthread_mutex_destroy,
+pthread_mutex_lock, pthread_mutex_unlock
+• Add any number of the following in the configuration file:
+◦ choose a number of worker (if your program implements workers)
+₩₩₩
+Worker 구현에 관한
