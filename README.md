@@ -78,17 +78,39 @@ https://velog.io/@limprove89/%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EA%B8%B0%EB%B0%98-%ED%
 
 
 
-## 보너스
-₩₩₩
+## 구현 시 한번에 같이 작업해도 될 수준의 무난한 보너스 (performance 향상)
+```
 Your program can have workers define as:
-◦ a worker can be either processes or threads (and use fork for them)
-◦ a worker should not be spawn for each client and must able to take care of an
-infinite number of requests
-◦ workers are not mandatory
-◦ you can use fork, wait, waitpid, wait3, wait4, dup, dup2, pipe or pthread_create,
-pthread_detach, pthread_join, pthread_mutex_init, pthread_mutex_destroy,
-pthread_mutex_lock, pthread_mutex_unlock
+  ◦ a worker can be either processes or threads (and use fork for them)
+  ◦ a worker should not be spawn for each client and must able to take care of an infinite number of requests
+  ◦ workers are not mandatory
+  ◦ you can use
+
+fork, wait, waitpid, wait3, wait4, dup, dup2, pipe (process 기반 Worker) or
+pthread_create, pthread_detach, pthread_join, pthread_mutex_init, pthread_mutex_destroy, pthread_mutex_lock, pthread_mutex_unlock (thread 기반 Worker)
+
 • Add any number of the following in the configuration file:
-◦ choose a number of worker (if your program implements workers)
-₩₩₩
-Worker 구현에 관한
+  ◦ choose a number of worker (if your program implements workers)
+
+-> <stack> 이랑 pthread 사용하면 끝? (stack에 lock 처리)
+```
+
+## 좀 까다로운 보너스 (regex)
+```
+• Add any number of the following in the configuration file:
+  ◦ Make routes work with regexp
+  
+-> 정규 표현식 구현 + 프로그램 실행 시 해당 대상 계속해서 체크..
+```
+
+## 감도 안 잡히는 보너스들 (plugin, proxy, internal module)
+```
+Make pluggins loadable/unloadable through terminal, like other compression system, charset convertor and so on... (repeatable bonus)
+
+• Add any number of the following in the configuration file:
+  ◦ Configure plugins (works with pluggins see above)
+  ◦ Configure a proxy to an other http/https server
+  ◦ Use an internal module for php or any other language. it means you aren’t calling any external executable to generate a page with this language. (repeatable bonus)
+  
+-> 잘 모르겠음
+```
