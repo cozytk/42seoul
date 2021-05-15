@@ -4,7 +4,7 @@ CXXFLAGS	= -std=c++98 #-Wall -Wextra -Werror
 SRCS		= main.cpp
 OBJS		= $(SRCS:.cpp=.o)
 
-NAME		= http-serv
+NAME		= webserv
 
 %.o: %.cpp
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
