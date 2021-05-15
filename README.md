@@ -57,6 +57,12 @@ CGI 헤더 ?
 https://docs.oracle.com/cd/E21043_01/doc.1111/e10726/toc.htm
 
 
+```
+CGI 는 ..
+DUP로 출력값 받을 수 있도록 처리 -> FORK -> EXECVE -> EXIT ?
+```
+
+
 
 #### Worker 개념
 
