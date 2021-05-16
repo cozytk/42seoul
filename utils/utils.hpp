@@ -1,6 +1,9 @@
 #ifndef UTILS_HPP
 # define UTILS_HPP
 
-bool isspace(char c);
+namespace ft
+{
+	bool isspace(char c);
+}
 
 #endif

@@ -6,9 +6,10 @@
 # include <map>
 
 # include "ConfigReader.hpp"
+# include "ConfigSyntax.hpp"
 # include "../utils/utils.hpp"
 
-class Conf
+class Config
 {
 private:
 	class node // add coplien
@@ -27,8 +28,6 @@ private:
 		// operator << + ..?
 	};
 
-	std::map<std::string, node> children;
-
 	enum Cursor
 	{
 		syntax,
@@ -37,7 +36,7 @@ private:
 		comment
 	};
 
-	int bracket;
+	std::map<std::string, node> children;
 	Cursor cursor;
 
 	void syntaxCursor(char c);
@@ -45,17 +44,13 @@ private:
 	
 public:
 	/* exception */
-	class ConfigSyntaxException : public std::exception
-	{
-		virtual const char *what() const throw();
-	};
 
 	/* coplien form */
-	Conf();
-	Conf(Conf const &x);
-	~Conf();
+	Config();
+	Config(Config const &x);
+	~Config();
 	
-	Conf &operator=(Conf const &x);
+	Config &operator=(Config const &x);
 	node &operator[](std::string const &name);
 
 	/* new */

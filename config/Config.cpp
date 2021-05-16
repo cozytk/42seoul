@@ -1,7 +1,7 @@
-#include "Conf.hpp"
+#include "Config.hpp"
 
 /* node */
-Conf::node &Conf::node::operator[](std::string const &name)
+Config::node &Config::node::operator[](std::string const &name)
 {
 	if (children.find(name) == children.end())
 	{
@@ -10,18 +10,18 @@ Conf::node &Conf::node::operator[](std::string const &name)
 	return (children.find(name)->second);
 }
 
-std::vector<std::string> const &Conf::node::getValue() const
+std::vector<std::string> const &Config::node::getValue() const
 {
 	return (this->value);
 }
 
-void Conf::node::setValue(std::string const &value)
+void Config::node::setValue(std::string const &value)
 {
 	this->value.push_back(value);
 }
 
 /*
-void Conf::node::push(std::string const &name, std::string const &value)
+void Config::node::push(std::string const &name, std::string const &value)
 {
 	node	dump;
 
@@ -30,31 +30,27 @@ void Conf::node::push(std::string const &name, std::string const &value)
 }*/
 
 /* exception */
-const char *Conf::ConfigSyntaxException::what() const throw()
-{
-	return ("ConfigSyntaxException: Syntax Error");
-}
+
 
 /* coplien form */
-Conf::Conf()
+Config::Config()
 {
-	this->bracket = 0;
 	this->cursor = syntax;
 }
 
-Conf::Conf(Conf const &x)
+Config::Config(Config const &x)
 {
 }
 
-Conf::~Conf()
+Config::~Config()
 {
 }
 
-Conf &Conf::operator=(Conf const &x)
+Config &Config::operator=(Config const &x)
 {
 }
 
-Conf::node &Conf::operator[](std::string const &name)
+Config::node &Config::operator[](std::string const &name)
 {
 	if (children.find(name) == children.end())
 	{
@@ -63,7 +59,7 @@ Conf::node &Conf::operator[](std::string const &name)
 	return (children.find(name)->second);
 }
 
-void Conf::syntaxCursor(char c)
+void Config::syntaxCursor(char c)
 {
 	if (this->cursor == syntax)
 	{
@@ -73,10 +69,7 @@ void Conf::syntaxCursor(char c)
 			this->cursor = comment;
 	}
 	else if (this->cursor == escape)
-	{
-		if (c == '\"')
-			this->cursor = string;
-	}
+		this->cursor = string;
 	else if (this->cursor == string)
 	{
 		if (c == '\\')
@@ -89,7 +82,7 @@ void Conf::syntaxCursor(char c)
 			this->cursor = syntax;
 }
 
-void Conf::syntaxProcess(std::vector<std::string> &v)
+void Config::syntaxProcess(std::vector<std::string> &v)
 {
 	std::vector<std::string>::iterator it = v.begin();
 	std::cout << "syntax=> ";
@@ -98,50 +91,69 @@ void Conf::syntaxProcess(std::vector<std::string> &v)
 	std::cout << std::endl;
 }
 
-void Conf::mapping(std::string const &line)
+void Config::mapping(std::string const &line)
 {
 	std::vector<std::string> v;
+	std::string buffer;
 	int i = 0;
 	int start;
 
 	while (i < line.length())
 	{
-		while (this->cursor == syntax && i < line.length() && isspace(line[i]))
-			syntaxCursor(line[i++]);
-		start = i;
+		buffer = "";
+		while (i < line.length() && ft::isspace(line[i]))
+			i++;
+		if (i == line.length())
+			break;
+		syntaxCursor(line[i]);
 		if (this->cursor == syntax)
 		{
-			while (this->cursor == syntax && i < line.length() && !isspace(line[i]))
-				syntaxCursor(line[i++]);
-			v.push_back(std::string(line, start, i - start) + std::to_string(this->cursor));
+			while (i < line.length() && this->cursor == syntax && !ft::isspace(line[i]))
+			{
+				buffer += line[i++];
+				syntaxCursor(line[i]);
+			}
 		}
 		else if (this->cursor == string)
 		{
-			while ((this->cursor == escape || this->cursor == string)
-					&& i < line.length())
-				syntaxCursor(line[i++]);
-	//		v.push_back(std::string(line, start, i - start) + std::to_string(this->cursor));
-			v.push_back(std::string(line, start, i - start));
+			while (i < line.length())
+			{
+				if (this->cursor != escape)
+					buffer += line[i];
+				i++;
+				syntaxCursor(line[i]);
+				if (line[i] == '\"' && this->cursor == syntax)
+				{
+					i++;
+					break;
+				}
+			}
+			buffer.erase(buffer.begin());
 		}
 		else if (this->cursor == comment)
 			break ;
+		if (buffer[buffer.size() - 1] == ';')
+			buffer.erase(buffer.end() - 1);
+		v.push_back(buffer);
 	}
 	syntaxCursor('\n');
 	syntaxProcess(v);
 }
 
-void Conf::file(std::string const &path)
+void Config::file(std::string const &path)
 {
 	ConfigReader cr;
+	ConfigSyntax cs;
 	int i = 0;
 
 	cr.file(path);
+	cs.syntax(cr);
 	while (cr.exist(i))
 		mapping(cr[i++]);
 }
 
 /*
-void Conf::push(std::string const &name, std::string const &value)
+void Config::push(std::string const &name, std::string const &value)
 {
 	node	dump;
 

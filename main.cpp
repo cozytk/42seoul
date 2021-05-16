@@ -1,10 +1,10 @@
 #include <iostream>
-#include "config/Conf.hpp"
+#include "config/Config.hpp"
 #include "config/ConfigReader.hpp"
 
 int main()
 {
-	Conf	config;
+	Config	config;
 
 	try
 	{
