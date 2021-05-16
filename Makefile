@@ -1,7 +1,9 @@
 CXX			= clang++
-CXXFLAGS	= -std=c++98 #-Wall -Wextra -Werror
+CXXFLAGS	= #-std=c++98 #-Wall -Wextra -Werror
 
-SRCS		= main.cpp
+SRCS		= main.cpp config/Conf.cpp config/ConfigReader.cpp \
+			  utils/isspace.cpp
+
 OBJS		= $(SRCS:.cpp=.o)
 
 NAME		= webserv
