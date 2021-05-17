@@ -4,6 +4,7 @@
 # include <iostream>
 # include <vector>
 # include <map>
+# include <stack>
 
 # include "ConfigReader.hpp"
 # include "ConfigSyntax.hpp"
@@ -16,7 +17,7 @@ private:
 	{
 	private:
 		std::vector<std::string> value;
-		std::map<std::string, node> children;
+		std::map<std::string, node *> children;
 
 	public:
 		node();
@@ -25,10 +26,10 @@ private:
 
 		node &operator=(node const &x);
 		node &operator[](std::string const &name);
+		std::vector<std::string> &operator*();
 
-		std::vector<std::string> const &getValue() const;
-		void setValue(std::vector<std::string> const &value);
-
+		node &pushNode(std::string &name);
+		void pushValue(std::string &name, std::vector<std::string> &v);
 		//node &operator[](std::string const &name);
 		// operator << + ..?
 	};
@@ -42,14 +43,14 @@ private:
 	};
 
 	/* tree */
-	node root;
+	node *root;
 
-	void pushNode(std::string const &name, std::vector<std::string> &v);
 	void parsing(std::vector<std::string>::iterator &f, std::vector<std::string>::iterator &l);
 	void configTree();
 
 	/* parse */
 	std::vector<std::string> store;
+	std::stack<node *> brackets;
 	Cursor cursor;
 
 	void syntaxCursor(char c);

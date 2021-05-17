@@ -30,32 +30,40 @@ Config::node &Config::node::operator[](std::string const &name)
 	return (children.find(name)->second);
 }
 
-std::vector<std::string> const &Config::node::getValue() const
+std::vector<std::string> &Config::node::operator*()
 {
 	return (this->value);
 }
 
-void Config::node::setValue(std::vector<std::string> const &value)
-{
-	this->value = value;
-}
-
-/*
-void Config::node::push(std::string const &name, std::string const &value)
+Config::node &Config::node::pushNode(std::string &name)
 {
 	node	dump;
 
-	dump.value = value;
-	children.insert(std::pair<std::string, node>(name, dump));
-}*/
+	if (children.find(name) == children.end())
+		children.insert(std::pair<std::string, node>(name, dump));
+	return (children.find(name)->second);
+}
+
+void Config::node::pushValue(std::string &name, std::vector<std::string> &value)
+{
+	node	dump;
+
+	if (children.find(name) == children.end())
+	{
+		dump.value = value;
+		children.insert(std::pair<std::string, node>(name, dump));
+		return ;
+	}
+	children.find(name)->second.value = value;
+}
 
 /* exception */
 
 
 /* coplien form */
-Config::Config()
+Config::Config() :
+	root(NULL), cursor(syntax)
 {
-	this->cursor = syntax;
 }
 
 Config::Config(Config const &x)
@@ -70,18 +78,30 @@ Config &Config::operator=(Config const &x)
 {
 }
 
-void Config::pushNode(std::string const &name, std::vector<std::string> &v)
+Config::node &Config::operator[](std::string const &name)
 {
+	return (root);
 }
 
 void Config::parsing(std::vector<std::string>::iterator &first, std::vector<std::string>::iterator &last)
 {
-	if (*last == ";") // assign
-		std::cout << "assign" << std::endl;
-	else if (*last == "{") // into child, name is *first
-		std::cout << "get child -> " << std::endl;
-	else if (*last == "}") // back to parents
-		std::cout << "get parents -> " << std::endl;
+	std::vector<std::string> dump;
+
+	if (*last == ";" && std::distance(first, last) > 1) // assign
+	{
+		dump.assign(first + 1, last);
+		brackets.top()->pushValue(*first, dump);
+	}
+	else if (*last == "{")
+	{
+		brackets.push(&brackets.top()->pushNode(*first));
+		std::cout << "push => " << &brackets.top() << std::endl;
+	}
+	else if (*last == "}")
+	{
+		brackets.pop();
+		std::cout << "pop => " << &brackets.top() << std::endl;
+	}
 }
 
 void Config::configTree()
@@ -184,7 +204,13 @@ void Config::file(std::string const &path)
 	int i = 0;
 
 	/* reset */
+	if (root != NULL)
+		delete root;
+	root = new node;
 	// need to add node, root reset
+	while (!brackets.empty())
+		brackets.pop();
+	brackets.push(root);
 	store.clear();
 	this->cursor = syntax;
 	/* load */
