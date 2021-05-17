@@ -100,7 +100,7 @@ https://velog.io/@limprove89/%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EA%B8%B0%EB%B0%98-%ED%
 
 
 
-## 구현 시 한번에 같이 작업해도 될 수준의 무난한 보너스 (performance 향상)
+## 구현 시 한번에 같이 작업할만한 보너스
 ```
 Your program can have workers define as:
   ◦ a worker can be either processes or threads (and use fork for them)
