@@ -12,17 +12,22 @@
 class Config
 {
 private:
-	class node // add coplien
+	class node
 	{
 	private:
 		std::vector<std::string> value;
 		std::map<std::string, node> children;
 
 	public:
+		node();
+		node(node const &x);
+		~node();
+
+		node &operator=(node const &x);
 		node &operator[](std::string const &name);
 
 		std::vector<std::string> const &getValue() const;
-		void setValue(std::string const &value);
+		void setValue(std::vector<std::string> const &value);
 
 		//node &operator[](std::string const &name);
 		// operator << + ..?
@@ -36,12 +41,20 @@ private:
 		comment
 	};
 
-	std::map<std::string, node> children;
+	/* tree */
+	node root;
+
+	void pushNode(std::string const &name, std::vector<std::string> &v);
+	void parsing(std::vector<std::string>::iterator &f, std::vector<std::string>::iterator &l);
+	void configTree();
+
+	/* parse */
+	std::vector<std::string> store;
 	Cursor cursor;
 
 	void syntaxCursor(char c);
-	void syntaxProcess(std::vector<std::string> &v);
-	
+	void mapping(std::string const &line);
+
 public:
 	/* exception */
 
@@ -55,7 +68,6 @@ public:
 
 	/* new */
 	void file(std::string const &path);
-	void mapping(std::string const &line);
 };
 
 #endif

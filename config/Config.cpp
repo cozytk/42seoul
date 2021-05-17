@@ -1,11 +1,31 @@
 #include "Config.hpp"
 
 /* node */
+Config::node::node()
+{
+	value.clear();
+	children.clear();
+}
+
+Config::node::node(node const &x)
+{
+}
+
+Config::node::~node()
+{
+}
+
+Config::node &Config::node::operator=(node const &x)
+{
+}
+
 Config::node &Config::node::operator[](std::string const &name)
 {
 	if (children.find(name) == children.end())
 	{
-		//push(name);
+		node	dump;
+
+		children.insert(std::pair<std::string, node>(name, dump));
 	}
 	return (children.find(name)->second);
 }
@@ -15,9 +35,9 @@ std::vector<std::string> const &Config::node::getValue() const
 	return (this->value);
 }
 
-void Config::node::setValue(std::string const &value)
+void Config::node::setValue(std::vector<std::string> const &value)
 {
-	this->value.push_back(value);
+	this->value = value;
 }
 
 /*
@@ -50,13 +70,34 @@ Config &Config::operator=(Config const &x)
 {
 }
 
-Config::node &Config::operator[](std::string const &name)
+void Config::pushNode(std::string const &name, std::vector<std::string> &v)
 {
-	if (children.find(name) == children.end())
+}
+
+void Config::parsing(std::vector<std::string>::iterator &first, std::vector<std::string>::iterator &last)
+{
+	if (*last == ";") // assign
+		std::cout << "assign" << std::endl;
+	else if (*last == "{") // into child, name is *first
+		std::cout << "get child -> " << std::endl;
+	else if (*last == "}") // back to parents
+		std::cout << "get parents -> " << std::endl;
+}
+
+void Config::configTree()
+{
+	std::vector<std::string>::iterator first;
+	std::vector<std::string>::iterator it = store.begin();
+
+	while (it != store.end())
 	{
-		//push(name);
+		first = it;
+		while (it != store.end() && *it != ";" && *it != "{" && *it != "}")
+			it++;
+		parsing(first, it);
+		if (*it == ";" || *it == "{" || *it == "}")
+			it++;
 	}
-	return (children.find(name)->second);
 }
 
 void Config::syntaxCursor(char c)
@@ -80,15 +121,6 @@ void Config::syntaxCursor(char c)
 	else if (this->cursor == comment)
 		if (c == '\n')
 			this->cursor = syntax;
-}
-
-void Config::syntaxProcess(std::vector<std::string> &v)
-{
-	std::vector<std::string>::iterator it = v.begin();
-	std::cout << "syntax=> ";
-	while (it != v.end())
-		std::cout << "[" << *(it++) << "]" << " ";
-	std::cout << std::endl;
 }
 
 void Config::mapping(std::string const &line)
@@ -133,11 +165,16 @@ void Config::mapping(std::string const &line)
 		else if (this->cursor == comment)
 			break ;
 		if (buffer[buffer.size() - 1] == ';')
+		{
 			buffer.erase(buffer.end() - 1);
-		v.push_back(buffer);
+			v.push_back(buffer);
+			v.push_back(";");
+		}
+		else
+			v.push_back(buffer);
 	}
 	syntaxCursor('\n');
-	syntaxProcess(v);
+	store.insert(store.end(), v.begin(), v.end());
 }
 
 void Config::file(std::string const &path)
@@ -146,17 +183,15 @@ void Config::file(std::string const &path)
 	ConfigSyntax cs;
 	int i = 0;
 
+	/* reset */
+	// need to add node, root reset
+	store.clear();
+	this->cursor = syntax;
+	/* load */
 	cr.file(path);
 	cs.syntax(cr);
 	while (cr.exist(i))
 		mapping(cr[i++]);
+	/* tree */
+	configTree();
 }
-
-/*
-void Config::push(std::string const &name, std::string const &value)
-{
-	node	dump;
-
-	dump.setValue(value);
-	children.insert(std::pair<std::string, node>(name, dump));
-}*/
