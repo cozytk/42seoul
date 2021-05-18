@@ -22,10 +22,13 @@ int main()
 		std::cout << e.what() << std::endl;
 	}
 
-	print_all(*config["worker_processes"]);
-	print_all(*config["events"]["worker_connections"]);
-	print_all(*config["http"]["include"]);
+	print_all(*config["worker_processes"][0]);
+	print_all(*config["events"][0]["worker_connections"][0]);
+	/*
+	print_all(*config["http"]["server"]);
+	print_all(*config["http"]["server"]["location"]);
 	print_all(*config["http"]["server"]["location"]["index"]);
+	*/
 	//std::cout << *config["server"] << std::endl;
 //	std::cout << config["server"]["location"].getValue() << std::endl;
 }

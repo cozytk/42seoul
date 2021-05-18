@@ -19,11 +19,17 @@ Config::node &Config::node::operator=(node const &x)
 {
 }
 
-Config::node &Config::node::operator[](std::string name)
+std::vector<Config::node> Config::node::operator[](std::string name)
 {
+	std::pair<std::multimap<std::string, node *>::iterator, std::multimap<std::string, node *>::iterator> ret;
+	std::vector<node> arr;
+
 	if (children.find(name) == children.end())
-		pushNode(name);
-	return (*children.find(name)->second);
+		children.insert(std::pair<std::string, node *>(name, new node()));
+    ret = children.equal_range(name);
+    for (std::multimap<std::string, node *>::iterator it = ret.first; it != ret.second; ++it)
+		arr.push_back(*(it->second));
+	return (arr);
 }
 
 std::vector<std::string> &Config::node::operator*()
@@ -31,18 +37,9 @@ std::vector<std::string> &Config::node::operator*()
 	return (this->value);
 }
 
-Config::node *Config::node::pushNode(std::string &name)
+std::multimap<std::string, Config::node *> &Config::node::getChildren()
 {
-	if (children.find(name) == children.end())
-		children.insert(std::pair<std::string, node *>(name, new node()));
-	return (children.find(name)->second);
-}
-
-void Config::node::pushValue(std::string &name, std::vector<std::string> &value)
-{
-	if (children.find(name) == children.end())
-		children.insert(std::pair<std::string, node *>(name, new node()));
-	children.find(name)->second->value = value;
+	return (this->children);
 }
 
 /* exception */
@@ -66,22 +63,33 @@ Config &Config::operator=(Config const &x)
 {
 }
 
-Config::node &Config::operator[](std::string const &name)
+std::vector<Config::node> Config::operator[](std::string const &name)
 {
 	return ((*root)[name]);
 }
 
-void Config::parsing(std::vector<std::string>::iterator &first, std::vector<std::string>::iterator &last)
+void Config::parsing(std::vector<std::string>::iterator first, std::vector<std::string>::iterator last)
 {
-	std::vector<std::string> dump;
+	node *dump;
 
-	if (*last == ";" && std::distance(first, last) > 1) // assign
+	if (*last == ";" && std::distance(first, last) > 0)
 	{
-		dump.assign(first + 1, last);
-		brackets.top()->pushValue(*first, dump);
+		if (brackets.top()->getChildren().find(*first) == brackets.top()->getChildren().end())
+		{
+			dump = new node;
+			(**dump).assign(first + 1, last);
+			brackets.top()->getChildren().insert(std::pair<std::string, node *>(*first, dump));
+		}
+		else
+			(**(brackets.top()->getChildren().find(*first)->second)).assign(first + 1, last);
 	}
 	else if (*last == "{")
-		brackets.push(brackets.top()->pushNode(*first));
+	{
+		dump = new node;
+		(**dump).assign(first + 1, last);
+		brackets.top()->getChildren().insert(std::pair<std::string, node *>(*first, dump));
+		brackets.push(dump);
+	}
 	else if (*last == "}")
 		brackets.pop();
 }

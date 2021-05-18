@@ -17,7 +17,7 @@ private:
 	{
 	private:
 		std::vector<std::string> value;
-		std::map<std::string, node *> children;
+		std::multimap<std::string, node *> children;
 
 	public:
 		node();
@@ -25,12 +25,12 @@ private:
 		~node();
 
 		node &operator=(node const &x);
-		node &operator[](std::string name);
+		std::vector<node> operator[](std::string name);
 		std::vector<std::string> &operator*();
+		std::multimap<std::string, node *> &getChildren();
 
 		node *pushNode(std::string &name);
 		void pushValue(std::string &name, std::vector<std::string> &v);
-		//node &operator[](std::string const &name);
 		// operator << + ..?
 	};
 
@@ -45,7 +45,7 @@ private:
 	/* tree */
 	node *root;
 
-	void parsing(std::vector<std::string>::iterator &f, std::vector<std::string>::iterator &l);
+	void parsing(std::vector<std::string>::iterator f, std::vector<std::string>::iterator l);
 	void configTree();
 
 	/* parse */
@@ -65,7 +65,7 @@ public:
 	~Config();
 	
 	Config &operator=(Config const &x);
-	node &operator[](std::string const &name);
+	std::vector<node> operator[](std::string const &name);
 
 	/* new */
 	void file(std::string const &path);
