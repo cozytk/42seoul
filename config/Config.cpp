@@ -19,15 +19,11 @@ Config::node &Config::node::operator=(node const &x)
 {
 }
 
-Config::node &Config::node::operator[](std::string const &name)
+Config::node &Config::node::operator[](std::string name)
 {
 	if (children.find(name) == children.end())
-	{
-		node	dump;
-
-		children.insert(std::pair<std::string, node>(name, dump));
-	}
-	return (children.find(name)->second);
+		pushNode(name);
+	return (*children.find(name)->second);
 }
 
 std::vector<std::string> &Config::node::operator*()
@@ -35,26 +31,18 @@ std::vector<std::string> &Config::node::operator*()
 	return (this->value);
 }
 
-Config::node &Config::node::pushNode(std::string &name)
+Config::node *Config::node::pushNode(std::string &name)
 {
-	node	dump;
-
 	if (children.find(name) == children.end())
-		children.insert(std::pair<std::string, node>(name, dump));
+		children.insert(std::pair<std::string, node *>(name, new node()));
 	return (children.find(name)->second);
 }
 
 void Config::node::pushValue(std::string &name, std::vector<std::string> &value)
 {
-	node	dump;
-
 	if (children.find(name) == children.end())
-	{
-		dump.value = value;
-		children.insert(std::pair<std::string, node>(name, dump));
-		return ;
-	}
-	children.find(name)->second.value = value;
+		children.insert(std::pair<std::string, node *>(name, new node()));
+	children.find(name)->second->value = value;
 }
 
 /* exception */
@@ -80,7 +68,7 @@ Config &Config::operator=(Config const &x)
 
 Config::node &Config::operator[](std::string const &name)
 {
-	return (root);
+	return ((*root)[name]);
 }
 
 void Config::parsing(std::vector<std::string>::iterator &first, std::vector<std::string>::iterator &last)
@@ -93,15 +81,9 @@ void Config::parsing(std::vector<std::string>::iterator &first, std::vector<std:
 		brackets.top()->pushValue(*first, dump);
 	}
 	else if (*last == "{")
-	{
-		brackets.push(&brackets.top()->pushNode(*first));
-		std::cout << "push => " << &brackets.top() << std::endl;
-	}
+		brackets.push(brackets.top()->pushNode(*first));
 	else if (*last == "}")
-	{
 		brackets.pop();
-		std::cout << "pop => " << &brackets.top() << std::endl;
-	}
 }
 
 void Config::configTree()

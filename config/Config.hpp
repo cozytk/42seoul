@@ -25,10 +25,10 @@ private:
 		~node();
 
 		node &operator=(node const &x);
-		node &operator[](std::string const &name);
+		node &operator[](std::string name);
 		std::vector<std::string> &operator*();
 
-		node &pushNode(std::string &name);
+		node *pushNode(std::string &name);
 		void pushValue(std::string &name, std::vector<std::string> &v);
 		//node &operator[](std::string const &name);
 		// operator << + ..?

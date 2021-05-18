@@ -23,6 +23,9 @@ int main()
 	}
 
 	print_all(*config["worker_processes"]);
+	print_all(*config["events"]["worker_connections"]);
+	print_all(*config["http"]["include"]);
+	print_all(*config["http"]["server"]["location"]["index"]);
 	//std::cout << *config["server"] << std::endl;
 //	std::cout << config["server"]["location"].getValue() << std::endl;
 }
