@@ -24,9 +24,7 @@ int main()
 
 	//std::cout << config["http"][0]["server"].size() << std::endl;
 	//print_all(*config["worker_processes"][0]);
-	print_all( *config("http", 0)("server", 1)("location", 0)("root", 0) );
-	print_all( *config("events", 0)("worker_connections", 0) );
-	print_all( *config("test", 0)("test", 0)("test", 0) );
+	print_all( *config("42", 0)("http", 0)("location", 0)("root", 0) );
 	/*
 	print_all(*config["http"]["server"]);
 	print_all(*config["http"]["server"]["location"]);
