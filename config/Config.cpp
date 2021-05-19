@@ -19,17 +19,19 @@ Config::node &Config::node::operator=(node const &x)
 {
 }
 
-std::vector<Config::node> Config::node::operator[](std::string name)
+Config::node &Config::node::operator()(std::string name, int index)
 {
 	std::pair<std::multimap<std::string, node *>::iterator, std::multimap<std::string, node *>::iterator> ret;
-	std::vector<node> arr;
+	std::vector<node *> arr;
 
 	if (children.find(name) == children.end())
 		children.insert(std::pair<std::string, node *>(name, new node()));
     ret = children.equal_range(name);
     for (std::multimap<std::string, node *>::iterator it = ret.first; it != ret.second; ++it)
-		arr.push_back(*(it->second));
-	return (arr);
+		arr.push_back(it->second);
+	if (arr.size() <= index)
+		throw OutOfBoundsException();
+	return (*arr[index]);
 }
 
 std::vector<std::string> &Config::node::operator*()
@@ -43,6 +45,10 @@ std::multimap<std::string, Config::node *> &Config::node::getChildren()
 }
 
 /* exception */
+const char *Config::OutOfBoundsException::what() const throw()
+{
+	return ("OutOfBoundsException: index out of bounds");
+}
 
 
 /* coplien form */
@@ -63,9 +69,9 @@ Config &Config::operator=(Config const &x)
 {
 }
 
-std::vector<Config::node> Config::operator[](std::string const &name)
+Config::node &Config::operator()(std::string const &name, int index)
 {
-	return ((*root)[name]);
+	return ((*root)(name, index));
 }
 
 void Config::parsing(std::vector<std::string>::iterator first, std::vector<std::string>::iterator last)

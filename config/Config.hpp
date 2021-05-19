@@ -25,13 +25,9 @@ private:
 		~node();
 
 		node &operator=(node const &x);
-		std::vector<node> operator[](std::string name);
+		node &operator()(std::string name, int index = 0);
 		std::vector<std::string> &operator*();
 		std::multimap<std::string, node *> &getChildren();
-
-		node *pushNode(std::string &name);
-		void pushValue(std::string &name, std::vector<std::string> &v);
-		// operator << + ..?
 	};
 
 	enum Cursor
@@ -58,6 +54,10 @@ private:
 
 public:
 	/* exception */
+	class OutOfBoundsException : public std::exception
+	{
+		virtual const char *what() const throw();
+	};
 
 	/* coplien form */
 	Config();
@@ -65,7 +65,7 @@ public:
 	~Config();
 	
 	Config &operator=(Config const &x);
-	std::vector<node> operator[](std::string const &name);
+	node& operator()(std::string const &name, int index = 0);
 
 	/* new */
 	void file(std::string const &path);
