@@ -8,7 +8,7 @@
 
 # include "ConfigReader.hpp"
 # include "ConfigSyntax.hpp"
-# include "../utils/utils.hpp"
+# include "../../utils/utils.hpp"
 
 class Config
 {

@@ -1,7 +1,7 @@
 CXX			= clang++
 CXXFLAGS	= -std=c++98 #-Wall -Wextra -Werror
 
-SRCS		= main.cpp config/Config.cpp config/ConfigReader.cpp config/ConfigSyntax.cpp \
+SRCS		= srcs/main.cpp srcs/config/Config.cpp srcs/config/ConfigReader.cpp srcs/config/ConfigSyntax.cpp \
 			  utils/isspace.cpp
 
 OBJS		= $(SRCS:.cpp=.o)
