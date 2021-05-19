@@ -4,7 +4,7 @@
 # include <webserv.hpp>
 
 # include "Server.hpp"
-# include "config/Config.hpp"
+# include "../config/Config.hpp"
 
 class Server;
 

@@ -11,7 +11,7 @@ SERVER		= ServerManager.cpp Server.cpp Location.cpp
 SRCS		= $(addprefix srcs/, $(MAIN)) \
 			  $(addprefix srcs/, $(LIBFT)) \
 			  $(addprefix srcs/config/, $(CONFIG)) \
-			  $(addprefix srcs/, $(SERVER))
+			  $(addprefix srcs/server/, $(SERVER))
 
 INCS		= incs/
 

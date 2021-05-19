@@ -13,7 +13,7 @@ private:
 //	std::vector<Location>	_locations;
 
 public:	
-	friend ServerManager;
+	friend class ServerManager;
 
 	Server();
 	Server(Server const &other);
