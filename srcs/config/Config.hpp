@@ -8,7 +8,10 @@
 
 class Config
 {
+	friend class ServerManager;
+
 private:
+	/* node */
 	class node
 	{
 	private:
@@ -23,6 +26,8 @@ private:
 		node &operator=(node const &x);
 		node &operator()(std::string name, int index = 0);
 		std::vector<std::string> &operator*();
+
+		int size(std::string name);
 		std::multimap<std::string, node *> &getChildren();
 	};
 
@@ -61,7 +66,10 @@ public:
 	~Config();
 	
 	Config &operator=(Config const &x);
+	
+	/* tree */
 	node& operator()(std::string const &name, int index = 0);
+	int size(std::string name);
 
 	/* new */
 	void file(std::string const &path);

@@ -6,7 +6,7 @@ LIBFT		= libft.cpp
 
 CONFIG		= Config.cpp ConfigReader.cpp ConfigSyntax.cpp
 
-SERVER		= ServerManager.cpp Server.cpp Location.cpp
+SERVER		= ServerManager.cpp Server.cpp
 
 SRCS		= $(addprefix srcs/, $(MAIN)) \
 			  $(addprefix srcs/, $(LIBFT)) \

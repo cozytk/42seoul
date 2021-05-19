@@ -10,10 +10,13 @@ class Server;
 
 class ServerManager {
 private:
-	Config				_config;
-	std::vector<Server>	_servers;
+	Config					_config;
+	std::vector<Server *>	_servers;
+
+	Server *newServer(Config::node *block);
 
 public:
+
 	ServerManager();
 	ServerManager(ServerManager const &x);
 	virtual ~ServerManager();
@@ -23,6 +26,7 @@ public:
 	void config(std::string const &path);
 
 	void run();
+
 };
 
 #endif

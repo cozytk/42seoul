@@ -10,7 +10,7 @@ class ServerManager;
 class Server {
 private:
 	int						_port;
-//	std::vector<Location>	_locations;
+	//std::vector<Location>	_locations;
 
 public:	
 	friend class ServerManager;
@@ -19,6 +19,9 @@ public:
 	Server(Server const &other);
 	virtual ~Server();
 	Server&operator=(Server const &other);
+
+	void setPort(int _port);
+	int getPort();
 
 	void run();
 

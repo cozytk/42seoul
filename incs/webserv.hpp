@@ -13,7 +13,8 @@
 
 /* libft */
 namespace ft {
-	bool isspace(char c);
+	bool		isspace(char c);
+	int			atoi(char *str);
 }
 
 #endif

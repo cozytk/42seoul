@@ -34,6 +34,19 @@ Config::node &Config::node::operator()(std::string name, int index)
 	return (*arr[index]);
 }
 
+int Config::node::size(std::string name)
+{
+	std::pair<std::multimap<std::string, node *>::iterator, std::multimap<std::string, node *>::iterator> ret;
+	std::vector<node *> arr;
+
+	if (children.find(name) == children.end())
+		return (0);
+    ret = children.equal_range(name);
+    for (std::multimap<std::string, node *>::iterator it = ret.first; it != ret.second; ++it)
+		arr.push_back(it->second);
+	return (arr.size());
+}
+
 std::vector<std::string> &Config::node::operator*()
 {
 	return (this->value);
@@ -72,6 +85,11 @@ Config &Config::operator=(Config const &x)
 Config::node &Config::operator()(std::string const &name, int index)
 {
 	return ((*root)(name, index));
+}
+
+int Config::size(std::string name)
+{
+	return ((*root).size(name));
 }
 
 void Config::parsing(std::vector<std::string>::iterator first, std::vector<std::string>::iterator last)

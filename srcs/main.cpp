@@ -1,6 +1,7 @@
 #include <webserv.hpp>
 
 #include "server/ServerManager.hpp"
+#include "config/Config.hpp"
 
 int main()
 {
@@ -9,6 +10,7 @@ int main()
 	try
 	{
 		manager.config("sample.conf");
+		manager.run();
 	}
 	catch (std::exception &e)
 	{
