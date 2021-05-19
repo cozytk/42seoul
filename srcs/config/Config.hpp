@@ -1,14 +1,10 @@
 #ifndef CONF_HPP
 # define CONF_HPP
 
-# include <iostream>
-# include <vector>
-# include <map>
-# include <stack>
+# include <webserv.hpp>
 
 # include "ConfigReader.hpp"
 # include "ConfigSyntax.hpp"
-# include "../../utils/utils.hpp"
 
 class Config
 {

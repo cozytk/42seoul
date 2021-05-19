@@ -1,8 +1,8 @@
-#ifndef SERVERMANAGER
-# define SERVERMANAGER
+#ifndef SERVERMANAGER_HPP
+# define SERVERMANAGER_HPP
 
-# include <iostream>
-# include <vector>
+# include <webserv.hpp>
+
 # include "Server.hpp"
 # include "config/Config.hpp"
 
@@ -15,11 +15,14 @@ private:
 
 public:
 	ServerManager();
-	ServerManager(ServerManager const &other);
+	ServerManager(ServerManager const &x);
 	virtual ~ServerManager();
-	ServerManager &operator=(ServerManager const &other);
+
+	ServerManager &operator=(ServerManager const &x);
+
+	void config(std::string const &path);
 
 	void run();
-	void config(std::string const &path);
 };
+
 #endif

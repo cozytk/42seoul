@@ -1,9 +1,10 @@
-#ifndef SERVER
-# define SERVER
-# include <vector>
+#ifndef SERVER_HPP
+# define SERVER_HPP
+
+# include <webserv.hpp>
+
 # include "ServerManager.hpp"
 
-//# include "Location.hpp"
 class ServerManager;
 
 class Server {

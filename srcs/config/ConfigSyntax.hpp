@@ -1,7 +1,8 @@
 #ifndef CONFIGSYNTAX_HPP
 # define CONFIGSYNTAX_HPP
 
-# include <iostream>
+# include <webserv.hpp>
+
 # include "ConfigReader.hpp"
 
 class ConfigSyntax

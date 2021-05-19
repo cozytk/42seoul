@@ -1,11 +1,7 @@
 #ifndef CONFIGREADER_HPP
 # define CONFIGREADER_HPP
 
-# include <iostream>
-# include <vector>
-
-# include <unistd.h>
-# include <fcntl.h>
+# include <webserv.hpp>
 
 class ConfigReader
 {
