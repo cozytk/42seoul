@@ -8,21 +8,29 @@
 class ServerManager;
 
 class Server {
+	friend class ServerManager;
+
 private:
+	sockaddr_in				_addr;
+	int						_socket;
 	int						_port;
 	//std::vector<Location>	_locations;
 
 public:	
-	friend class ServerManager;
+	/* exception */
+	class CreateException : std::exception {
+		const char *what() const throw();
+	};
 
+	/* coplien */
 	Server();
 	Server(Server const &other);
 	virtual ~Server();
-	Server&operator=(Server const &other);
+	Server &operator=(Server const &other);
 
-	void setPort(int _port);
 	int getPort();
 
+	void socketBind();
 	void run();
 
 };

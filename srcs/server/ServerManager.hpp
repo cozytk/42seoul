@@ -11,7 +11,7 @@ class Server;
 class ServerManager {
 private:
 	Config					_config;
-	std::vector<Server *>	_servers;
+	std::map<int, Server *>	_servers;
 
 	Server *newServer(Config::node *block);
 
@@ -25,6 +25,7 @@ public:
 
 	void config(std::string const &path);
 
+	void bind();
 	void run();
 
 };

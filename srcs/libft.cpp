@@ -31,3 +31,15 @@ int			ft::atoi(char *str)
 	}
 	return (minus * ret);
 }
+
+void	*ft::memset(void *_src, int val, size_t size)
+{
+	unsigned char *src;
+	unsigned char *ptr;
+
+	src = reinterpret_cast<unsigned char *>(_src);
+	ptr = src;
+	while (size-- > 0)
+		*(src++) = val;
+	return (ptr);
+}
