@@ -18,8 +18,12 @@ private:
 
 public:	
 	/* exception */
-	class CreateException : std::exception {
-		const char *what() const throw();
+	class CreateException : public std::exception {
+		virtual const char *what() const throw();
+	};
+
+	class ListenException : public std::exception {
+		virtual const char *what() const throw();
 	};
 
 	/* coplien */

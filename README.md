@@ -136,3 +136,7 @@ Make pluggins loadable/unloadable through terminal, like other compression syste
   
 -> 잘 모르겠음
 ```
+
+
+mem leak (config )
+try {} catch (...) { ~ close, delete }

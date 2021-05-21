@@ -43,3 +43,20 @@ void	*ft::memset(void *_src, int val, size_t size)
 		*(src++) = val;
 	return (ptr);
 }
+
+void	ft::fd_zero(struct fd_set *fds)
+{
+	ft::memset(fds, 0, sizeof(*fds));
+}
+
+void	ft::fd_set(int fd, struct fd_set *fds)
+{
+	fds->fds_bits[fd / 32] |= (1 << (fd % 32));
+}
+
+bool	ft::fd_isset(int fd, struct fd_set *fds)
+{
+	if ((fds->fds_bits[fd / 32] & (1 << (fd % 32))) != 0)
+		return (true);
+	return (false);
+}

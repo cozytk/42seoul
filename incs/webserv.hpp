@@ -24,6 +24,9 @@ namespace ft {
 	bool		isspace(char c);
 	int			atoi(char *str);
 	void		*memset(void *src, int val, size_t size);
+	void		fd_zero(struct fd_set *fds);
+	void		fd_set(int fd, struct fd_set *fds);
+	bool		fd_isset(int fd, struct fd_set *fds);
 }
 
 #endif

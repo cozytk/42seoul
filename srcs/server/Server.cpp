@@ -1,9 +1,12 @@
 #include "Server.hpp"
 
 /* exception */
-
 const char *Server::CreateException::what() const throw() {
 	return ("ServerException: Failed to create server");
+}
+
+const char *Server::ListenException::what() const throw() {
+	return ("ServerException: Failed to open server");
 }
 
 /* coplien */
@@ -17,6 +20,7 @@ Server::~Server() {
 }
 
 Server &Server::operator=(Server const &x) {
+	return (*this);
 }
 
 int Server::getPort() {
@@ -31,10 +35,11 @@ void Server::socketBind() {
 	this->_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	this->_addr.sin_port = htons(this->_port);
 	if (bind(this->_socket, (sockaddr *)&this->_addr, sizeof(this->_addr)) == -1)
-		throw CreateException();
-	if (listen(this->_socket, 512) == -1)
-		throw CreateException();
+		throw CreateException();	
 }
 
 void Server::run() {
+	if (listen(this->_socket, 512) == -1)
+		throw CreateException();
+	std::cout << this->_socket << " is being run (port: " << this->_port << ")" << std::endl;
 }

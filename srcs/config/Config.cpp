@@ -17,6 +17,7 @@ Config::node::~node()
 
 Config::node &Config::node::operator=(node const &x)
 {
+	return (*this);
 }
 
 Config::node &Config::node::operator()(std::string name, int index)
@@ -80,6 +81,7 @@ Config::~Config()
 
 Config &Config::operator=(Config const &x)
 {
+	return (*this);
 }
 
 Config::node &Config::operator()(std::string const &name, int index)
