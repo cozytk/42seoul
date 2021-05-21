@@ -13,27 +13,43 @@
 Request::Request() {}
 // TODO add fd parameter
 Request::Request(std::string const &request){
-	std::stringstream ss(request);
-	std::string key;
-	std::string value;
-	std::string whiteSpace;
+	std::string copyReq(request);
+	int head = 0;
+	int tail = 0;
 
-	getline(ss, value, ' ');
-	this->_headers.insert( std::pair<std::string, std::string>("Type", value));
-	getline(ss, value, ' ');
-	this->_headers.insert( std::pair<std::string, std::string>("Path", value));
-	getline(ss, value, '\r');
-	getline(ss, whiteSpace, '\n');
-	this->_headers.insert( std::pair<std::string, std::string>("Version", value));
+	// Find request type
+	while( copyReq[tail++] != ' ');
+	this->_headers[ "Type" ] = copyReq.substr( 0 , ( tail - 1) - head );
 
-	while (getline(ss, key, ':') && getline(ss, whiteSpace, ' ') && getline(ss, value, '\r')) {
-		getline(ss, whiteSpace, '\n');
+	// Find path
+	head = tail;
+	while( copyReq[tail++] != ' ');
+	this->_headers[ "Path" ] = copyReq.substr( head, ( tail - 1) - head );
 
-		// std::cout << "key:*" << key << "*" << std::endl;
-		// std::cout << "value:*" << value << "*" << std::endl;
-		this->_headers.insert( std::pair<std::string, std::string>(key, value));
+	// Find HTTP version
+	head = tail;
+	while( copyReq[tail++] != '\r');
+	this->_headers[ "Version" ] = copyReq.substr( head, ( tail - 1) - head );
+	tail++;
+	// Map all headers from a key to a value
+	while(tail + 3 < (int)copyReq.length() &&
+	(copyReq[tail] != '\r' || copyReq[tail + 1] != '\n' || copyReq[tail + 2] != '\r' || copyReq[tail + 3] != '\n'))
+	{
+		int colone = 0;
+		head = tail++;
+		while( copyReq[tail] != '\r' || copyReq[tail + 1] != '\n')
+		{
+			if (copyReq[tail] == ':' && copyReq[tail + 1] == ' ')
+				colone = tail;
+			tail++;
+		}
+		this->_headers[copyReq.substr(head, (colone) - head)] = copyReq.substr( colone + 2, tail - (colone + 2));
 	}
-	// this->_body = key;
+	if (tail + 4 < (int)copyReq.length())
+	{
+		tail = tail + 4;
+		this->_body = copyReq.substr( tail, copyReq.length() - tail);
+	}
 }
 
 Request::Request(const Request& copy)
@@ -90,4 +106,7 @@ bool				Request::isValid() {
 }
 Request::HeaderType	Request::getHeaders() {
 	return (this->_headers);
+}
+std::string			Request::getBody() {
+	return (this->_body);
 }

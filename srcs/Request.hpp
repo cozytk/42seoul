@@ -25,6 +25,7 @@ class Request
 
 		bool		isValid();
 		HeaderType	getHeaders();
+		std::string	getBody();
 };
 //Accept-Charsets
 //Accept-Language
