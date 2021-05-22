@@ -22,8 +22,14 @@
 
 /* macro */
 # define RECV_BUFFER_SIZE 65536
+# define ERR_RECV -1
 # define WAIT_RECV 0
 # define ALL_RECV 1
+
+# define SEND_BUFFER_SIZE 2048
+# define ERR_SEND -1
+# define WAIT_SEND 0
+# define ALL_SEND 1
 
 /* libft */
 namespace ft {

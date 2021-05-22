@@ -90,22 +90,39 @@ void ServerManager::run() {
 			n_server++;
 			if (ft::fd_isset(server->first, &fds_loop.write))
 			{
-				(server->second)->send(server->first);
-				ft::fd_clr(server->first, &this->fds.write);
-				this->_writable.erase(server->first);
+				tmp = (server->second)->send(server->first);
+				if (tmp == ALL_SEND) {
+					ft::fd_clrs(server->first, &this->fds);
+					this->_writable.erase(server->first);
+				}
+				else if (tmp == ERR_SEND) {
+					ft::fd_clrs(server->first, &this->fds);
+					this->_writable.erase(server->first);
+					this->_readable.erase(server->first);
+				}
 			}
 			server = n_server;
 		}
-
-		for (server = this->_readable.begin(); server != this->_readable.end(); server++)
+		server = this->_readable.begin();
+		while (server != this->_readable.end())
 		{
+			n_server = server;
+			n_server++;
 			if (ft::fd_isset(server->first, &fds_loop.read))
 			{
-				if ((server->second)->recv(server->first) == ALL_RECV) {
+				tmp = (server->second)->recv(server->first);
+				if (tmp == ALL_RECV) {
 					this->_writable.insert(std::pair<int, Server *>(server->first, server->second));
 					ft::fd_set(server->first, &this->fds.write);
 				}
+				else if (tmp == ERR_RECV) {
+					
+					ft::fd_clrs(server->first, &this->fds);	
+					close(server->first);
+					this->_readable.erase(server->first);
+				}
 			}
+			server = n_server;
 		}
 
 		for (server = this->_servers.begin(); server != this->_servers.end(); server++)

@@ -15,11 +15,14 @@ private:
 	friend class Server;
 
 	private:
+		/* request */
 		std::map<std::string, std::string> _headers;
 		std::string _header;
 		std::string _body;
 
 		int _length;
+
+		int _sent;
 
 	public:
 		Request();
@@ -55,6 +58,10 @@ public:
 		virtual const char *what() const throw();
 	};
 
+	class SendException : public std::exception {
+		virtual const char *what() const throw();
+	};
+
 	/* coplien */
 	Server();
 	Server(Server const &other);
@@ -68,7 +75,7 @@ public:
 
 	int accept();
 	int recv(int socket);
-	void send(int socket);
+	int send(int socket);
 
 };
 #endif

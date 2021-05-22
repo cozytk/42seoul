@@ -5,6 +5,7 @@ Server::Request::Request() {
 	this->_header = "";
 	this->_body = "";
 	this->_length = -1;
+	this->_sent = 0;
 }
 
 Server::Request::Request(Server::Request const &x) :
@@ -52,6 +53,10 @@ const char *Server::AcceptException::what() const throw() {
 
 const char *Server::ReceiveException::what() const throw() {
 	return ("ServerException: Failed to receive packet");
+}
+
+const char *Server::SendException::what() const throw() {
+	return ("ServerException: Failed to send packet");
 }
 
 /* coplien */
@@ -110,28 +115,54 @@ int Server::recv(int socket) {
 	if (len == -1)
 		throw ReceiveException();
 	if (len == 0)
-		std::cout << "..........?" << std::endl;
+	{
+		std::cout << "disconnected;" << std::endl;
+		close(socket);
+		return (ERR_RECV);
+	}
 	
 	if (this->_request[socket]->_length == -1) {
 		this->_request[socket]->_header = buffer.substr(0, buffer.find("\r\n\r\n"));
 		this->_request[socket]->_body = buffer.substr(buffer.find("\r\n\r\n") + 4);
 		this->_request[socket]->parseHeader();
-		this->_request[socket]->_length = ft::atoi(const_cast<char *>(this->_request[socket]->_headers["content-length"].c_str()));
+		this->_request[socket]->_length = 0;
+		if (this->_request[socket]->_headers.find("content-length") != this->_request[socket]->_headers.end())
+			this->_request[socket]->_length = ft::atoi(const_cast<char *>(this->_request[socket]->_headers["content-length"].c_str()));
 	}
 	else {
-		this->_request[socket]->_body += buffer;
-		if (this->_request[socket]->_body.length() >= this->_request[socket]->_length)
-			return (ALL_RECV);
+		this->_request[socket]->_body += buffer;	
 	}
+	if (this->_request[socket]->_body.length() >= this->_request[socket]->_length)
+		return (ALL_RECV);
 	return (WAIT_RECV);
 }
 
-void Server::send(int socket) {
+int Server::send(int socket) {
+	std::string buf;
+	int len;
+
+	/* tmp */
 	std::string body = "hello world\nSocket: " + std::to_string(this->_socket) + "\nPort: " + std::to_string(this->_port) + "\n";
 	std::string header = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: " + std::to_string(body.length()) + "\n\n";
 
-	//write(socket, (header + body).c_str(), (header + body).length());
-	write(socket, (header + body).c_str(), (header + body).length());
+	std::string response = header + body;
+
+	/* re */
+	buf = std::string(response, this->_request[socket]->_sent, SEND_BUFFER_SIZE);
+	len = ::send(socket, buf.c_str(), buf.length(), 0);
+	if (len == -1)
+		throw SendException();
+	if (len == 0)
+		return (ERR_SEND);
+	this->_request[socket]->_sent += len;
+	if (this->_request[socket]->_sent >= response.length())
+	{
+		this->_request[socket]->_sent = 0;
+		this->_request.erase(socket);
+		close(socket);
+		return (ALL_SEND);
+	}
+	return (WAIT_SEND);
 }
 
 /*
