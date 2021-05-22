@@ -9,24 +9,21 @@
 class Server;
 
 class ServerManager {
-public:
-	/* class, struct */
-	struct fds {
-		fd_set read;
-		fd_set write;
-		fd_set except;
-	};
-
 private:
 	Config					_config;
 	std::map<int, Server *>	_servers;
+	std::map<int, Server *>	_readable;
+	std::map<int, Server *>	_writable;
 
-	struct fds fds;
+	ft::fds fds;
 	int inspect_range;
 
 	Server *newServer(Config::node *block);
 
 public:	
+	/* static */
+	static bool alive;
+
 	/* exception */
 	class NetFunctionException : public std::exception {
 		virtual const char *what() const throw();
@@ -42,6 +39,9 @@ public:
 	void config(std::string const &path);
 
 	void run();
+
+	/* signal */
+	void serverClose();
 };
 
 #endif

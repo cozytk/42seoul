@@ -1,5 +1,42 @@
 #include "Server.hpp"
 
+/* Request */
+Server::Request::Request() {
+	this->_header = "";
+	this->_body = "";
+	this->_length = -1;
+}
+
+Server::Request::Request(Server::Request const &x) :
+	_header(x._header), _body(x._body), _length(x._length) {
+}
+
+Server::Request::~Request() {
+}
+
+Server::Request &Server::Request::operator=(Server::Request const &x) {
+	this->_header = x._header;
+	this->_body = x._body;
+	this->_length = x._length;
+	return (*this);
+}
+
+void Server::Request::parseHeader() {
+	int pos;
+	int lf;
+
+	pos = 0;
+	while ((lf = _header.find("\r\n", pos)) != std::string::npos)
+	{
+		if (pos != 0)
+			_headers.insert(ft::headerPair(std::string(_header.begin() + pos, _header.begin() + lf)));
+		pos = lf + 2;
+	}
+	_headers.insert(ft::headerPair(std::string(_header, pos)));
+}
+
+
+/* Server */
 /* exception */
 const char *Server::CreateException::what() const throw() {
 	return ("ServerException: Failed to create server");
@@ -7,6 +44,14 @@ const char *Server::CreateException::what() const throw() {
 
 const char *Server::ListenException::what() const throw() {
 	return ("ServerException: Failed to open server");
+}
+
+const char *Server::AcceptException::what() const throw() {
+	return ("ServerException: Failed to accept connection");
+}
+
+const char *Server::ReceiveException::what() const throw() {
+	return ("ServerException: Failed to receive packet");
 }
 
 /* coplien */
@@ -40,6 +85,58 @@ void Server::socketBind() {
 
 void Server::run() {
 	if (listen(this->_socket, 512) == -1)
-		throw CreateException();
+		throw ListenException();
 	std::cout << this->_socket << " is being run (port: " << this->_port << ")" << std::endl;
 }
+
+int Server::accept() {
+	int socket;
+
+	if ((socket = ::accept(this->_socket, 0, 0)) == -1)
+		throw AcceptException();
+	fcntl(socket, F_SETFL, O_NONBLOCK);
+	this->_request.insert(std::make_pair<int, Request *>(socket, new Request));
+	return (socket);
+}
+
+int Server::recv(int socket) {
+	char buf[RECV_BUFFER_SIZE + 1];
+	std::string buffer = "";
+	int len;
+
+	len = ::recv(socket, buf, RECV_BUFFER_SIZE, 0);
+	buf[len] = 0;
+	buffer += buf;
+	if (len == -1)
+		throw ReceiveException();
+	if (len == 0)
+		std::cout << "..........?" << std::endl;
+	
+	if (this->_request[socket]->_length == -1) {
+		this->_request[socket]->_header = buffer.substr(0, buffer.find("\r\n\r\n"));
+		this->_request[socket]->_body = buffer.substr(buffer.find("\r\n\r\n") + 4);
+		this->_request[socket]->parseHeader();
+		this->_request[socket]->_length = ft::atoi(const_cast<char *>(this->_request[socket]->_headers["content-length"].c_str()));
+	}
+	else {
+		this->_request[socket]->_body += buffer;
+		if (this->_request[socket]->_body.length() >= this->_request[socket]->_length)
+			return (ALL_RECV);
+	}
+	return (WAIT_RECV);
+}
+
+void Server::send(int socket) {
+	std::string body = "hello world\nSocket: " + std::to_string(this->_socket) + "\nPort: " + std::to_string(this->_port) + "\n";
+	std::string header = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: " + std::to_string(body.length()) + "\n\n";
+
+	//write(socket, (header + body).c_str(), (header + body).length());
+	write(socket, (header + body).c_str(), (header + body).length());
+}
+
+/*
+	std::string body = "hello world\nSocket: " + std::to_string(this->_socket) + "\nPort: " + std::to_string(this->_port) + "\n";
+	std::string header = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: " + std::to_string(body.length()) + "\n\n";
+
+	write(socket, (header + body).c_str(), (header + body).length());
+ */

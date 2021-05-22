@@ -1,5 +1,12 @@
 #include "ServerManager.hpp"
 
+/* signal */
+bool ServerManager::alive = true;
+
+void interrupt(int i) {
+	ServerManager::alive = false;
+}
+
 /* exception */
 const char *ServerManager::NetFunctionException::what() const throw() {
 	return ("ServerManagerException: Failed to excute built-in function");
@@ -7,6 +14,7 @@ const char *ServerManager::NetFunctionException::what() const throw() {
 
 /* coplien */
 ServerManager::ServerManager() {
+	signal(SIGINT, &interrupt);
 }
 
 ServerManager::ServerManager(ServerManager const &other) {
@@ -26,7 +34,6 @@ Server *ServerManager::newServer(Config::node *block) {
 	server->socketBind();
 	/* register */
 	ft::fd_set(server->_socket, &this->fds.read);
-	ft::fd_set(server->_socket, &this->fds.write);
 	ft::fd_set(server->_socket, &this->fds.except);
 	this->inspect_range = server->_socket;
 	/* ret */
@@ -52,20 +59,20 @@ void ServerManager::config(std::string const &path) {
 }
 
 void ServerManager::run() {
-	std::map<int, Server *>::iterator server = this->_servers.begin();
+	std::map<int, Server *>::iterator server;
+	std::map<int, Server *>::iterator n_server;
 	int select_ret;
-	struct fds fds_loop;
+	int tmp;
+	struct ft::fds fds_loop;
 	timeval timeout;
 	
 	/* init */
-	timeout.tv_sec = 5;
+	timeout.tv_sec = 4;
 	timeout.tv_usec = 0;
 	/* run */
-	for (; server != this->_servers.end(); server++)
-	{
+	for (server = this->_servers.begin(); server != this->_servers.end(); server++)
 		(server->second)->run();
-	}
-	while (1)
+	while (ServerManager::alive)
 	{
 		fds_loop = this->fds;
 		if ((select_ret = select(this->inspect_range + 1, &fds_loop.read, &fds_loop.write, &fds_loop.except, &timeout)) == -1)
@@ -76,5 +83,53 @@ void ServerManager::run() {
 			continue;
 		}
 
+		server = this->_writable.begin();
+		while (server != this->_writable.end())
+		{
+			n_server = server;
+			n_server++;
+			if (ft::fd_isset(server->first, &fds_loop.write))
+			{
+				(server->second)->send(server->first);
+				ft::fd_clr(server->first, &this->fds.write);
+				this->_writable.erase(server->first);
+			}
+			server = n_server;
+		}
+
+		for (server = this->_readable.begin(); server != this->_readable.end(); server++)
+		{
+			if (ft::fd_isset(server->first, &fds_loop.read))
+			{
+				if ((server->second)->recv(server->first) == ALL_RECV) {
+					this->_writable.insert(std::pair<int, Server *>(server->first, server->second));
+					ft::fd_set(server->first, &this->fds.write);
+				}
+			}
+		}
+
+		for (server = this->_servers.begin(); server != this->_servers.end(); server++)
+		{
+			if (ft::fd_isset(server->first, &fds_loop.read))
+			{
+				tmp = (server->second)->accept();
+				this->_readable.insert(std::pair<int, Server *>(tmp, server->second));
+				ft::fd_sets(tmp, &this->fds);
+				this->inspect_range = tmp > this->inspect_range ? tmp : this->inspect_range;
+			}
+		}
 	}
+}
+
+/* signal */
+void ServerManager::serverClose() {
+	std::cout << "interrupt" << std::endl;
+	std::map<int, Server *>::iterator server;
+
+	for (server = this->_servers.begin(); server != this->_servers.end(); server++)
+		close(server->first);
+	for (server = this->_readable.begin(); server != this->_readable.end(); server++)
+		close(server->first);
+	for (server = this->_writable.begin(); server != this->_writable.end(); server++)
+		close(server->first);
 }

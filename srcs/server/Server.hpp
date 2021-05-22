@@ -11,10 +11,31 @@ class Server {
 	friend class ServerManager;
 
 private:
-	sockaddr_in				_addr;
-	int						_socket;
-	int						_port;
-	//std::vector<Location>	_locations;
+	class Request {
+	friend class Server;
+
+	private:
+		std::map<std::string, std::string> _headers;
+		std::string _header;
+		std::string _body;
+
+		int _length;
+
+	public:
+		Request();
+		Request(Request const &x);
+		~Request();
+
+		Request &operator=(Request const &x);
+
+		void parseHeader();
+	};
+
+	std::map<int, Request *>	_request;
+	sockaddr_in					_addr;
+	int							_socket;
+	int							_port;
+	//std::vector<Location>		_locations;
 
 public:	
 	/* exception */
@@ -23,6 +44,14 @@ public:
 	};
 
 	class ListenException : public std::exception {
+		virtual const char *what() const throw();
+	};
+
+	class AcceptException : public std::exception {
+		virtual const char *what() const throw();
+	};
+
+	class ReceiveException : public std::exception {
 		virtual const char *what() const throw();
 	};
 
@@ -36,6 +65,10 @@ public:
 
 	void socketBind();
 	void run();
+
+	int accept();
+	int recv(int socket);
+	void send(int socket);
 
 };
 #endif

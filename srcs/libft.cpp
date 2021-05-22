@@ -1,14 +1,12 @@
 #include <webserv.hpp>
 
-bool		ft::isspace(char c)
-{
+bool		ft::isspace(char c) {
 	if (c == 0x20 || (0x09 <= c && c <= 0x0d))
 		return (true);
 	return (false);
 }
 
-int			ft::atoi(char *str)
-{
+int			ft::atoi(char *str) {
 	int		ret;
 	int		minus;
 
@@ -32,8 +30,7 @@ int			ft::atoi(char *str)
 	return (minus * ret);
 }
 
-void	*ft::memset(void *_src, int val, size_t size)
-{
+void	*ft::memset(void *_src, int val, size_t size) {
 	unsigned char *src;
 	unsigned char *ptr;
 
@@ -44,19 +41,37 @@ void	*ft::memset(void *_src, int val, size_t size)
 	return (ptr);
 }
 
-void	ft::fd_zero(struct fd_set *fds)
-{
+void	ft::fd_zero(struct fd_set *fds) {
 	ft::memset(fds, 0, sizeof(*fds));
 }
 
-void	ft::fd_set(int fd, struct fd_set *fds)
-{
+void	ft::fd_set(int fd, struct fd_set *fds) {
 	fds->fds_bits[fd / 32] |= (1 << (fd % 32));
 }
 
-bool	ft::fd_isset(int fd, struct fd_set *fds)
-{
+void	ft::fd_sets(int fd, struct fds *fds) {
+	fd_set(fd, &fds->read);
+	fd_set(fd, &fds->write);
+	fd_set(fd, &fds->except);
+}
+
+void	ft::fd_clr(int fd, struct fd_set *fds) {
+	fds->fds_bits[fd / 32] &= (~(1 << (fd % 32)));
+}
+
+void	ft::fd_clrs(int fd, struct fds *fds) {
+	fd_clr(fd, &fds->read);
+	fd_clr(fd, &fds->write);
+	fd_clr(fd, &fds->except);
+}
+
+bool	ft::fd_isset(int fd, struct fd_set *fds) {
 	if ((fds->fds_bits[fd / 32] & (1 << (fd % 32))) != 0)
 		return (true);
 	return (false);
+}
+
+std::pair<std::string, std::string> ft::headerPair(std::string str) {	
+	int pos = str.find(": ");
+	return (std::make_pair<std::string, std::string>(std::string(str, 0, pos), std::string(str, pos + 2)));
 }
