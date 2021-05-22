@@ -11,49 +11,68 @@
 /* ************************************************************************** */
 
 Request::Request() {}
-// TODO add fd parameter
-Request::Request(std::string const &request){
+Request::Request(std::string const &request, bool isChuncked):
+_isChuncked(isChuncked)
+{
 	std::string copyReq(request);
+	int headEnd = copyReq.find("\r\n\r\n");
 	int head = 0;
 	int tail = 0;
 
 	// Find request type
-	while( copyReq[tail++] != ' ');
-	this->_headers[ "Type" ] = copyReq.substr( 0 , ( tail - 1) - head );
+	tail = copyReq.find(" ");
+	// while( copyReq[tail++] != ' ');
+	this->_headers[ "Type" ] = copyReq.substr(0, tail - head);
 
 	// Find path
-	head = tail;
-	while( copyReq[tail++] != ' ');
-	this->_headers[ "Path" ] = copyReq.substr( head, ( tail - 1) - head );
+	head = tail + 1;
+	tail = copyReq.find(" ", head);
+	// while( copyReq[tail++] != ' ');
+	this->_headers[ "Path" ] = copyReq.substr(head, tail - head);
 
 	// Find HTTP version
-	head = tail;
-	while( copyReq[tail++] != '\r');
-	this->_headers[ "Version" ] = copyReq.substr( head, ( tail - 1) - head );
-	tail++;
+	head = tail + 1;
+	tail = copyReq.find("\r\n", head);
+	this->_headers[ "Version" ] = copyReq.substr(head, tail - head);
+
 	// Map all headers from a key to a value
-	while(tail + 3 < (int)copyReq.length() &&
-	(copyReq[tail] != '\r' || copyReq[tail + 1] != '\n' || copyReq[tail + 2] != '\r' || copyReq[tail + 3] != '\n'))
+	while(tail < headEnd)
 	{
 		int colone = 0;
-		head = tail++;
-		while( copyReq[tail] != '\r' || copyReq[tail + 1] != '\n')
-		{
-			if (copyReq[tail] == ':' && copyReq[tail + 1] == ' ')
-				colone = tail;
-			tail++;
-		}
-		this->_headers[copyReq.substr(head, (colone) - head)] = copyReq.substr( colone + 2, tail - (colone + 2));
+
+		head = tail + 1;
+		colone = copyReq.find(": ", head);
+		tail = copyReq.find("\r\n", colone + 2);
+		this->_headers[copyReq.substr(head, (colone) - head)] = copyReq.substr(colone + 2, tail - (colone + 2));
 	}
-	if (tail + 4 < (int)copyReq.length())
-	{
-		tail = tail + 4;
-		this->_body = copyReq.substr( tail, copyReq.length() - tail);
-	}
+	if (this->_isChuncked)
+		parseBody(copyReq);
+	else if (headEnd + 4 < (int) copyReq.length())
+		parseBody(copyReq.substr(headEnd + 4));
 }
 
+void				Request::parseBody(std::string const &body)
+{
+	if (this->_headers["Transfer-encoding"] == "encoding")
+		this->_isChuncked = true;
+	if (this->_isChuncked)
+	{
+		int crlf = body.find("\r\n");
+		if (crlf < body.length() - 2)
+		{
+			this->_stateCode = 400;
+			return ;
+		}
+		if (body.find("0\r\n") != std::string::npos)
+			this->_isChuncked = false;
+	}
+	this->_body = body;
+	this->_stateCode = 200;
+}
+
+
 Request::Request(const Request& copy)
-: _headers(copy._headers), _body(copy._body)
+: _headers(copy._headers), _body(copy._body), _isChuncked(copy._isChuncked)
 {
 	/* copy-constructor code */
 }
@@ -83,7 +102,16 @@ Request& Request::operator=(const Request& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-/* getter code */
+Request::HeaderType	Request::getHeaders()
+{
+	return (this->_headers);
+}
+
+std::string			Request::getBody()
+{
+	return (this->_body);
+}
+
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
@@ -101,12 +129,8 @@ Request& Request::operator=(const Request& obj)
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-bool				Request::isValid() {
+bool				Request::isValid()
+{
 	return (true);
 }
-Request::HeaderType	Request::getHeaders() {
-	return (this->_headers);
-}
-std::string			Request::getBody() {
-	return (this->_body);
-}
+

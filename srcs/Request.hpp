@@ -16,9 +16,13 @@ class Request
 		std::string	_version;
 		HeaderType	_headers;
 		std::string	_body;
+		bool		_isChuncked;
+		int			_stateCode;
+
+		void parseBody(std::string const &body);
 	public:
 		Request();
-		Request(std::string const &request);
+		Request(std::string const &request, bool isChuncked);
 		Request(const Request& copy);
 		Request& operator=(const Request& obj);
 		virtual ~Request();
