@@ -26,7 +26,7 @@ int main() {
 	server_fd = socket(AF_INET, SOCK_STREAM, 0); // err
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(8080);
+	address.sin_port = htons(8081);
 
 	memset(address.sin_zero, '\0', sizeof(address.sin_zero));
 
@@ -41,14 +41,14 @@ int main() {
 		write(new_socket, data.c_str(), data.length());
 		close(new_socket);
 	std::string stringed(buffer);
-	// Request req(stringed);
-	// Request::HeaderType headear = req.getHeaders();
-	// Request::HeaderType::iterator head = headear.begin();
-	// Request::HeaderType::iterator end = headear.end();
-	// while(head != end) {
-	// 	std::cout << head->first << " : " << head->second << std::endl;
-	// 	head++;
-	// }
+	Request req(stringed);
+	Request::HeaderType headear = req.getHeaders();
+	Request::HeaderType::iterator head = headear.begin();
+	Request::HeaderType::iterator end = headear.end();
+	while(head != end) {
+		std::cout << head->first << " : " << head->second << std::endl;
+		head++;
+	}
 
 	}
 	// std::cout<< "Upgrade-Insecure-Requests :" << head[ "Upgrade-~Insecure-Requests" ] << std::endl;

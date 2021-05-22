@@ -46,5 +46,13 @@ class Request
 //User-Agent
 //WWW-Authenticate
 
+// GET
+// HEAD
+// POST
+// PUT
+// DELETE
+// CONNECT
+// OPTIONS
+// TRACE
 
 #endif
