@@ -27,7 +27,8 @@ class Request
 		Request& operator=(const Request& obj);
 		virtual ~Request();
 
-		bool		isValid();
+		int			getStateCode();
+		bool		isChuncked();
 		HeaderType	getHeaders();
 		std::string	getBody();
 };

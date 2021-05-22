@@ -73,9 +73,7 @@ void				Request::parseBody(std::string const &body)
 
 Request::Request(const Request& copy)
 : _headers(copy._headers), _body(copy._body), _isChuncked(copy._isChuncked)
-{
-	/* copy-constructor code */
-}
+{}
 
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
@@ -113,6 +111,11 @@ std::string			Request::getBody()
 }
 
 
+int					Request::getStateCode()
+{
+	return (this->_stateCode);
+}
+
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
@@ -129,8 +132,6 @@ std::string			Request::getBody()
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-bool				Request::isValid()
-{
-	return (true);
+bool				Request::isChuncked() {
+	return (this->_isChuncked);
 }
-
