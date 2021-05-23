@@ -22,37 +22,41 @@ int main() {
 	int bytes;
 	sockaddr_in address;
 	int addrlen = sizeof(address);
+	bool isChuncked = false;
 
 	server_fd = socket(AF_INET, SOCK_STREAM, 0); // err
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(8082);
+	address.sin_port = htons(8080);
 
 	memset(address.sin_zero, '\0', sizeof(address.sin_zero));
 
 	bind(server_fd, (sockaddr *)&address, sizeof(address));
 	listen(server_fd, 5);
-	while (1)
+	// while (1)
 	{
 		std::cout << "waiting..." << std::endl;
 		new_socket = accept(server_fd, (sockaddr *)&address, (socklen_t *)&addrlen);
 		bytes = read(new_socket, buffer, 100000);
-		std::cout << buffer << std::endl;
+		std::cout << "*" << buffer << "*" << std::endl;
 		write(new_socket, data.c_str(), data.length());
 		close(new_socket);
 
 		std::string stringed(buffer);
-		Request req(stringed, true);
+		Request req(stringed, isChuncked);
 		Request::HeaderType headear = req.getHeaders();
 		Request::HeaderType::iterator head = headear.begin();
 		Request::HeaderType::iterator end = headear.end();
+		std::cout << "header===========================================" << std::endl;
 		while(head != end) {
 			std::cout << head->first << " : " << head->second << std::endl;
 			head++;
 		}
-		std::cout << "-----------" << std::endl;
+		std::cout << "body===========================================" << std::endl;
 		std::cout << req.getBody() << std::endl;
-
+		for(int i = 0;i < 100000;i++)
+			buffer[i] = 0;
+		isChuncked = req.isChuncked();
 	}
 	// std::cout<< "Upgrade-Insecure-Requests :" << head[ "Upgrade-~Insecure-Requests" ] << std::endl;
 	// std::cout<< "Accept : " << head[ "Accept" ] << std::endl;

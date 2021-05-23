@@ -13,13 +13,13 @@ class Request
 	public:
 	typedef	std::map<std::string, std::string> HeaderType;
 	private:
-		std::string	_version;
 		HeaderType	_headers;
 		std::string	_body;
 		bool		_isChuncked;
 		int			_stateCode;
 
 		void parseBody(std::string const &body);
+		void parseHead(std::string const &request);
 	public:
 		Request();
 		Request(std::string const &request, bool isChuncked);

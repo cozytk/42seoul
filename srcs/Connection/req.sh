@@ -4,13 +4,9 @@ Content-Type: text/plain
 Transfer-Encoding: chunked
 
 1a
-abcdefghijklmnopqrstuvwxyz
-";
-echo; sleep 1;
-} | telnet localhost 8080
-
+abcdefghijklmnopqrstuvwxyz";sleep 1;
+} | telnet localhost 8081
 {echo "10
 1234567890123456
-0";
-echo; sleep 1;
-} | telnet localhost 8080
+0";sleep 1;
+} | telnet localhost 8081
