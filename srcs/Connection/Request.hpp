@@ -15,20 +15,20 @@ class Request
 	private:
 		HeaderType	_headers;
 		std::string	_body;
-		bool		_isChuncked;
+		bool		_isChunked;
 		int			_stateCode;
 
 		void parseBody(std::string const &body);
 		void parseHead(std::string const &request);
 	public:
 		Request();
-		Request(std::string const &request, bool isChuncked);
+		Request(std::string const &request, bool isChunked);
 		Request(const Request& copy);
 		Request& operator=(const Request& obj);
 		virtual ~Request();
 
 		int			getStateCode();
-		bool		isChuncked();
+		bool		isChunked();
 		HeaderType	getHeaders();
 		std::string	getBody();
 };

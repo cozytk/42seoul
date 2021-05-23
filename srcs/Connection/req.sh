@@ -5,8 +5,8 @@ Transfer-Encoding: chunked
 
 1a
 abcdefghijklmnopqrstuvwxyz";sleep 1;
-} | telnet localhost 8081
+} | telnet localhost 8082
 {echo "10
 1234567890123456
 0";sleep 1;
-} | telnet localhost 8081
+} | telnet localhost 8082

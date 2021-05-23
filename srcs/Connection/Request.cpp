@@ -11,19 +11,14 @@
 /* ************************************************************************** */
 
 Request::Request() {}
-Request::Request(std::string const &request, bool isChuncked):
-_isChuncked(isChuncked)
+Request::Request(std::string const &request, bool isChunked):
+_isChunked(isChunked)
 {
 	size_t headEnd = request.find("\r\n\r\n");
 
-	if (this->_isChuncked)
-	{
-		std::cout << "parsing chuncked" << std::endl;
+	if (this->_isChunked)
 		parseBody(request);
-
-	}
 	else {
-		std::cout << "parsing header" << std::endl;
 		parseHead(request);
 		if (headEnd + 4 < request.length())
 			parseBody(request.substr(headEnd + 4));
@@ -52,47 +47,37 @@ void				Request::parseHead(std::string const &request) {
 	this->_headers[ "Version" ] = request.substr(head, tail - head);
 
 	// Map all headers from a key to a value
-	// std::cout << "size: " << request.length() << " end: " << headEnd << " npos: " << std::string::npos << std::endl;
-	// std::cout << "cmp: " <<  (headEnd != std::string::npos) << std::endl;
 	while(tail < headEnd)
 	{
 		size_t colone = 0;
 
-		head = tail + 1;
+		head = tail + 2;
 		colone = request.find(": ", head);
 		tail = request.find("\r\n", colone + 2);
-		std::cout << "k: " << request.substr(head, (colone) - head) << " v: " << request.substr(colone + 2, tail - (colone + 2)) << std::endl;
 		this->_headers[request.substr(head, (colone) - head)] = request.substr(colone + 2, tail - (colone + 2));
 	}
 }
-
 void				Request::parseBody(std::string const &body)
 {
-	// std::cout << "cmp: " <<  (this->_headers["Transfer-Encoding"] == "chuncked") << std::endl;
-	// std::cout << "parsebody " <<  "transfer: " << this->_headers["Transfer-Encoding"] << std::endl;
-
-	if (this->_headers["Transfer-Encoding"] == "chuncked")
+	if (this->_headers["Transfer-Encoding"] == "chunked")
+		this->_isChunked = true;
+	if (this->_isChunked)
 	{
-
-		this->_isChuncked = true;
-	}
-	if (this->_isChuncked)
-	{
-		int crlf = body.find("\r\n");
-		if (crlf < (int)body.length() - 2)
+		size_t crlf = body.find("\r\n");
+		if (crlf == 0)
 		{
 			this->_stateCode = 400;
 			return ;
 		}
 		if (body.find("0\r\n") != std::string::npos)
-			this->_isChuncked = false;
+			this->_isChunked = false;
 	}
 	this->_body = body;
 	this->_stateCode = 200;
 }
 
 Request::Request(const Request& copy)
-: _headers(copy._headers), _body(copy._body), _isChuncked(copy._isChuncked)
+: _headers(copy._headers), _body(copy._body), _isChunked(copy._isChunked)
 {}
 
 /* ************************************************************************** */
@@ -152,6 +137,6 @@ int					Request::getStateCode()
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-bool				Request::isChuncked() {
-	return (this->_isChuncked);
+bool				Request::isChunked() {
+	return (this->_isChunked);
 }
