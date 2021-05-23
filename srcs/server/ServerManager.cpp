@@ -64,18 +64,17 @@ void ServerManager::run() {
 	int select_ret;
 	int tmp;
 	struct ft::fds fds_loop;
-	timeval timeout;
 	
 	/* init */
-	timeout.tv_sec = 4;
-	timeout.tv_usec = 0;
+	this->fds.timeout.tv_sec = 4;
+	this->fds.timeout.tv_usec = 0;
 	/* run */
 	for (server = this->_servers.begin(); server != this->_servers.end(); server++)
 		(server->second)->run();
 	while (ServerManager::alive)
 	{
 		fds_loop = this->fds;
-		if ((select_ret = select(this->inspect_range + 1, &fds_loop.read, &fds_loop.write, &fds_loop.except, &timeout)) == -1)
+		if ((select_ret = select(this->inspect_range + 1, &fds_loop.read, &fds_loop.write, &fds_loop.except, &fds_loop.timeout)) == -1)
 			throw NetFunctionException();
 		if (select_ret == 0)
 		{

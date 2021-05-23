@@ -38,6 +38,7 @@ namespace ft {
 		fd_set read;
 		fd_set write;
 		fd_set except;
+		timeval timeout;
 	};
 
 	/* func */
@@ -45,13 +46,15 @@ namespace ft {
 	int			atoi(char *str);
 	void		*memset(void *src, int val, size_t size);
 
+	std::string	to_string(int n);
+
 	/* fd_set */
-	void		fd_zero(struct fd_set *fds);
-	void		fd_set(int fd, struct fd_set *fds);
-	void		fd_sets(int fd, struct fds *fds);
-	void		fd_clr(int fd, struct fd_set *fds);
-	void		fd_clrs(int fd, struct fds *fds);
-	bool		fd_isset(int fd, struct fd_set *fds);
+	void		fd_zero(::fd_set *fds);
+	void		fd_set(int fd, ::fd_set *fds);
+	void		fd_sets(int fd, fds *fds);
+	void		fd_clr(int fd, ::fd_set *fds);
+	void		fd_clrs(int fd, fds *fds);
+	bool		fd_isset(int fd, ::fd_set *fds);
 
 	/* key, value */
 	std::pair<std::string, std::string> headerPair(std::string str);
