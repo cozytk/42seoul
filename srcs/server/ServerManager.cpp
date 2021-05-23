@@ -21,6 +21,17 @@ ServerManager::ServerManager(ServerManager const &other) {
 }
 
 ServerManager::~ServerManager() {
+	std::multimap<int, Server *>::iterator it;
+	std::multimap<int, Server *>::iterator n_it;
+
+	it = this->_servers.begin();
+	while (it != this->_servers.end()) {
+		n_it = it;
+		++n_it;
+		delete it->second;
+		this->_servers.erase(it);
+		it = n_it;
+	}
 }
 
 ServerManager &ServerManager::operator=(ServerManager const &x) {

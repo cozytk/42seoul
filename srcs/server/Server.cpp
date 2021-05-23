@@ -67,6 +67,17 @@ Server::Server(Server const &x) {
 }
 
 Server::~Server() {
+	std::multimap<int, Request *>::iterator it;
+	std::multimap<int, Request *>::iterator n_it;
+
+	it = this->_request.begin();
+	while (it != this->_request.end()) {
+		n_it = it;
+		++n_it;
+		delete it->second;
+		this->_request.erase(it);
+		it = n_it;
+	}
 }
 
 Server &Server::operator=(Server const &x) {
