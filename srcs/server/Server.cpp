@@ -189,6 +189,34 @@ int Server::send(int socket) {
 	return (WAIT_SEND);
 }
 
+void
+Server::solveRequest(Connection& connection, const Request& request)
+{
+	Request::Method method = request.get_method();
+	/*
+	 * need to 40501, 401, 40022, 40301 response
+	 */
+
+	if (method == Request::TRACE)
+		executeTrace(connection, request);
+	else if (request.get_m_uri_type() == Request::DIRECTORY)
+		return (executeAutoindex(connection, request));
+	else if (request.get_m_uri_type() == Request::CGI_PROGRAM)
+		return (executeCGI(connection, request));
+	else if (method == Request::GET)
+		executeGet(connection, request);
+	else if (method == Request::HEAD)
+		executeHead(connection, request);
+	else if (method == Request::POST)executePost(connection, request);
+	else if (method == Request::PUT)
+		executePut(connection, request);
+	else if (method == Request::DELETE)
+		executeDelete(connection, request);
+	else if (method == Request::OPTIONS)
+		executeOptions(connection, request);
+	else
+		throw (400);
+}
 /*
 	std::string body = "hello world\nSocket: " + std::to_string(this->_socket) + "\nPort: " + std::to_string(this->_port) + "\n";
 	std::string header = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: " + std::to_string(body.length()) + "\n\n";
