@@ -15,7 +15,7 @@ Request::Request(std::string const &request, bool isChunked):
 _isChunked(isChunked)
 {
 	size_t headEnd = request.find("\r\n\r\n");
-
+//	todo constructor should work without isChucked
 	if (this->_isChunked)
 		parseBody(request);
 	else {
@@ -115,7 +115,6 @@ std::string			Request::getBody()
 	return (this->_body);
 }
 
-
 int					Request::getStateCode()
 {
 	return (this->_stateCode);
@@ -139,4 +138,40 @@ int					Request::getStateCode()
 
 bool				Request::isChunked() {
 	return (this->_isChunked);
+}
+
+bool				Request::isValidStart() {
+	if (!isValidType() || !isValidPath() || !isValidVersion())
+		return false;
+	this->_stateCode = 200;
+	return true;
+}
+
+bool				Request::isValidType() {
+	size_t i = 0;
+
+	while (i++ < ft::methods->length())
+	{
+		if (this->_headers["Type"] == ft::methods[i])
+			return true;
+	}
+	this->_stateCode = 400;
+	return false;
+}
+
+bool				Request::isValidPath() {
+	if(access(this->_headers["Path"].c_str(),F_OK) == 0){
+		std::cout << "path is correct." << std::endl;
+		return true;
+	}
+	std::cout << "path is wrong." << std::endl;
+	this->_stateCode = 505;
+	return false;
+}
+
+bool				Request::isValidVersion() {
+	if (this->_headers["Version"] == "HTTP1.1")
+		return true;
+	this->_stateCode = 505;
+	return false;
 }

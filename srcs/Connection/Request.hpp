@@ -6,8 +6,10 @@
 # include <iostream>
 # include <vector>
 # include <utility>
-#include <cstring>
-#include <sstream>
+# include <cstring>
+# include <unistd.h>
+# include "Constant.hpp"
+
 class Request
 {
 	public:
@@ -18,8 +20,12 @@ class Request
 		bool		_isChunked;
 		int			_stateCode;
 
-		void parseBody(std::string const &body);
-		void parseHead(std::string const &request);
+		void		parseBody(std::string const &body);
+		void		parseHead(std::string const &request);
+		bool		isValidStart();
+		bool		isValidType();
+		bool		isValidPath();
+		bool		isValidVersion();
 	public:
 		Request();
 		Request(std::string const &request, bool isChunked);
@@ -28,9 +34,12 @@ class Request
 		virtual ~Request();
 
 		int			getStateCode();
-		bool		isChunked();
 		HeaderType	getHeaders();
 		std::string	getBody();
+
+		bool		isChunked();
+		bool		isValid();
+
 };
 //Accept-Charsets
 //Accept-Language
