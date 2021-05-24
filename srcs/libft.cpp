@@ -91,3 +91,22 @@ std::pair<std::string, std::string> ft::headerPair(std::string str) {
 	int pos = str.find(": ");
 	return (std::make_pair<std::string, std::string>(std::string(str, 0, pos), std::string(str, pos + 2)));
 }
+
+
+bool ft::hasEmptyLine(std::string const &str) {
+	std::string line;
+	int pos;
+	int lf;
+
+	pos = 0;
+	while ((lf = str.find("\r\n", pos)) != std::string::npos) {
+		line = std::string(str.begin() + pos, str.begin() + lf);
+		if (line.size() == 0)
+			return (true);
+		pos = lf + 2;
+	}
+	line = std::string(str.begin() + pos, str.end());
+	if (line.size() == 0)
+		return (true);
+	return (false);
+}

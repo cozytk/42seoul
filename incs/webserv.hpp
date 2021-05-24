@@ -58,6 +58,9 @@ namespace ft {
 
 	/* key, value */
 	std::pair<std::string, std::string> headerPair(std::string str);
+	
+	/* file */
+	bool hasEmptyLine(std::string const &str);
 }
 
 #endif

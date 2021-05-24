@@ -16,9 +16,9 @@ private:
 	friend class Server;
 
 	private:
-		/* request */
 		std::map<std::string, std::string> _headers;
 		std::string _buffer;
+		std::string _response;
 
 		int _length;
 
