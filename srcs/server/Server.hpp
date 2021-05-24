@@ -12,17 +12,19 @@ class Server {
 
 private:
 	class Request {
+	friend class ServerManager;
 	friend class Server;
 
 	private:
 		/* request */
 		std::map<std::string, std::string> _headers;
-		std::string _header;
-		std::string _body;
+		std::string _buffer;
 
 		int _length;
 
 		int _sent;
+
+		bool _continue;
 
 	public:
 		Request();
@@ -31,7 +33,7 @@ private:
 
 		Request &operator=(Request const &x);
 
-		void parseHeader();
+		void parseHeader(std::string const &header);
 	};
 
 	std::map<int, Request *>	_request;

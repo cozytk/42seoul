@@ -100,9 +100,17 @@ void ServerManager::run() {
 			n_server++;
 			if (ft::fd_isset(server->first, &fds_loop.write))
 			{
+				std::cout << "send: " << server->first << std::endl;
 				tmp = (server->second)->send(server->first);
 				if (tmp == ALL_SEND) {
-					ft::fd_clrs(server->first, &this->fds);
+					if (!(server->second)->_request[server->first]->_continue) {
+						std::cout << "is not 100 continue" << std::endl;
+						ft::fd_clrs(server->first, &this->fds);
+						::close(server->first);
+						(server->second)->_request.erase(server->first);
+						this->_readable.erase(server->first);
+					}
+					ft::fd_clr(server->first, &this->fds.write);
 					this->_writable.erase(server->first);
 				}
 				else if (tmp == ERR_SEND) {
@@ -120,13 +128,13 @@ void ServerManager::run() {
 			n_server++;
 			if (ft::fd_isset(server->first, &fds_loop.read))
 			{
+				std::cout << "recv: " << server->first << std::endl;
 				tmp = (server->second)->recv(server->first);
 				if (tmp == ALL_RECV) {
 					this->_writable.insert(std::pair<int, Server *>(server->first, server->second));
 					ft::fd_set(server->first, &this->fds.write);
 				}
 				else if (tmp == ERR_RECV) {
-					
 					ft::fd_clrs(server->first, &this->fds);	
 					close(server->first);
 					this->_readable.erase(server->first);
@@ -140,6 +148,7 @@ void ServerManager::run() {
 			if (ft::fd_isset(server->first, &fds_loop.read))
 			{
 				tmp = (server->second)->accept();
+				std::cout << "accept: " << tmp << std::endl;
 				this->_readable.insert(std::pair<int, Server *>(tmp, server->second));
 				ft::fd_sets(tmp, &this->fds);
 				this->inspect_range = tmp > this->inspect_range ? tmp : this->inspect_range;

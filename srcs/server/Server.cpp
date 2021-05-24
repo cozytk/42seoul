@@ -2,38 +2,39 @@
 
 /* Request */
 Server::Request::Request() {
-	this->_header = "";
-	this->_body = "";
+	this->_buffer = "";
 	this->_length = -1;
 	this->_sent = 0;
+	this->_continue = false;
 }
 
 Server::Request::Request(Server::Request const &x) :
-	_header(x._header), _body(x._body), _length(x._length) {
+	_buffer(x._buffer), _length(x._length) {
 }
 
 Server::Request::~Request() {
 }
 
 Server::Request &Server::Request::operator=(Server::Request const &x) {
-	this->_header = x._header;
-	this->_body = x._body;
+	this->_buffer = x._buffer;
 	this->_length = x._length;
+	this->_sent = x._sent;
+	this->_continue = x._continue;
 	return (*this);
 }
 
-void Server::Request::parseHeader() {
+void Server::Request::parseHeader(std::string const &header) {
 	int pos;
 	int lf;
 
 	pos = 0;
-	while ((lf = _header.find("\r\n", pos)) != std::string::npos)
+	while ((lf = header.find("\r\n", pos)) != std::string::npos)
 	{
 		if (pos != 0)
-			_headers.insert(ft::headerPair(std::string(_header.begin() + pos, _header.begin() + lf)));
+			_headers.insert(ft::headerPair(std::string(header.begin() + pos, header.begin() + lf)));
 		pos = lf + 2;
 	}
-	_headers.insert(ft::headerPair(std::string(_header, pos)));
+	_headers.insert(ft::headerPair(std::string(header, pos)));
 }
 
 
@@ -128,49 +129,61 @@ int Server::recv(int socket) {
 	if (len == 0)
 	{
 		std::cout << "disconnected;" << std::endl;
-		close(socket);
+		::close(socket);
 		return (ERR_RECV);
 	}
 	
+	this->_request[socket]->_continue = false;
+	this->_request[socket]->_buffer += buffer;
+	if (this->_request[socket]->_length == -1 && this->_request[socket]->_buffer.find("\r\n\r\n") == std::string::npos) {
+		this->_request[socket]->_continue = true;
+		return (ALL_RECV);
+	}
 	if (this->_request[socket]->_length == -1) {
-		this->_request[socket]->_header = buffer.substr(0, buffer.find("\r\n\r\n"));
-		this->_request[socket]->_body = buffer.substr(buffer.find("\r\n\r\n") + 4);
-		this->_request[socket]->parseHeader();
+		this->_request[socket]->parseHeader( this->_request[socket]->_buffer.substr(0, this->_request[socket]->_buffer.find("\r\n\r\n")) );
 		this->_request[socket]->_length = 0;
 		if (this->_request[socket]->_headers.find("content-length") != this->_request[socket]->_headers.end())
 			this->_request[socket]->_length = ft::atoi(const_cast<char *>(this->_request[socket]->_headers["content-length"].c_str()));
 	}
-	else {
-		this->_request[socket]->_body += buffer;	
-	}
-	if (this->_request[socket]->_body.length() >= this->_request[socket]->_length)
+
+	if (this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length)
+	{
+		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		return (ALL_RECV);
+	}
 	return (WAIT_RECV);
 }
 
 int Server::send(int socket) {
 	std::string buf;
 	int len;
+	int buf_size;
 
+	std::string body;
+	std::string header;
 	/* tmp */
-	std::string body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
-	std::string header = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
+	header = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+
+	if (this->_request[socket]->_continue) {
+		body = "";
+		header = "HTTP/1.1 100 Continue\n\n";
+	}
 
 	std::string response = header + body;
+	std::cout << response << std::endl;
 
 	/* re */
-	buf = std::string(response, this->_request[socket]->_sent, SEND_BUFFER_SIZE);
+	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
+		response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
+	buf = std::string(response, this->_request[socket]->_sent, buf_size);
 	len = ::send(socket, buf.c_str(), buf.length(), 0);
 	if (len == -1)
 		throw SendException();
 	if (len == 0)
 		return (ERR_SEND);
 	this->_request[socket]->_sent += len;
-	if (this->_request[socket]->_sent >= response.length())
-	{
-		this->_request[socket]->_sent = 0;
-		this->_request.erase(socket);
-		close(socket);
+	if (this->_request[socket]->_sent >= response.length()) {
 		return (ALL_SEND);
 	}
 	return (WAIT_SEND);
