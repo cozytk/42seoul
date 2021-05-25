@@ -125,7 +125,7 @@ int Server::recv(int socket) {
 		throw ReceiveException();
 	if (len == 0)
 	{
-		std::cout << "//disconnected;//" << std::endl;
+		std::cout << "[disconnected;]" << std::endl;
 		::close(socket);
 		return (ERR_RECV);
 	}
@@ -134,13 +134,29 @@ int Server::recv(int socket) {
 		return (WAIT_RECV);
 	if (this->_request[socket]->_length == -1) {
 		this->_request[socket]->parseHeader( this->_request[socket]->_buffer.substr(0, this->_request[socket]->_buffer.find("\r\n\r\n")) );
-		this->_request[socket]->_length = 0;
-		if (this->_request[socket]->_headers.find("content-length") != this->_request[socket]->_headers.end())
-			this->_request[socket]->_length = ft::atoi(const_cast<char *>(this->_request[socket]->_headers["content-length"].c_str()));
+		// chunked
+		if (this->_request[socket]->_headers.find("Transfer-Encoding") != this->_request[socket]->_headers.end() &&
+			this->_request[socket]->_headers["Transfer-Encoding"] == "chunked") {
+			this->_request[socket]->_length = -1;
+			std::cout << "CHUNKED ▼" << std::endl;
+			std::cout << "[" << buffer << "]" << std::endl;
+		}
+		else { // normal
+			this->_request[socket]->_length = 0;
+			if (this->_request[socket]->_headers.find("Content-Length") != this->_request[socket]->_headers.end())
+				this->_request[socket]->_length = ft::atoi(const_cast<char *>(this->_request[socket]->_headers["Content-Length"].c_str()));
+		}
 	}
-	if (this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length)
-	{
-		std::cout << std::endl << "RECV ▼" << std::endl;
+	if (this->_request[socket]->_length != -1 &&
+	this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length) {
+		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
+		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
+		return (ALL_RECV);
+	}
+	if (this->_request[socket]->_length == -1 &&
+		this->_request[socket]->_headers.find("Transfer-Encoding") != this->_request[socket]->_headers.end() &&
+		this->_request[socket]->_headers["Transfer-Encoding"] == "chunked" && !buffer.compare(0, 3, "0\r\n")) {
+		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		return (ALL_RECV);
 	}
