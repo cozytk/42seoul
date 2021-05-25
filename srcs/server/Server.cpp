@@ -139,7 +139,8 @@ int Server::recv(int socket) {
 			this->_request[socket]->_headers["Transfer-Encoding"] == "chunked") {
 			this->_request[socket]->_length = -1;
 			std::cout << "CHUNKED ▼" << std::endl;
-			std::cout << "[" << buffer << "]" << std::endl;
+			//std::cout << "[" << buffer << "]" << std::endl;
+			std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		}
 		else { // normal
 			this->_request[socket]->_length = 0;
