@@ -5,7 +5,6 @@ Server::Request::Request() {
 	this->_buffer = "";
 	this->_length = -1;
 	this->_sent = 0;
-	this->_continue = false;
 }
 
 Server::Request::Request(Server::Request const &x) :
@@ -19,7 +18,6 @@ Server::Request &Server::Request::operator=(Server::Request const &x) {
 	this->_buffer = x._buffer;
 	this->_length = x._length;
 	this->_sent = x._sent;
-	this->_continue = x._continue;
 	return (*this);
 }
 
@@ -131,26 +129,19 @@ int Server::recv(int socket) {
 		::close(socket);
 		return (ERR_RECV);
 	}
-	
-	this->_request[socket]->_continue = false;
 	this->_request[socket]->_buffer += buffer;
-	std::cout << "[{" << this->_request[socket]->_buffer << "}]" << std::endl;
-	if (this->_request[socket]->_length == -1 && this->_request[socket]->_buffer.find("\r\n\r\n") == std::string::npos) {
-		   //	&& ft::hasEmptyLine(this->_request[socket]->_buffer)) {
-		   //
-		this->_request[socket]->_continue = true;
-		return (ALL_RECV);
-	}
+	if (this->_request[socket]->_length == -1 && this->_request[socket]->_buffer.find("\r\n\r\n") == std::string::npos)
+		return (WAIT_RECV);
 	if (this->_request[socket]->_length == -1) {
 		this->_request[socket]->parseHeader( this->_request[socket]->_buffer.substr(0, this->_request[socket]->_buffer.find("\r\n\r\n")) );
 		this->_request[socket]->_length = 0;
 		if (this->_request[socket]->_headers.find("content-length") != this->_request[socket]->_headers.end())
 			this->_request[socket]->_length = ft::atoi(const_cast<char *>(this->_request[socket]->_headers["content-length"].c_str()));
 	}
-
 	if (this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length)
 	{
-	//	std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
+		std::cout << std::endl << "RECV ▼" << std::endl;
+		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		return (ALL_RECV);
 	}
 	return (WAIT_RECV);
@@ -167,13 +158,9 @@ int Server::send(int socket) {
 	body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
 	header = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 
-	if (this->_request[socket]->_continue) {
-		body = "";
-		header = "HTTP/1.1 100 Continue\n\n";
-	}
-
 	std::string response = header + body;
-	std::cout << "//" << response << "//" << std::endl;
+	std::cout << std::endl << "SEND ▼" << std::endl;
+	std::cout << "[" << response << "]" << std::endl;
 
 	/* re */
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?

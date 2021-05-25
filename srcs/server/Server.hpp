@@ -24,8 +24,6 @@ private:
 
 		int _sent;
 
-		bool _continue;
-
 	public:
 		Request();
 		Request(Request const &x);
