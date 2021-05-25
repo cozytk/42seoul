@@ -32,13 +32,11 @@ void				Request::parseHead(std::string const &request) {
 
 	// Find request type
 	tail = request.find(" ");
-	// while( request[tail++] != ' ');
 	this->_headers[ "Type" ] = request.substr(0, tail - head);
 
 	// Find path
 	head = tail + 1;
 	tail = request.find(" ", head);
-	// while( request[tail++] != ' ');
 	this->_headers[ "Path" ] = request.substr(head, tail - head);
 
 	// Find HTTP version
@@ -59,16 +57,16 @@ void				Request::parseHead(std::string const &request) {
 }
 void				Request::parseBody(std::string const &body)
 {
-	if (this->_headers["Transfer-Encoding"] == "chunked")
+	if (isExistHeader("Transfer-Encoding") && this->_headers["Transfer-Encoding"] == "chunked")
 		this->_isChunked = true;
 	if (this->_isChunked)
 	{
-		size_t crlf = body.find("\r\n");
-		if (crlf == 0)
-		{
-			this->_stateCode = 400;
-			return ;
-		}
+		// size_t crlf = body.find("\r\n");
+		// if (crlf == 0)
+		// {
+		// 	this->_stateCode = 400;
+		// 	return ;
+		// }
 		if (body.find("0\r\n") != std::string::npos)
 			this->_isChunked = false;
 	}
@@ -136,9 +134,6 @@ int					Request::getStateCode()
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-bool				Request::isChunked() {
-	return (this->_isChunked);
-}
 
 bool				Request::isValidStart() {
 	if (!isValidType() || !isValidPath() || !isValidVersion())
@@ -149,29 +144,88 @@ bool				Request::isValidStart() {
 
 bool				Request::isValidType() {
 	size_t i = 0;
-
-	while (i++ < ft::methods->length())
+std::string	methods[8] = {
+		"GET",
+		"HEAD",
+		"POST",
+		"PUT",
+		"DELETE",
+		"CONNECT",
+		"OPTIONS",
+		"TRACE"
+	};
+	if (!isExistHeader("Type"))
 	{
-		if (this->_headers["Type"] == ft::methods[i])
+		this->_stateCode = 400;
+		return false;
+	}
+	while (i++ < 8)
+	{
+		if (this->_headers["Type"] == methods[i])
 			return true;
 	}
+	// get, head can't be 405
+	// todo should check server support method if not return 405
 	this->_stateCode = 400;
 	return false;
 }
 
 bool				Request::isValidPath() {
-	if(access(this->_headers["Path"].c_str(),F_OK) == 0){
+	if(isExistHeader("Path") && access(this->_headers["Path"].c_str(),F_OK) == 0){
 		std::cout << "path is correct." << std::endl;
 		return true;
 	}
 	std::cout << "path is wrong." << std::endl;
-	this->_stateCode = 505;
+	this->_stateCode = 404;
 	return false;
 }
 
 bool				Request::isValidVersion() {
-	if (this->_headers["Version"] == "HTTP1.1")
+	if (isExistHeader("Version") && this->_headers["Version"] == "HTTP1.1")
 		return true;
 	this->_stateCode = 505;
 	return false;
+}
+
+// bool				Request::isValidContent() {
+// 	std::string method = ;
+// 	// post, put without content-length 411, 400
+// 	this->_stateCode = 200;
+// 	if (this->_headers["Type"] == ft::methods[POST] || method == ft::methods[PUT]) {
+// 		if (isExistHeader("Content-Length")) {
+// 			// ignore content-length since transfer-encoding contained
+// 			if (isExistHeader("Transfer-Encoding") && this->_headers["Transfer-Encoding"] != "identity")
+// 				return true;
+// 			// todo need stoi to check
+// 			if (this->_headers["Content-Length"] == this->_body.length())
+// 				return true;
+// 			// bad request
+// 			this->_stateCode = 400;
+// 			return false;
+// 		}
+// 		// request should contain content-length
+// 		this->_stateCode = 411;
+// 		return false;
+// 	}
+// 	return true;
+// }
+
+bool				Request::isChunked() {
+	return (this->_isChunked);
+}
+
+bool				Request::isValid() {
+	if (!isValidStart())
+		return false;
+	// if (!isValidContent())
+	// 	return false;
+	this->_stateCode = 200;
+	return true;
+}
+
+
+bool				Request::isExistHeader(std::string in) {
+	if (this->_headers.find(in) == this->_headers.end())
+		return false;
+	return true;
 }

@@ -8,7 +8,7 @@
 # include <utility>
 # include <cstring>
 # include <unistd.h>
-# include "Constant.hpp"
+# include "WebServerConstant.hpp"
 
 class Request
 {
@@ -22,10 +22,13 @@ class Request
 
 		void		parseBody(std::string const &body);
 		void		parseHead(std::string const &request);
+
 		bool		isValidStart();
 		bool		isValidType();
 		bool		isValidPath();
 		bool		isValidVersion();
+
+		// bool		isValidContent();
 	public:
 		Request();
 		Request(std::string const &request, bool isChunked);
@@ -39,6 +42,7 @@ class Request
 
 		bool		isChunked();
 		bool		isValid();
+		bool		isExistHeader(std::string in);
 
 };
 //Accept-Charsets
