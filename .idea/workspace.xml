@@ -6,7 +6,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0d7ce7d0-abb0-4b3c-94b9-cc7fd49a61c6" name="Default Changelist" comment="" />
+    <list default="true" id="0d7ce7d0-abb0-4b3c-94b9-cc7fd49a61c6" name="Default Changelist" comment="Default Changelist" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -65,5 +65,8 @@
       <workItem from="1621836924286" duration="5168000" />
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
