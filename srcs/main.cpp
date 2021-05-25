@@ -1,5 +1,7 @@
-#include <iostream>
-#include "ServerManager.hpp"
+#include <webserv.hpp>
+
+#include "server/ServerManager.hpp"
+#include "config/Config.hpp"
 
 int main()
 {
@@ -8,9 +10,11 @@ int main()
 	try
 	{
 		manager.config("sample.conf");
+		manager.run();
 	}
 	catch (std::exception &e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 	}
+	manager.serverClose();
 }

@@ -21,6 +21,7 @@ ConfigReader::~ConfigReader()
 
 ConfigReader &ConfigReader::operator=(ConfigReader const &x)
 {
+	return (*this);
 }
 
 std::string &ConfigReader::operator[](int l)

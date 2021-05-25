@@ -24,6 +24,7 @@ ConfigSyntax::~ConfigSyntax()
 
 ConfigSyntax &ConfigSyntax::operator=(ConfigSyntax const &x)
 {
+	return (*this);
 }
 
 void ConfigSyntax::syntax(ConfigReader &cr)
