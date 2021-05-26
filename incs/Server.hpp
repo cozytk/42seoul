@@ -4,6 +4,7 @@
 # include <webserv.hpp>
 
 # include "ServerManager.hpp"
+# include "SayiRequest.hpp"
 
 class ServerManager;
 
@@ -39,8 +40,9 @@ private:
 	int							_socket;
 	int							_port;
 	//std::vector<Location>		_locations;
+	SayiRequest *					_sayi_req;
 
-public:	
+public:
 	/* exception */
 	class CreateException : public std::exception {
 		virtual const char *what() const throw();

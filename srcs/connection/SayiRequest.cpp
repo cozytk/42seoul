@@ -1,4 +1,4 @@
-#include "Request.hpp"
+#include "SayiRequest.hpp"
 
 /* ************************************************************************** */
 /* ---------------------------- STATIC VARIABLE ----------------------------- */
@@ -10,22 +10,18 @@
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Request::Request() {}
-Request::Request(std::string const &request, bool isChunked):
+SayiRequest::SayiRequest() {}
+SayiRequest::SayiRequest(std::string const &request, bool isChunked):
 _isChunked(isChunked)
 {
 	size_t headEnd = request.find("\r\n\r\n");
 //	todo constructor should work without isChucked
-	if (this->_isChunked)
-		parseBody(request);
-	else {
-		parseHead(request);
-		if (headEnd + 4 < request.length())
-			parseBody(request.substr(headEnd + 4));
-	}
+	parseHead(request);
+	if (headEnd + 4 < request.length())
+		parseBody(request.substr(headEnd + 4));
 }
 
-void				Request::parseHead(std::string const &request) {
+void				SayiRequest::parseHead(std::string const &request) {
 	size_t headEnd = request.find("\r\n\r\n");
 	size_t head = 0;
 	size_t tail = 0;
@@ -55,7 +51,7 @@ void				Request::parseHead(std::string const &request) {
 		this->_headers[request.substr(head, (colone) - head)] = request.substr(colone + 2, tail - (colone + 2));
 	}
 }
-void				Request::parseBody(std::string const &body)
+void				SayiRequest::parseBody(std::string const &body)
 {
 	if (isExistHeader("Transfer-Encoding") && this->_headers["Transfer-Encoding"] == "chunked")
 		this->_isChunked = true;
@@ -74,7 +70,7 @@ void				Request::parseBody(std::string const &body)
 	this->_stateCode = 200;
 }
 
-Request::Request(const Request& copy)
+SayiRequest::SayiRequest(const SayiRequest& copy)
 : _headers(copy._headers), _body(copy._body), _isChunked(copy._isChunked)
 {}
 
@@ -82,7 +78,7 @@ Request::Request(const Request& copy)
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Request::~Request()
+SayiRequest::~SayiRequest()
 {
 	/* destructor code */
 }
@@ -91,7 +87,7 @@ Request::~Request()
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Request& Request::operator=(const Request& obj)
+SayiRequest& SayiRequest::operator=(const SayiRequest& obj)
 {
 	if (this == &obj)
 		return (*this);
@@ -103,17 +99,17 @@ Request& Request::operator=(const Request& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-Request::HeaderType	Request::getHeaders()
+SayiRequest::HeaderType	SayiRequest::getHeaders()
 {
 	return (this->_headers);
 }
 
-std::string			Request::getBody()
+std::string			SayiRequest::getBody()
 {
 	return (this->_body);
 }
 
-int					Request::getStateCode()
+int					SayiRequest::getStateCode()
 {
 	return (this->_stateCode);
 }
@@ -135,16 +131,16 @@ int					Request::getStateCode()
 /* ************************************************************************** */
 
 
-bool				Request::isValidStart() {
+bool				SayiRequest::isValidStart() {
 	if (!isValidType() || !isValidPath() || !isValidVersion())
 		return false;
 	this->_stateCode = 200;
 	return true;
 }
 
-bool				Request::isValidType() {
-	size_t i = 0;
-std::string	methods[8] = {
+bool				SayiRequest::isValidType() {
+	size_t i = -1;
+	std::string	methods[8] = {
 		"GET",
 		"HEAD",
 		"POST",
@@ -159,7 +155,7 @@ std::string	methods[8] = {
 		this->_stateCode = 400;
 		return false;
 	}
-	while (i++ < 8)
+	while (++i < 8)
 	{
 		if (this->_headers["Type"] == methods[i])
 			return true;
@@ -170,7 +166,7 @@ std::string	methods[8] = {
 	return false;
 }
 
-bool				Request::isValidPath() {
+bool				SayiRequest::isValidPath() {
 	if(isExistHeader("Path") && access(this->_headers["Path"].c_str(),F_OK) == 0){
 		std::cout << "path is correct." << std::endl;
 		return true;
@@ -180,14 +176,14 @@ bool				Request::isValidPath() {
 	return false;
 }
 
-bool				Request::isValidVersion() {
-	if (isExistHeader("Version") && this->_headers["Version"] == "HTTP1.1")
+bool				SayiRequest::isValidVersion() {
+	if (isExistHeader("Version") && this->_headers["Version"] == "HTTP/1.1")
 		return true;
 	this->_stateCode = 505;
 	return false;
 }
 
-// bool				Request::isValidContent() {
+// bool				SayiRequest::isValidContent() {
 // 	std::string method = ;
 // 	// post, put without content-length 411, 400
 // 	this->_stateCode = 200;
@@ -210,21 +206,30 @@ bool				Request::isValidVersion() {
 // 	return true;
 // }
 
-bool				Request::isChunked() {
+bool				SayiRequest::isAllowedMethod() {
+	if (this->_headers["Path"] == "/" && this->_headers["Type"] != "GET") {
+		this->_stateCode = 405;
+		return false;
+	}
+	return true;
+}
+
+bool				SayiRequest::isChunked() {
 	return (this->_isChunked);
 }
 
-bool				Request::isValid() {
+bool				SayiRequest::isValid() {
 	if (!isValidStart())
 		return false;
 	// if (!isValidContent())
 	// 	return false;
+	if (!isAllowedMethod())
+		return false;
 	this->_stateCode = 200;
 	return true;
 }
 
-
-bool				Request::isExistHeader(std::string in) {
+bool				SayiRequest::isExistHeader(std::string in) {
 	if (this->_headers.find(in) == this->_headers.end())
 		return false;
 	return true;
