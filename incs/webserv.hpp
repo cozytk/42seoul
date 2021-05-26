@@ -35,11 +35,14 @@
 namespace ft {
 	/* base64 */
 	namespace base64 {
-		static std::string alphabet;
+		static std::string alphabet =
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			"abcdefghijklmnopqrstuvwxyz"
+			"0123456789+/";
 		
 		std::string encode(std::string const &str);
 		std::string decode(std::string const &str);
-	}
+	};
 
 	/* class, struct */
 	struct fds {

@@ -5,7 +5,6 @@
 
 int main()
 {
-	/*
 	ServerManager manager;
 
 	try
@@ -18,6 +17,4 @@ int main()
 		std::cerr << e.what() << std::endl;
 	}
 	manager.serverClose();
-	*/
-	ft::base64::encode("this is base 64 encode");
 }
