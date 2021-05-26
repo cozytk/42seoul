@@ -1,7 +1,7 @@
 #include <webserv.hpp>
 
-#include "server/ServerManager.hpp"
-#include "config/Config.hpp"
+#include "ServerManager.hpp"
+#include "Config.hpp"
 
 int main()
 {
