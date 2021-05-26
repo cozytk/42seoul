@@ -170,8 +170,18 @@ int Server::send(int socket) {
 	std::string body;
 	std::string header;
 	/* tmp */
+
 	body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
 	header = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+
+	if (this->_request[socket]->_buffer.find("POST") != std::string::npos) {
+		header = "HTTP/1.1 405 OK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	}
+	if (this->_request[socket]->_buffer.find("HEAD") != std::string::npos) {
+		header = "HTTP/1.1 404 Not Found\n\n";
+		body = "";
+	}
+
 
 	std::string response = header + body;
 	std::cout << std::endl << "SEND ▼" << std::endl;
