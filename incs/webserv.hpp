@@ -33,6 +33,17 @@
 
 /* libft */
 namespace ft {
+	/* base64 */
+	namespace base64 {
+		static std::string alphabet =
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			"abcdefghijklmnopqrstuvwxyz"
+			"0123456789+/";
+		
+		std::string encode(std::string const &str);
+		std::string decode(std::string const &str);
+	};
+
 	/* class, struct */
 	struct fds {
 		fd_set read;
@@ -58,9 +69,6 @@ namespace ft {
 
 	/* key, value */
 	std::pair<std::string, std::string> headerPair(std::string str);
-	
-	/* file */
-	bool hasEmptyLine(std::string const &str);
 }
 
 #endif
