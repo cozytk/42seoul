@@ -167,7 +167,20 @@ bool				SayiRequest::isValidType() {
 }
 
 bool				SayiRequest::isValidPath() {
-	if(isExistHeader("Path") && access(this->_headers["Path"].c_str(),F_OK) == 0){
+	std::string path("." +this->_headers["Path"]);
+	if (path[(int)path.length() - 1] != '/')
+	{
+		if (path.find(".bla") != std::string::npos)
+		{
+
+		}
+		else
+			path = path + "/index.html";
+	}
+	else
+		path = path + "index.html";
+	std::cout << "path check index: " << path << std::endl;
+	if(isExistHeader("Path") && access(path.c_str(),F_OK) == 0){
 		std::cout << "path is correct." << std::endl;
 		return true;
 	}
