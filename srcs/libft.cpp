@@ -1,5 +1,29 @@
 #include <webserv.hpp>
 
+std::string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+					"abcdefghijklmnopqrstuvwxyz"
+					"0123456789+/";
+
+std::string encode(std::string const &str) {
+	int arr;
+	int count;
+
+	count = 0;
+	while (count < (str.length() + 2) / 3) {
+		arr = 0;
+		str::cout << str[count * 3] << str[count * 3 + 1] << str[count * 3 + 2] << std::endl;
+		/*
+		for (int i = 0; i < 3; i++) {
+			arr |= ;
+		}
+		*/
+		count++;
+	}
+}
+
+std::string decode(std::string const &str) {
+}
+
 bool		ft::isspace(char c) {
 	if (c == 0x20 || (0x09 <= c && c <= 0x0d))
 		return (true);
@@ -90,23 +114,4 @@ bool	ft::fd_isset(int fd, ::fd_set *fds) {
 std::pair<std::string, std::string> ft::headerPair(std::string str) {	
 	int pos = str.find(": ");
 	return (std::make_pair<std::string, std::string>(std::string(str, 0, pos), std::string(str, pos + 2)));
-}
-
-
-bool ft::hasEmptyLine(std::string const &str) {
-	std::string line;
-	int pos;
-	int lf;
-
-	pos = 0;
-	while ((lf = str.find("\r\n", pos)) != std::string::npos) {
-		line = std::string(str.begin() + pos, str.begin() + lf);
-		if (line.size() == 0)
-			return (true);
-		pos = lf + 2;
-	}
-	line = std::string(str.begin() + pos, str.end());
-	if (line.size() == 0)
-		return (true);
-	return (false);
 }
