@@ -68,18 +68,7 @@ void				Request::parseBody(std::string const &body)
 		// 	return ;
 		// }
 		if (body.find("0\r\n") != std::string::npos)
-			this->_isChunked = false;
-	}
-	this->_body = body;
-	this->_stateCode = 200;
-}
-
-Request::Request(const Request& copy)
-: _headers(copy._headers), _body(copy._body), _isChunked(copy._isChunked)
-{}
-
-/* ************************************************************************** */
-/* ------------------------------- DESTRUCTOR ------------------------------- */
+			this->_isChunked = false; } this->_body = body; this->_stateCode = 200; } Request::Request(const Request& copy) : _headers(copy._headers), _body(copy._body), _isChunked(copy._isChunked) {} /* ************************************************************************** */ /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
 Request::~Request()
@@ -118,6 +107,17 @@ int					Request::getStateCode()
 	return (this->_stateCode);
 }
 
+std::string         Request::getMethod()
+{
+	return (this->_methods);
+}
+
+
+std::string Request::getUriType()
+{
+	return (this->_uritype);
+}
+
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
@@ -144,16 +144,7 @@ bool				Request::isValidStart() {
 
 bool				Request::isValidType() {
 	size_t i = 0;
-std::string	methods[8] = {
-		"GET",
-		"HEAD",
-		"POST",
-		"PUT",
-		"DELETE",
-		"CONNECT",
-		"OPTIONS",
-		"TRACE"
-	};
+
 	if (!isExistHeader("Type"))
 	{
 		this->_stateCode = 400;
@@ -161,7 +152,7 @@ std::string	methods[8] = {
 	}
 	while (i++ < 8)
 	{
-		if (this->_headers["Type"] == methods[i])
+		if (this->_headers["Type"] == _methods[i])
 			return true;
 	}
 	// get, head can't be 405
@@ -222,7 +213,6 @@ bool				Request::isValid() {
 	this->_stateCode = 200;
 	return true;
 }
-
 
 bool				Request::isExistHeader(std::string in) {
 	if (this->_headers.find(in) == this->_headers.end())
