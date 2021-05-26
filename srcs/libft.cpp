@@ -133,7 +133,7 @@ bool	ft::fd_isset(int fd, ::fd_set *fds) {
 	return (false);
 }
 
-std::pair<std::string, std::string> ft::headerPair(std::string str) {	
+std::pair<std::string, std::string> ft::headerPair(std::string str) {
 	int pos = str.find(": ");
 	return (std::make_pair<std::string, std::string>(std::string(str, 0, pos), std::string(str, pos + 2)));
 }

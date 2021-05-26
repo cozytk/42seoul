@@ -1,5 +1,4 @@
 #include "Server.hpp"
-#include "../connection/Request.hpp"
 
 /* Request */
 Server::Request::Request() {

@@ -107,16 +107,16 @@ int					Request::getStateCode()
 	return (this->_stateCode);
 }
 
-std::string         Request::getMethod()
-{
-	return (this->_methods);
-}
-
-
-std::string Request::getUriType()
-{
-	return (this->_uritype);
-}
+//std::string         Request::getMethod()
+//{
+//	return (this->_methods);
+//}
+//
+//
+//std::string Request::getUriType()
+//{
+//	return (this->_uritype);
+//}
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
@@ -143,6 +143,7 @@ bool				Request::isValidStart() {
 }
 
 bool				Request::isValidType() {
+	std::string _methods[8] = {"GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS"};
 	size_t i = 0;
 
 	if (!isExistHeader("Type"))

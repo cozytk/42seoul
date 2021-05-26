@@ -1,4 +1,3 @@
-#include "connection/Request.hpp"
 #include "Response.hpp"
 
 /* ************************************************************************** */
@@ -13,8 +12,7 @@
 
 Response::Response() {}
 Response::Response(/* constructor parameter */)
-: /* constructor initialize list */
-{
+: /* constructor initialize list */ {
 	/* constructor code */
 }
 
@@ -74,33 +72,32 @@ operator<<(std::ostream& out, const Response& response)
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-void
-Response::solveRequest(Connection& connection, const Request& request)
+void Response::sortMethod(Connection& connection, const Request& request)
 {
-	Request::Method method = request.getMethod();
+	std::string method = request.getHeaders()["Type"];
 
 	/*
 	 * need to 405(01), 401, 400(22), 403(01) response
 	 */
 
 	if (method == "TRACE")
-		executeTrace(connection, request);
+		runTrace(connection, request);
 	else if (request.get_uri_type() == "DIRECTORY")
-		return (executeAutoindex(connection, request));
+		return (runAutoindex(connection, request));
 	else if (request.get_uri_type() == "CGI_PROGRAM")
-		return (executeCGI(connection, request));
+		return (runCGI(connection, request));
 	else if (method == "GET")
-		executeGet(connection, request);
+		runGetHead(connection, request, GET);
 	else if (method == "HEAD")
-		executeHead(connection, request);
+		runGetHead(connection, request, HEAD);
 	else if (method == "POST")
-		executePost(connection, request);
+		runPost(connection, request);
 	else if (method == "PUT")
-		executePut(connection, request);
+		runPut(connection, request);
 	else if (method == "DELETE")
-		executeDelete(connection, request);
+		runDelete(connection, request);
 	else if (method == "OPTIONS")
-		executeOptions(connection, request);
+		runOptions(connection, request);
 	else
 		throw (400);
 }
@@ -109,43 +106,25 @@ Response::solveRequest(Connection& connection, const Request& request)
  * autoindex
  */
 
-void
-Response::executeGet(Connection& connection, const Request& request)
+void Response::runGetHead(Connection& connection, const Request& request, bool method)
 {
-	std::string path = request.get_path_translated();
+	std::string path = request.getPathTranslated();
 	std::string body;
 
 	try {
-		body = ft::getStringFromFile(path, m_limit_client_body_size);
+		body = fileToString(path, 20000000);
 	} catch (std::overflow_error& e) {
-		return (createResponse(connection, 41304));
+		return (createResponse(connection, 413));
 	}
 	headers_t headers(1, getMimeTypeHeader(path));
 	if (headers[0].empty())
-		return (createResponse(connection, 41501));
+		return (createResponse(connection, 415));
 	headers.push_back(getLastModifiedHeader(path));
+	if (method == HEAD)
+		headers.push_back("content-length:" + ft::to_string(int(body.size())));
 	return (createResponse(connection, 200, headers, body));
 }
-
-void
-Server::executeHead(Connection& connection, const Request& request)
-{
-	std::string path = request.get_m_path_translated();
-	std::string body;
-
-	try {
-		body = ft::getStringFromFile(path, m_limit_client_body_size);
-	} catch (std::overflow_error& e) {
-		return (createResponse(connection, 41305));
-	}
-
-	headers_t headers(1, getMimeTypeHeader(path));
-	if (headers[0].empty())
-		return (createResponse(connection, 41502));
-	headers.push_back(getLastModifiedHeader(path));
-	headers.push_back("content-length:" + ft::to_string(body.size()));
-	return (createResponse(connection, 200, headers));
-}
+/*
 
 void
 Server::executeTrace(Connection& connection, const Request& request)
@@ -203,4 +182,56 @@ Server::executeDelete(Connection& connection, const Request& request) {
 		createResponse(connection, 204);
 	else
 		return (createResponse(connection, 204));
+}
+
+ */
+
+
+void Response::response100(Connection& connection, int status, headers_t headers, std::string body)
+{
+
+}
+
+void Response::response200(Connection& connection, int status, headers_t headers, std::string body)
+{
+
+}
+
+void Response::response300(Connection& connection, int status, headers_t headers, std::string body)
+{
+
+}
+
+void Response::response400(Connection& connection, int status, headers_t headers, std::string body)
+{
+
+}
+
+void Response::response500(Connection& connection, int status, headers_t headers, std::string body)
+{
+
+}
+std::string Response::fileToString(std::string path, int limit)
+{
+	char buf[1024];
+	int fd = -1;
+	ssize_t cnt = 0;
+	std::string str;
+
+	if ((fd = open(path.c_str(), O_RDONLY)) == -1)
+		throw (std::invalid_argument("Invalid : " + path));
+	while ((cnt = read(fd, buf, 1024)) > 0)
+	{
+		str.append(buf, cnt);
+		if (limit != -1 && static_cast<int>(str.size()) > limit)
+			throw (std::overflow_error("Overflow : " + path));
+	}
+	close(fd);
+	return (str);
+}
+
+std::string Response::writeResponseMsg() const
+{
+	std::string msg;
+	std::map<std::string, std::string>::const_iterator it = this->_headers.begin();
 }

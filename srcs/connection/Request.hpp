@@ -13,10 +13,8 @@
 class Request
 {
 	public:
-	typedef	std::map<std::string, std::string> HeaderType;
+		typedef	std::map<std::string, std::string> HeaderType;
 	private:
-		std::string	_methods[8] = { "GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE" }; // what is CONNECT?
-		std::string _uritype[4] = { "Directory", "FILE", "FILE_TO_CREATE", "CGI_PROGRAM"};
 		HeaderType	_headers;
 		std::string	_body;
 		bool		_isChunked;
@@ -41,8 +39,6 @@ class Request
 		int			getStateCode();
 		HeaderType	getHeaders();
 		std::string	getBody();
-		std::string getMethod();
-		std::string getUriType();
 
 		bool		isChunked();
 		bool		isValid();

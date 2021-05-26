@@ -11,10 +11,8 @@
 class Request
 {
 public:
-	enum Method { DEFAULT, GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE };
 	typedef	std::map<std::string, std::string> HeaderType;
 private:
-	Method _method;
 	std::string	_version;
 	HeaderType	_headers;
 	std::string	_body;
@@ -32,7 +30,6 @@ public:
 	bool		isValid();
 	HeaderType	getHeaders();
 	std::string	getBody();
-	Method get_method() const;
 };
 //Accept-Charsets
 //Accept-Language
