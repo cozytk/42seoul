@@ -1,6 +1,6 @@
-https://datatracker.ietf.org/doc/html/rfc2045
 
-RFC base64
+## base64
+RFC -> https://datatracker.ietf.org/doc/html/rfc2045
 
 `usage ▼`
 ```
