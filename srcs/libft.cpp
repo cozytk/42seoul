@@ -1,5 +1,51 @@
 #include <webserv.hpp>
 
+std::string	ft::base64::encode(std::string const &str) {
+	std::string buffer = "";
+	int tmp;
+	int arr;
+	int count;
+
+	count = 0;
+	while (count < (str.length() + 2) / 3) {
+		arr = 0;
+		for (int i = 0; i < 3; i++) {
+			tmp = static_cast<int>(str[count * 3 + i]);
+			arr |= (tmp << (2 - i) * 8);
+		}
+		for (int i = 0; i < 4; i++) {
+			if (count == (str.length() + 2) / 3 - 1 && i >= 1 && count * 3 + i - 1 >= str.length())
+				buffer += '=';
+			else
+				buffer += ft::base64::alphabet[(arr >> (3 - i) * 6) & 0b00111111];
+		}
+		count++;
+	}
+	return (buffer);
+}
+
+std::string	ft::base64::decode(std::string const &str) {
+	std::string buffer = "";
+	int arr;
+	int tmp;
+	int count;
+	
+	count = 0;
+	while (count < str.length() / 4) {
+		arr = 0;
+		for (int i = 0; i < 4; i++) {
+			tmp = static_cast<int>(ft::base64::alphabet.find(str[count * 4 + i]));
+			if (tmp != -1)
+				arr |= (tmp << (3 - i) * 6);
+		}
+		for (int i = 0; i < 3; i++)
+			if (!(count == str.length() / 4 - 1 && str[count * 4 + i + 1] == '='))
+				buffer += static_cast<char>(arr >> (2 - i) * 8);
+		count++;
+	}
+	return (buffer);
+}
+
 bool		ft::isspace(char c) {
 	if (c == 0x20 || (0x09 <= c && c <= 0x0d))
 		return (true);

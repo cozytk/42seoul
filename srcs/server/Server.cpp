@@ -6,7 +6,6 @@ Server::Request::Request() {
 	this->_buffer = "";
 	this->_length = -1;
 	this->_sent = 0;
-	this->_continue = false;
 }
 
 Server::Request::Request(Server::Request const &x) :
@@ -20,7 +19,6 @@ Server::Request &Server::Request::operator=(Server::Request const &x) {
 	this->_buffer = x._buffer;
 	this->_length = x._length;
 	this->_sent = x._sent;
-	this->_continue = x._continue;
 	return (*this);
 }
 
@@ -29,8 +27,7 @@ void Server::Request::parseHeader(std::string const &header) {
 	int lf;
 
 	pos = 0;
-	while ((lf = header.find("\r\n", pos)) != std::string::npos)
-	{
+	while ((lf = header.find("\r\n", pos)) != std::string::npos) {
 		if (pos != 0)
 			_headers.insert(ft::headerPair(std::string(header.begin() + pos, header.begin() + lf)));
 		pos = lf + 2;
@@ -129,26 +126,37 @@ int Server::recv(int socket) {
 		throw ReceiveException();
 	if (len == 0)
 	{
-		std::cout << "disconnected;" << std::endl;
+		std::cout << "[disconnected;]" << std::endl;
 		::close(socket);
 		return (ERR_RECV);
 	}
-	
-	this->_request[socket]->_continue = false;
 	this->_request[socket]->_buffer += buffer;
-	if (this->_request[socket]->_length == -1 && this->_request[socket]->_buffer.find("\r\n\r\n") == std::string::npos) {
-		this->_request[socket]->_continue = true;
-		return (ALL_RECV);
-	}
+	if (this->_request[socket]->_length == -1 && this->_request[socket]->_buffer.find("\r\n\r\n") == std::string::npos)
+		return (WAIT_RECV);
 	if (this->_request[socket]->_length == -1) {
 		this->_request[socket]->parseHeader( this->_request[socket]->_buffer.substr(0, this->_request[socket]->_buffer.find("\r\n\r\n")) );
-		this->_request[socket]->_length = 0;
-		if (this->_request[socket]->_headers.find("content-length") != this->_request[socket]->_headers.end())
-			this->_request[socket]->_length = ft::atoi(const_cast<char *>(this->_request[socket]->_headers["content-length"].c_str()));
+		// chunked
+		if (this->_request[socket]->_headers.find("Transfer-Encoding") != this->_request[socket]->_headers.end() &&
+			this->_request[socket]->_headers["Transfer-Encoding"] == "chunked") {
+			this->_request[socket]->_length = -1;
+		}
+		else { // normal
+			this->_request[socket]->_length = 0;
+			if (this->_request[socket]->_headers.find("Content-Length") != this->_request[socket]->_headers.end())
+				this->_request[socket]->_length = ft::atoi(const_cast<char *>(this->_request[socket]->_headers["Content-Length"].c_str()));
+		}
 	}
-
-	if (this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length)
-	{
+	if (this->_request[socket]->_length != -1 &&
+	this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length) {
+		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
+		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
+		return (ALL_RECV);
+	}
+	if (this->_request[socket]->_length == -1 &&
+		this->_request[socket]->_headers.find("Transfer-Encoding") != this->_request[socket]->_headers.end() &&
+		this->_request[socket]->_headers["Transfer-Encoding"] == "chunked" &&
+		this->_request[socket]->_buffer.find("\r\n0\r\n") != std::string::npos) {
+		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		return (ALL_RECV);
 	}
@@ -166,13 +174,9 @@ int Server::send(int socket) {
 	body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
 	header = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 
-	if (this->_request[socket]->_continue) {
-		body = "";
-		header = "HTTP/1.1 100 Continue\n\n";
-	}
-
 	std::string response = header + body;
-	std::cout << response << std::endl;
+	std::cout << std::endl << "SEND ▼" << std::endl;
+	std::cout << "[" << response << "]" << std::endl;
 
 	/* re */
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
