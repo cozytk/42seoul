@@ -141,30 +141,30 @@ int Server::recv(int socket) {
 		return (WAIT_RECV);
 	if (this->_request[socket]->_length == -1) {
 		this->_request[socket]->parseHeader( this->_request[socket]->_buffer.substr(0, this->_request[socket]->_buffer.find("\r\n\r\n")) );
-		// chunked
-		if (this->_request[socket]->_headers.find("Transfer-Encoding") != this->_request[socket]->_headers.end() &&
-			this->_request[socket]->_headers["Transfer-Encoding"] == "chunked") {
+		if (this->_request[socket]->_headers.find("transfer-encoding") != this->_request[socket]->_headers.end() &&
+			this->_request[socket]->_headers["transfer-encoding"] == "chunked") {
 			this->_request[socket]->_length = -1;
 		}
-		else { // normal
+		else {
 			this->_request[socket]->_length = 0;
-			if (this->_request[socket]->_headers.find("Content-Length") != this->_request[socket]->_headers.end())
-				this->_request[socket]->_length = ft::atoi(const_cast<char *>(this->_request[socket]->_headers["Content-Length"].c_str()));
+			if (this->_request[socket]->_headers.find("content-length") != this->_request[socket]->_headers.end())
+				this->_request[socket]->_length = ft::atoi(const_cast<char *>(this->_request[socket]->_headers["content-length"].c_str()));
 		}
 	}
 	if (this->_request[socket]->_length != -1 &&
 	this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length) {
+		ft::trim_space(this->_request[socket]->_buffer);
 		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, false);
 		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
-
 		return (ALL_RECV);
 	}
 	if (this->_request[socket]->_length == -1 &&
-		this->_request[socket]->_headers.find("Transfer-Encoding") != this->_request[socket]->_headers.end() &&
-		this->_request[socket]->_headers["Transfer-Encoding"] == "chunked" &&
+		this->_request[socket]->_headers.find("transfer-encoding") != this->_request[socket]->_headers.end() &&
+		this->_request[socket]->_headers["transfer-encoding"] == "chunked" &&
 		this->_request[socket]->_buffer.find("\r\n0\r\n") != std::string::npos) {
+		ft::trim_space(this->_request[socket]->_buffer);
 		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, true);
