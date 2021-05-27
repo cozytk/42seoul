@@ -28,7 +28,7 @@ public:
 	virtual ~Request();
 
 	bool		isValid();
-	HeaderType	getHeaders();
+	HeaderType	getHeaders() const;
 	std::string	getBody();
 };
 //Accept-Charsets

@@ -92,7 +92,7 @@ Request& Request::operator=(const Request& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-Request::HeaderType	Request::getHeaders()
+Request::HeaderType	Request::getHeaders() const
 {
 	return (this->_headers);
 }
@@ -219,4 +219,9 @@ bool				Request::isExistHeader(std::string in) {
 	if (this->_headers.find(in) == this->_headers.end())
 		return false;
 	return true;
+}
+
+std::string Request::getPathTranslated() const
+{
+	return (_pathTranslated);
 }

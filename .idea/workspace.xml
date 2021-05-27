@@ -12,17 +12,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0d7ce7d0-abb0-4b3c-94b9-cc7fd49a61c6" name="Default Changelist" comment="Default Changelist">
-      <change afterPath="$PROJECT_DIR$/srcs/test.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/webserv.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/incs/webserv.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/incs/webserv.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/srcs/Response.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/Response.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/srcs/Response.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/Response.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/srcs/connection/Request.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/connection/Request.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/srcs/connection/Request.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/connection/Request.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/srcs/server/Request.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/server/Request.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/srcs/server/Request.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/server/Request.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/server/Server.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,9 +76,9 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="webserv" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv" TARGET_NAME="webserv" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="webserv" RUN_TARGET_NAME="webserv">
@@ -109,7 +106,8 @@
       <workItem from="1621836924286" duration="5168000" />
       <workItem from="1622014280665" duration="2084000" />
       <workItem from="1622017282908" duration="1698000" />
-      <workItem from="1622026906180" duration="8190000" />
+      <workItem from="1622026906180" duration="8725000" />
+      <workItem from="1622096371783" duration="2549000" />
     </task>
     <servers />
   </component>

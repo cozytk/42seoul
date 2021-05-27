@@ -106,6 +106,17 @@ void Response::sortMethod(Connection& connection, const Request& request)
  * autoindex
  */
 
+time_t Response::getLastModifiedHeader(const std::string& path)
+{
+	struct stat buf;
+	__darwin_time_t ret;
+
+	ft::memset(&buf, 0, sizeof(struct stat));
+	stat(path.c_str(), &buf);
+	ret = buf.st_mtimespec.tv_sec;
+	return (ret);
+}
+
 void Response::runGetHead(Connection& connection, const Request& request, bool method)
 {
 	std::string path = request.getPathTranslated();
@@ -114,18 +125,25 @@ void Response::runGetHead(Connection& connection, const Request& request, bool m
 	try {
 		body = fileToString(path, 20000000);
 	} catch (std::overflow_error& e) {
-		return (createResponse(connection, 413));
+		return (response400(connection, 413));
 	}
 	headers_t headers(1, getMimeTypeHeader(path));
 	if (headers[0].empty())
-		return (createResponse(connection, 415));
-	headers.push_back(getLastModifiedHeader(path));
+		return (response400(connection, 415));
+	headers.push_back(reinterpret_cast<const char *>(getLastModifiedHeader(path)));
 	if (method == HEAD)
 		headers.push_back("content-length:" + ft::to_string(int(body.size())));
-	return (createResponse(connection, 200, headers, body));
+	return (response200(connection, 200, headers, body));
 }
-/*
 
+std::string Request::getMimeTypeHeader() const
+{
+	return (_mimeTypeHeader);
+}
+
+
+
+/*
 void
 Server::executeTrace(Connection& connection, const Request& request)
 {
@@ -194,7 +212,8 @@ void Response::response100(Connection& connection, int status, headers_t headers
 
 void Response::response200(Connection& connection, int status, headers_t headers, std::string body)
 {
-
+	headers.push_back(getDateHeader());
+	headers.push_back(getServerHeader(this));
 }
 
 void Response::response300(Connection& connection, int status, headers_t headers, std::string body)
@@ -202,7 +221,7 @@ void Response::response300(Connection& connection, int status, headers_t headers
 
 }
 
-void Response::response400(Connection& connection, int status, headers_t headers, std::string body)
+void Response::response400(Connection& connection, int status)
 {
 
 }
@@ -214,7 +233,7 @@ void Response::response500(Connection& connection, int status, headers_t headers
 std::string Response::fileToString(std::string path, int limit)
 {
 	char buf[1024];
-	int fd = -1;
+	int fd;
 	ssize_t cnt = 0;
 	std::string str;
 
@@ -223,7 +242,7 @@ std::string Response::fileToString(std::string path, int limit)
 	while ((cnt = read(fd, buf, 1024)) > 0)
 	{
 		str.append(buf, cnt);
-		if (limit != -1 && static_cast<int>(str.size()) > limit)
+		if (limit != -1 && str.size() > limit)
 			throw (std::overflow_error("Overflow : " + path));
 	}
 	close(fd);
@@ -234,4 +253,16 @@ std::string Response::writeResponseMsg() const
 {
 	std::string msg;
 	std::map<std::string, std::string>::const_iterator it = this->_headers.begin();
+}
+
+std::string getDateHeader()
+{
+	char buff[1024];
+	struct tm t;
+	timeval now;
+
+	gettimeofday(&now, NULL);
+	ft::convertTimespecToTm(now.tv_sec, &t);
+	strftime(buff, sizeof(buff), "%a, %d %b %Y %X GMT", &t);
+	return ("Last-Modified:" + std::string(buff));
 }

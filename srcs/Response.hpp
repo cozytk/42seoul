@@ -31,7 +31,10 @@ class Response
 		void response300(Connection& connection, int status, headers_t headers, std::string body);
 		void response400(Connection& connection, int status, headers_t headers, std::string body);
 		void response500(Connection& connection, int status, headers_t headers, std::string body);
-		std::string fileToString(std::string path, int limit)
+		std::string fileToString(std::string path, int limit);
+		std::string getMimeTypeHeader(std::string path) const;
+		std::string getDateHeader();
+		static time_t getLastModifiedHeader(const std::string& path);
 };
 
 /* global operator overload */

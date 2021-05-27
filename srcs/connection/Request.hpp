@@ -17,6 +17,9 @@ class Request
 	private:
 		HeaderType	_headers;
 		std::string	_body;
+		std::string	_mimeTypeHeader;
+		std::string	_lastModifiedHeader;
+		std::string _pathTranslated;
 		bool		_isChunked;
 		int			_stateCode;
 
@@ -37,12 +40,17 @@ class Request
 		virtual ~Request();
 
 		int			getStateCode();
-		HeaderType	getHeaders();
+		HeaderType	getHeaders() const;
 		std::string	getBody();
+		/*
+		 * taekkim add
+		 */
+		std::string getPathTranslated() const;
 
 		bool		isChunked();
 		bool		isValid();
 		bool		isExistHeader(std::string in);
+
 
 };
 //Accept-Charsets

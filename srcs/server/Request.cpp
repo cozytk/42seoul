@@ -105,7 +105,7 @@ Request& Request::operator=(const Request& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-Request::HeaderType	Request::getHeaders()
+Request::HeaderType	Request::getHeaders() const
 {
 	return (this->_headers);
 }
