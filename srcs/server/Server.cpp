@@ -3,6 +3,7 @@
 /* Request */
 Server::Request::Request() {
 	this->_buffer = "";
+	this->_response = "";
 	this->_length = -1;
 	this->_sent = 0;
 }
@@ -35,7 +36,9 @@ void Server::Request::parseHeader(std::string const &header) {
 }
 
 void Server::Request::clear() {
-	this->_buffer = "";
+	this->_headers.clear();
+	this->_buffer.clear();
+	this->_response.clear();
 	this->_length = -1;
 	this->_sent = 0;
 }
@@ -182,21 +185,22 @@ int Server::send(int socket) {
 	this->_parsed_req->isValid();
 	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
 
-	if (this->_parsed_req->getHeaders()["Type"] == "GET")
-		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\n\n";
+		body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
+
+	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
+		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	}
 	if (this->_parsed_req->getHeaders()["Type"] == "POST")
 	{
-		body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
 		header = "HTTP/1.1 " + stateCode + " NOK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 
 	}
-	if (this->_parsed_req->getHeaders()["Type"] == "HEAD")
-		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\n\n";
-	// Content-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
+		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+		body = "";
+	}
 
 	std::string response = header + body;
-	std::cout << std::endl << "SEND ▼" << std::endl;
-	std::cout << "[" << response << "]" << std::endl;
 
 	/* re */
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
@@ -207,6 +211,11 @@ int Server::send(int socket) {
 		throw SendException();
 	if (len == 0)
 		return (ERR_SEND);
+
+	std::cout << std::endl << "SEND ▼" << std::endl;
+	std::cout << "[" << buf << "]" << std::endl;
+
+
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
 		return (ALL_SEND);
