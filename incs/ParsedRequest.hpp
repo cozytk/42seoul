@@ -36,7 +36,7 @@ class ParsedRequest
 		bool			isAllowedMethod();
 	public:
 		ParsedRequest();
-		ParsedRequest(std::string const &request, Config::node config);
+		ParsedRequest(std::string const &request, Config::node *config);
 		ParsedRequest(const ParsedRequest& copy);
 		ParsedRequest& operator=(const ParsedRequest& obj);
 		virtual ~ParsedRequest();

@@ -39,8 +39,8 @@ private:
 	sockaddr_in					_addr;
 	int							_socket;
 	int							_port;
-	//std::vector<Location>		_locations;
-	ParsedRequest *					_parsed_req;
+	Config::node *				_server_conf;
+	ParsedRequest *				_parsed_req;
 
 public:
 	/* exception */

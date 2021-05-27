@@ -149,7 +149,7 @@ int Server::recv(int socket) {
 	this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length) {
 		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
-		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, false);
+		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
 
 		return (ALL_RECV);
@@ -160,7 +160,7 @@ int Server::recv(int socket) {
 		this->_request[socket]->_buffer.find("\r\n0\r\n") != std::string::npos) {
 		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
-		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, true);
+		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
 		return (ALL_RECV);
 	}

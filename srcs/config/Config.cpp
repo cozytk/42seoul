@@ -39,7 +39,7 @@ Config::node &Config::node::operator()(std::string name, int index) {
     for (std::multimap<std::string, node *>::iterator it = ret.first; it != ret.second; ++it)
 		arr.push_back(it->second);
 	if (arr.size() <= index)
-		throw OutOfBoundsException();
+		throw Config::OutOfBoundsException();
 	return (*arr[index]);
 }
 

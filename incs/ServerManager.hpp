@@ -20,7 +20,7 @@ private:
 
 	Server *newServer(Config::node *block);
 
-public:	
+public:
 	/* static */
 	static bool alive;
 

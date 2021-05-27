@@ -11,11 +11,11 @@
 /* ************************************************************************** */
 
 ParsedRequest::ParsedRequest() {}
-ParsedRequest::ParsedRequest(std::string const &request,  Config::node config)
+ParsedRequest::ParsedRequest(std::string const &request,  Config::node *config):
+_config(config)
 {
 	size_t headEnd = request.find("\r\n\r\n");
 //	todo constructor should work without isChucked
-	_config = &config;
 	parseHead(request);
 	if (headEnd + 4 < request.length())
 		parseBody(request.substr(headEnd + 4));
@@ -163,6 +163,7 @@ bool				ParsedRequest::isValidType() {
 	// get, head can't be 405
 	// todo should check server support method if not return 405
 	this->_stateCode = 400;
+	return false;
 }
 
 bool				ParsedRequest::isValidPath() {
@@ -170,6 +171,36 @@ bool				ParsedRequest::isValidPath() {
 	struct stat s;
 	std::string res;
 
+		//
+		int i = 0;
+	std::cout << "configing" << std::endl;
+	std::cout << "server size: " << (*_config).size("location") << std::endl;
+	Config::node node;
+	node = (*_config);
+	std::cout << "get location: " << node.size("location") << std::endl;
+	std::vector<std::string> v;
+	i = 0;
+	while (i < node.size("location"))
+	{
+		std::cout << i << " th:" << (*node("location", i))[0] << std::endl;
+		if ((*node("location", i))[0] == "/")
+		{
+
+			std::cout << "got cat" << std::endl;
+			v = *(*_config)("http", 0)("server")("location", i);
+		}
+		i++;
+	}
+
+
+	i = 0;
+	std::cout << "location size: " << v.size() << std::endl;
+	while (i < v.size())
+	{
+		std::cout << i << "th: " << v[i] << std::endl;
+		i++;
+	}
+	//
 	if(!isExistHeader("Path")){
 		this->_stateCode = 400;
 		return false;

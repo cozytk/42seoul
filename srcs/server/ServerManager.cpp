@@ -42,6 +42,7 @@ Server *ServerManager::newServer(Config::node *block) {
 	Server *server = new Server;
 	/* bind */
 	server->_port = ft::atoi( const_cast<char *>((*(*block)("listen", 0))[0].c_str()) );
+	server->_server_conf = block;
 	server->socketBind();
 	/* register */
 	ft::fd_set(server->_socket, &this->fds.read);
@@ -62,35 +63,6 @@ void ServerManager::config(std::string const &path) {
 	ft::fd_zero(&this->fds.except);
 	/* init config */
 	_config.file(path);
-	//
-	std::cout << "configing" << std::endl;
-	std::cout << "server size: " << _config("http", 0).size("server") << std::endl;
-	Config::node node;
-	node = _config("http", 0)("server");
-	std::cout << "get location: " << node.size("location") << std::endl;
-	std::vector<std::string> v;
-	i = 0;
-	while (i < node.size("location"))
-	{
-		std::cout << i << " th:" << (*node("location", i))[0] << std::endl;
-		if ((*node("location", i))[0] == "/")
-		{
-
-			std::cout << "got cat" << std::endl;
-			v = *_config("http", 0)("server")("location", i);
-		}
-		i++;
-	}
-
-
-	i = 0;
-	std::cout << "location size: " << v.size() << std::endl;
-	while (i < v.size())
-	{
-		std::cout << i << "th: " << v[i] << std::endl;
-		i++;
-	}
-	//
 	while (i < _config("http", 0).size("server")) {
 		tmp = newServer(&_config("http", 0)("server", i));
 		_servers.insert(std::pair<int, Server *>(tmp->_socket, tmp));
