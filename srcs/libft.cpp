@@ -92,6 +92,11 @@ std::string	ft::to_string(int n)
 	return (std::string(ret.rbegin(), ret.rend()));
 }
 
+void	ft::trim_space(std::string &str) {
+	while (9 <= str[0] && str[0] <= 13)
+		str.erase(str.begin());
+}
+
 void	*ft::memset(void *_src, int val, size_t size) {
 	unsigned char *src;
 	unsigned char *ptr;
@@ -101,6 +106,12 @@ void	*ft::memset(void *_src, int val, size_t size) {
 	while (size-- > 0)
 		*(src++) = val;
 	return (ptr);
+}
+
+int		ft::tolower(int c) {
+	if ('A' <= c && c <= 'Z')
+		c += 32;
+	return (c);
 }
 
 void	ft::fd_zero(::fd_set *fds) {
@@ -135,5 +146,7 @@ bool	ft::fd_isset(int fd, ::fd_set *fds) {
 
 std::pair<std::string, std::string> ft::headerPair(std::string str) {
 	int pos = str.find(": ");
-	return (std::make_pair<std::string, std::string>(std::string(str, 0, pos), std::string(str, pos + 2)));
+	std::string header = std::string(str, 0, pos);
+	ft::transform(header.begin(), header.end(), ft::tolower);
+	return (std::make_pair<std::string, std::string>(header, std::string(str, pos + 2)));
 }

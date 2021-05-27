@@ -33,6 +33,8 @@ private:
 		Request &operator=(Request const &x);
 
 		void parseHeader(std::string const &header);
+
+		void clear();
 	};
 
 	std::map<int, Request *>	_request;

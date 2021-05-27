@@ -90,6 +90,19 @@ void ServerManager::run() {
 			throw NetFunctionException();
 		if (select_ret == 0)
 		{
+			/*
+			server = this->_readable.begin();
+			while (server != this->_readable.end()) {
+				std::cout << "disconnect: " << server->first << std::endl;
+				n_server = server;
+				n_server++;
+				ft::fd_clrs(server->first, &this->fds);
+				this->_readable.erase(server->first);
+				this->_writable.erase(server->first);
+				::close(server->first);
+				server = n_server;
+			}
+			*/
 			std::cout << "time out" << std::endl;
 			continue;
 		}
@@ -103,13 +116,17 @@ void ServerManager::run() {
 			{
 				tmp = (server->second)->send(server->first);
 				if (tmp == ALL_SEND) {
+					//ft::fd_clrs(server->first, &this->fds);
+					//::close(server->first);
+					//(server->second)->_request.erase(server->first);
+					//this->_readable.erase(server->first);
+					//
+					tmp = server->first;
+					delete (server->second)->_request[tmp];
+					(server->second)->_request.erase(tmp);
+					(server->second)->_request.insert(std::make_pair<int, Server::Request *>(tmp, new Server::Request));
 
-					ft::fd_clrs(server->first, &this->fds);
-					::close(server->first);
-					(server->second)->_request.erase(server->first);
-					this->_readable.erase(server->first);
-
-					//ft::fd_clr(server->first, &this->fds.write);
+					ft::fd_clr(server->first, &this->fds.write);
 					this->_writable.erase(server->first);
 				}
 				else if (tmp == ERR_SEND) {
@@ -133,8 +150,9 @@ void ServerManager::run() {
 					ft::fd_set(server->first, &this->fds.write);
 				}
 				else if (tmp == ERR_RECV) {
-					ft::fd_clrs(server->first, &this->fds);
-					close(server->first);
+					(server->second)->_request.erase(server->first);
+					ft::fd_clrs(server->first, &this->fds);	
+					::close(server->first);
 					this->_readable.erase(server->first);
 				}
 			}
@@ -147,7 +165,7 @@ void ServerManager::run() {
 			{
 				tmp = (server->second)->accept();
 				this->_readable.insert(std::pair<int, Server *>(tmp, server->second));
-				ft::fd_sets(tmp, &this->fds);
+				ft::fd_set(tmp, &this->fds.read);
 				this->inspect_range = tmp > this->inspect_range ? tmp : this->inspect_range;
 			}
 		}
@@ -160,9 +178,9 @@ void ServerManager::serverClose() {
 	std::map<int, Server *>::iterator server;
 
 	for (server = this->_servers.begin(); server != this->_servers.end(); server++)
-		close(server->first);
+		::close(server->first);
 	for (server = this->_readable.begin(); server != this->_readable.end(); server++)
-		close(server->first);
+		::close(server->first);
 	for (server = this->_writable.begin(); server != this->_writable.end(); server++)
-		close(server->first);
+		::close(server->first);
 }
