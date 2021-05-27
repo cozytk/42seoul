@@ -103,12 +103,13 @@ void ServerManager::run() {
 				tmp = (server->second)->send(server->first);
 				if (tmp == ALL_SEND) {
 
-					ft::fd_clrs(server->first, &this->fds);
-					::close(server->first);
-					(server->second)->_request.erase(server->first);
-					this->_readable.erase(server->first);
+					//ft::fd_clrs(server->first, &this->fds);
+					//::close(server->first);
+					//(server->second)->_request.erase(server->first);
+					//this->_readable.erase(server->first);
 
-					//ft::fd_clr(server->first, &this->fds.write);
+					(server->second)->_request[server->first]->clear();
+					ft::fd_clr(server->first, &this->fds.write);
 					this->_writable.erase(server->first);
 				}
 				else if (tmp == ERR_SEND) {
@@ -132,8 +133,9 @@ void ServerManager::run() {
 					ft::fd_set(server->first, &this->fds.write);
 				}
 				else if (tmp == ERR_RECV) {
+					(server->second)->_request.erase(server->first);
 					ft::fd_clrs(server->first, &this->fds);	
-					close(server->first);
+					::close(server->first);
 					this->_readable.erase(server->first);
 				}
 			}

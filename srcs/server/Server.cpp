@@ -8,7 +8,7 @@ Server::Request::Request() {
 }
 
 Server::Request::Request(Server::Request const &x) :
-	_buffer(x._buffer), _length(x._length) {
+	_buffer(x._buffer), _length(x._length), _sent(x._sent) {
 }
 
 Server::Request::~Request() {
@@ -34,6 +34,11 @@ void Server::Request::parseHeader(std::string const &header) {
 	_headers.insert(ft::headerPair(std::string(header, pos)));
 }
 
+void Server::Request::clear() {
+	this->_buffer = "";
+	this->_length = -1;
+	this->_sent = 0;
+}
 
 /* Server */
 /* exception */
@@ -126,7 +131,6 @@ int Server::recv(int socket) {
 	if (len == 0)
 	{
 		std::cout << "[disconnected;]" << std::endl;
-		::close(socket);
 		return (ERR_RECV);
 	}
 	this->_request[socket]->_buffer += buffer;
