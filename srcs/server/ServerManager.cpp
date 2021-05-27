@@ -42,6 +42,7 @@ Server *ServerManager::newServer(Config::node *block) {
 	Server *server = new Server;
 	/* bind */
 	server->_port = ft::atoi( const_cast<char *>((*(*block)("listen", 0))[0].c_str()) );
+	server->_server_conf = block;
 	server->socketBind();
 	/* register */
 	ft::fd_set(server->_socket, &this->fds.read);
@@ -75,7 +76,7 @@ void ServerManager::run() {
 	int select_ret;
 	int tmp;
 	struct ft::fds fds_loop;
-	
+
 	/* init */
 	this->fds.timeout.tv_sec = 4;
 	this->fds.timeout.tv_usec = 0;

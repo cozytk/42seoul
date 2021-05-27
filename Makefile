@@ -8,7 +8,7 @@ CONFIG		= Config.cpp ConfigReader.cpp ConfigSyntax.cpp
 
 SERVER		= ServerManager.cpp Server.cpp
 
-CONNECTION	= SayiRequest.cpp
+CONNECTION	= ParsedRequest.cpp
 
 SRCS		= $(addprefix srcs/, $(MAIN)) \
 			  $(addprefix srcs/, $(LIBFT)) \
