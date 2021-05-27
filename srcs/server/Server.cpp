@@ -179,11 +179,11 @@ int Server::send(int socket) {
 	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
 
 	if (this->_parsed_req->getHeaders()["Type"] == "GET")
-		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\n\n";
+		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\r\n\r\n";
 	if (this->_parsed_req->getHeaders()["Type"] == "POST")
 	{
-		body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
-		header = "HTTP/1.1 " + stateCode + " NOK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+		body = "hello world\r\nSocket: " + ft::to_string(this->_socket) + "\r\nPort: " + ft::to_string(this->_port) + "\r\n";
+		header = "HTTP/1.1 " + stateCode + " NOK\r\nContent-Type: text/plain\r\nContent-Length: " + ft::to_string(body.length()) + "\r\n\r\n";
 
 	}
 	if (this->_parsed_req->getHeaders()["Type"] == "HEAD")

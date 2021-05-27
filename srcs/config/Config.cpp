@@ -24,6 +24,8 @@ Config::node::~node() {
 }
 
 Config::node &Config::node::operator=(node const &x) {
+	this->value = x.value;
+	this->children = x.children;
 	return (*this);
 }
 

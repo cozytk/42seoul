@@ -6,9 +6,12 @@
 # include "ConfigReader.hpp"
 # include "ConfigSyntax.hpp"
 
+class ParcedRequest;
+
 class Config
 {
 	friend class ServerManager;
+	friend class ParcedRequest;
 
 private:
 	/* node */
@@ -64,9 +67,9 @@ public:
 	Config();
 	Config(Config const &x);
 	~Config();
-	
+
 	Config &operator=(Config const &x);
-	
+
 	/* tree */
 	node& operator()(std::string const &name, int index = 0);
 	int size(std::string name);

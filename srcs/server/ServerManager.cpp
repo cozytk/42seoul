@@ -62,6 +62,35 @@ void ServerManager::config(std::string const &path) {
 	ft::fd_zero(&this->fds.except);
 	/* init config */
 	_config.file(path);
+	//
+	std::cout << "configing" << std::endl;
+	std::cout << "server size: " << _config("http", 0).size("server") << std::endl;
+	Config::node node;
+	node = _config("http", 0)("server");
+	std::cout << "get location: " << node.size("location") << std::endl;
+	std::vector<std::string> v;
+	i = 0;
+	while (i < node.size("location"))
+	{
+		std::cout << i << " th:" << (*node("location", i))[0] << std::endl;
+		if ((*node("location", i))[0] == "/")
+		{
+
+			std::cout << "got cat" << std::endl;
+			v = *_config("http", 0)("server")("location", i);
+		}
+		i++;
+	}
+
+
+	i = 0;
+	std::cout << "location size: " << v.size() << std::endl;
+	while (i < v.size())
+	{
+		std::cout << i << "th: " << v[i] << std::endl;
+		i++;
+	}
+	//
 	while (i < _config("http", 0).size("server")) {
 		tmp = newServer(&_config("http", 0)("server", i));
 		_servers.insert(std::pair<int, Server *>(tmp->_socket, tmp));
@@ -75,7 +104,7 @@ void ServerManager::run() {
 	int select_ret;
 	int tmp;
 	struct ft::fds fds_loop;
-	
+
 	/* init */
 	this->fds.timeout.tv_sec = 4;
 	this->fds.timeout.tv_usec = 0;
@@ -132,7 +161,7 @@ void ServerManager::run() {
 					ft::fd_set(server->first, &this->fds.write);
 				}
 				else if (tmp == ERR_RECV) {
-					ft::fd_clrs(server->first, &this->fds);	
+					ft::fd_clrs(server->first, &this->fds);
 					close(server->first);
 					this->_readable.erase(server->first);
 				}

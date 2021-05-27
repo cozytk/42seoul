@@ -11,11 +11,11 @@
 /* ************************************************************************** */
 
 ParsedRequest::ParsedRequest() {}
-ParsedRequest::ParsedRequest(std::string const &request, bool isChunked):
-_isChunked(isChunked)
+ParsedRequest::ParsedRequest(std::string const &request,  Config::node config)
 {
 	size_t headEnd = request.find("\r\n\r\n");
 //	todo constructor should work without isChucked
+	_config = &config;
 	parseHead(request);
 	if (headEnd + 4 < request.length())
 		parseBody(request.substr(headEnd + 4));
@@ -163,7 +163,6 @@ bool				ParsedRequest::isValidType() {
 	// get, head can't be 405
 	// todo should check server support method if not return 405
 	this->_stateCode = 400;
-	return false;
 }
 
 bool				ParsedRequest::isValidPath() {
@@ -186,7 +185,8 @@ bool				ParsedRequest::isValidPath() {
 	    }
 	    else if( s.st_mode & S_IFREG )
 	    {
-			if (path.find(".bla") != std::string::npos)
+			if (path.find(".bla") != std::string::npos ||
+			path.find(".bad_extension") != std::string::npos)
 				std::cout << "need cgi run" << std::endl;
 	    }
 		this->_stateCode = 200;
