@@ -167,24 +167,32 @@ bool				SayiRequest::isValidType() {
 }
 
 bool				SayiRequest::isValidPath() {
-	std::string path("." +this->_headers["Path"]);
-	if (path[(int)path.length() - 1] != '/')
-	{
-		if (path.find(".bla") != std::string::npos)
-		{
+	std::string path;
+	struct stat s;
+	std::string res;
 
-		}
-		else
-			path = path + "/index.html";
+	if(!isExistHeader("Path")){
+		this->_stateCode = 400;
+		return false;
 	}
-	else
-		path = path + "index.html";
-	std::cout << "path check index: " << path << std::endl;
-	if(isExistHeader("Path") && access(path.c_str(),F_OK) == 0){
-		std::cout << "path is correct." << std::endl;
+	path = "." +this->_headers["Path"];
+	if( stat(path.c_str(),&s) == 0 )
+	{
+	    if( s.st_mode & S_IFDIR )
+	    {
+			if (path[(int)path.length() - 1] != '/')
+				path = path + "/";
+			path = path + "index.html";
+	    }
+	    else if( s.st_mode & S_IFREG )
+	    {
+			if (path.find(".bla") != std::string::npos)
+				std::cout << "need cgi run" << std::endl;
+	    }
+		this->_stateCode = 200;
+		// this->_headers["Path"] = path;
 		return true;
 	}
-	std::cout << "path is wrong." << std::endl;
 	this->_stateCode = 404;
 	return false;
 }

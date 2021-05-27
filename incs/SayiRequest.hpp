@@ -7,6 +7,7 @@
 # include <vector>
 # include <utility>
 # include <cstring>
+ #include <sys/stat.h>
 # include <unistd.h>
 # include "WebServerConstant.hpp"
 
