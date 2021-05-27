@@ -1,5 +1,5 @@
-#ifndef REQUEST_HPP
-# define REQUEST_HPP
+#ifndef PARSED_REQUEST_HPP
+# define PARSED_REQUEST_HPP
 
 # include <string>
 # include <map>
@@ -7,10 +7,11 @@
 # include <vector>
 # include <utility>
 # include <cstring>
+ #include <sys/stat.h>
 # include <unistd.h>
 # include "WebServerConstant.hpp"
 
-class Request
+class ParsedRequest
 {
 	public:
 	typedef	std::map<std::string, std::string> HeaderType;
@@ -29,12 +30,13 @@ class Request
 		bool		isValidVersion();
 
 		// bool		isValidContent();
+		bool		isAllowedMethod();
 	public:
-		Request();
-		Request(std::string const &request, bool isChunked);
-		Request(const Request& copy);
-		Request& operator=(const Request& obj);
-		virtual ~Request();
+		ParsedRequest();
+		ParsedRequest(std::string const &request, bool isChunked);
+		ParsedRequest(const ParsedRequest& copy);
+		ParsedRequest& operator=(const ParsedRequest& obj);
+		virtual ~ParsedRequest();
 
 		int			getStateCode();
 		HeaderType	getHeaders();
