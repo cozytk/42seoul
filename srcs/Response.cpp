@@ -258,11 +258,10 @@ std::string Response::writeResponseMsg() const
 std::string getDateHeader()
 {
 	char buff[1024];
-	struct tm t;
-	timeval now;
+	struct tm *t;
+	time_t now = time(NULL);
 
-	gettimeofday(&now, NULL);
-	ft::convertTimespecToTm(now.tv_sec, &t);
-	strftime(buff, sizeof(buff), "%a, %d %b %Y %X GMT", &t);
+	t = localtime(&now);
+	strftime(buff, 1024, "%a, %d %b %Y %X GMT", t);
 	return ("Last-Modified:" + std::string(buff));
 }

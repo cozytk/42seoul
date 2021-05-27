@@ -6,13 +6,13 @@
 # include <vector>
 # include <map>
 # include <stack>
+# include <ctime>
 
 /* header C */
 # include <unistd.h>
 # include <fcntl.h>
 # include <signal.h>
 # include <sys/stat.h>
-# include <sys/time.h>
 
 /* network C */
 # include <sys/socket.h>
