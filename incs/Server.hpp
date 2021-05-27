@@ -4,7 +4,7 @@
 # include <webserv.hpp>
 
 # include "ServerManager.hpp"
-# include "SayiRequest.hpp"
+# include "ParsedRequest.hpp"
 
 class ServerManager;
 
@@ -40,7 +40,7 @@ private:
 	int							_socket;
 	int							_port;
 	//std::vector<Location>		_locations;
-	SayiRequest *					_sayi_req;
+	ParsedRequest *					_parsed_req;
 
 public:
 	/* exception */

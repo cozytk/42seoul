@@ -149,8 +149,8 @@ int Server::recv(int socket) {
 	this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length) {
 		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
-		this->_sayi_req = new SayiRequest(this->_request[socket]->_buffer, false);
-		std::cout << "[" << this->_sayi_req->getBody() << "]" << std::endl;
+		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, false);
+		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
 
 		return (ALL_RECV);
 	}
@@ -160,8 +160,8 @@ int Server::recv(int socket) {
 		this->_request[socket]->_buffer.find("\r\n0\r\n") != std::string::npos) {
 		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
-		this->_sayi_req = new SayiRequest(this->_request[socket]->_buffer, true);
-		std::cout << "[" << this->_sayi_req->getBody() << "]" << std::endl;
+		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, true);
+		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
 		return (ALL_RECV);
 	}
 	return (WAIT_RECV);
@@ -175,18 +175,18 @@ int Server::send(int socket) {
 	std::string body;
 	std::string header;
 	/* tmp */
-	this->_sayi_req->isValid();
-	std::string stateCode = ft::to_string(this->_sayi_req->getStateCode());
+	this->_parsed_req->isValid();
+	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
 
-	if (this->_sayi_req->getHeaders()["Type"] == "GET")
+	if (this->_parsed_req->getHeaders()["Type"] == "GET")
 		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\n\n";
-	if (this->_sayi_req->getHeaders()["Type"] == "POST")
+	if (this->_parsed_req->getHeaders()["Type"] == "POST")
 	{
 		body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
 		header = "HTTP/1.1 " + stateCode + " NOK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 
 	}
-	if (this->_sayi_req->getHeaders()["Type"] == "HEAD")
+	if (this->_parsed_req->getHeaders()["Type"] == "HEAD")
 		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\n\n";
 	// Content-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 
@@ -207,7 +207,7 @@ int Server::send(int socket) {
 	if (this->_request[socket]->_sent >= response.length()) {
 		return (ALL_SEND);
 	}
-	delete this->_sayi_req;
+	delete this->_parsed_req;
 	return (WAIT_SEND);
 }
 

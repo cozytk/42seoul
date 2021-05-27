@@ -1,5 +1,5 @@
-#ifndef SAYI_REQUEST_HPP
-# define SAYI_REQUEST_HPP
+#ifndef PARSED_REQUEST_HPP
+# define PARSED_REQUEST_HPP
 
 # include <string>
 # include <map>
@@ -11,7 +11,7 @@
 # include <unistd.h>
 # include "WebServerConstant.hpp"
 
-class SayiRequest
+class ParsedRequest
 {
 	public:
 	typedef	std::map<std::string, std::string> HeaderType;
@@ -32,11 +32,11 @@ class SayiRequest
 		// bool		isValidContent();
 		bool		isAllowedMethod();
 	public:
-		SayiRequest();
-		SayiRequest(std::string const &request, bool isChunked);
-		SayiRequest(const SayiRequest& copy);
-		SayiRequest& operator=(const SayiRequest& obj);
-		virtual ~SayiRequest();
+		ParsedRequest();
+		ParsedRequest(std::string const &request, bool isChunked);
+		ParsedRequest(const ParsedRequest& copy);
+		ParsedRequest& operator=(const ParsedRequest& obj);
+		virtual ~ParsedRequest();
 
 		int			getStateCode();
 		HeaderType	getHeaders();
