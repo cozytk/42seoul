@@ -7,6 +7,7 @@
 # include <map>
 # include <stack>
 # include <ctime>
+# include <queue>
 
 /* header C */
 # include <unistd.h>
@@ -58,6 +59,9 @@ namespace ft {
 	bool		isspace(char c);
 	int			atoi(char *str);
 	void		*memset(void *src, int val, size_t size);
+	int			tolower(int c);
+
+	void trim_space(std::string &str);
 
 	std::string	to_string(int n);
 
@@ -71,6 +75,15 @@ namespace ft {
 
 	/* key, value */
 	std::pair<std::string, std::string> headerPair(std::string str);
+
+	/* template */
+	template <typename Iterator>
+	void		transform(Iterator first, Iterator last, int (*func)(int)) {
+		while (first != last) {
+			*first = func(*first);
+			++first;
+		}
+	}
 }
 
 #endif

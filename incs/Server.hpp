@@ -4,6 +4,7 @@
 # include <webserv.hpp>
 
 # include "ServerManager.hpp"
+# include "ParsedRequest.hpp"
 
 class ServerManager;
 
@@ -32,15 +33,18 @@ private:
 		Request &operator=(Request const &x);
 
 		void parseHeader(std::string const &header);
+
+		void clear();
 	};
 
 	std::map<int, Request *>	_request;
 	sockaddr_in					_addr;
 	int							_socket;
 	int							_port;
-	//std::vector<Location>		_locations;
+	Config::node *				_server_conf;
+	ParsedRequest *				_parsed_req;
 
-public:	
+public:
 	/* exception */
 	class CreateException : public std::exception {
 		virtual const char *what() const throw();

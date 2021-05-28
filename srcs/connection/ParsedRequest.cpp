@@ -1,4 +1,4 @@
-#include "Request.hpp"
+#include "ParsedRequest.hpp"
 
 /* ************************************************************************** */
 /* ---------------------------- STATIC VARIABLE ----------------------------- */
@@ -10,22 +10,18 @@
 /* ------------------------------ CONSTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Request::Request() {}
-Request::Request(std::string const &request, bool isChunked):
-_isChunked(isChunked)
+ParsedRequest::ParsedRequest() {}
+ParsedRequest::ParsedRequest(std::string const &request,  Config::node *config):
+_config(config)
 {
 	size_t headEnd = request.find("\r\n\r\n");
 //	todo constructor should work without isChucked
-	if (this->_isChunked)
-		parseBody(request);
-	else {
-		parseHead(request);
-		if (headEnd + 4 < request.length())
-			parseBody(request.substr(headEnd + 4));
-	}
+	parseHead(request);
+	if (headEnd + 4 < request.length())
+		parseBody(request.substr(headEnd + 4));
 }
 
-void				Request::parseHead(std::string const &request) {
+void				ParsedRequest::parseHead(std::string const &request) {
 	size_t headEnd = request.find("\r\n\r\n");
 	size_t head = 0;
 	size_t tail = 0;
@@ -55,7 +51,7 @@ void				Request::parseHead(std::string const &request) {
 		this->_headers[request.substr(head, (colone) - head)] = request.substr(colone + 2, tail - (colone + 2));
 	}
 }
-void				Request::parseBody(std::string const &body)
+void				ParsedRequest::parseBody(std::string const &body)
 {
 	if (isExistHeader("Transfer-Encoding") && this->_headers["Transfer-Encoding"] == "chunked")
 		this->_isChunked = true;
@@ -68,10 +64,21 @@ void				Request::parseBody(std::string const &body)
 		// 	return ;
 		// }
 		if (body.find("0\r\n") != std::string::npos)
-			this->_isChunked = false; } this->_body = body; this->_stateCode = 200; } Request::Request(const Request& copy) : _headers(copy._headers), _body(copy._body), _isChunked(copy._isChunked) {} /* ************************************************************************** */ /* ------------------------------- DESTRUCTOR ------------------------------- */
+			this->_isChunked = false;
+	}
+	this->_body = body;
+	this->_stateCode = 200;
+}
+
+ParsedRequest::ParsedRequest(const ParsedRequest& copy)
+: _headers(copy._headers), _body(copy._body), _isChunked(copy._isChunked)
+{}
+
+/* ************************************************************************** */
+/* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
 
-Request::~Request()
+ParsedRequest::~ParsedRequest()
 {
 	/* destructor code */
 }
@@ -80,7 +87,7 @@ Request::~Request()
 /* -------------------------------- OVERLOAD -------------------------------- */
 /* ************************************************************************** */
 
-Request& Request::operator=(const Request& obj)
+ParsedRequest& ParsedRequest::operator=(const ParsedRequest& obj)
 {
 	if (this == &obj)
 		return (*this);
@@ -92,17 +99,17 @@ Request& Request::operator=(const Request& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-Request::HeaderType	Request::getHeaders() const
+ParsedRequest::HeaderType	ParsedRequest::getHeaders()
 {
 	return (this->_headers);
 }
 
-std::string			Request::getBody()
+std::string			ParsedRequest::getBody()
 {
 	return (this->_body);
 }
 
-int					Request::getStateCode()
+int					ParsedRequest::getStateCode()
 {
 	return (this->_stateCode);
 }
@@ -135,23 +142,31 @@ int					Request::getStateCode()
 /* ************************************************************************** */
 
 
-bool				Request::isValidStart() {
+bool				ParsedRequest::isValidStart() {
 	if (!isValidType() || !isValidPath() || !isValidVersion())
 		return false;
 	this->_stateCode = 200;
 	return true;
 }
 
-bool				Request::isValidType() {
-	std::string _methods[8] = {"GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS"};
-	size_t i = 0;
-
+bool				ParsedRequest::isValidType() {
+	size_t i = -1;
+	std::string	methods[8] = {
+		"GET",
+		"HEAD",
+		"POST",
+		"PUT",
+		"DELETE",
+		"CONNECT",
+		"OPTIONS",
+		"TRACE"
+	};
 	if (!isExistHeader("Type"))
 	{
 		this->_stateCode = 400;
 		return false;
 	}
-	while (i++ < 8)
+	while (++i < 8)
 	{
 		if (this->_headers["Type"] == _methods[i])
 			return true;
@@ -162,24 +177,76 @@ bool				Request::isValidType() {
 	return false;
 }
 
-bool				Request::isValidPath() {
-	if(isExistHeader("Path") && access(this->_headers["Path"].c_str(),F_OK) == 0){
-		std::cout << "path is correct." << std::endl;
+bool				ParsedRequest::isValidPath() {
+	std::string path;
+	struct stat s;
+	std::string res;
+
+		//
+		int i = 0;
+	std::cout << "configing" << std::endl;
+	std::cout << "server size: " << (*_config).size("location") << std::endl;
+	Config::node node;
+	node = (*_config);
+	std::cout << "get location: " << node.size("location") << std::endl;
+	std::vector<std::string> v;
+	i = 0;
+	while (i < node.size("location"))
+	{
+		std::cout << i << " th:" << (*node("location", i))[0] << std::endl;
+		if ((*node("location", i))[0] == "/")
+		{
+
+			std::cout << "got cat" << std::endl;
+			v = *(*_config)("http", 0)("server")("location", i);
+		}
+		i++;
+	}
+
+
+	i = 0;
+	std::cout << "location size: " << v.size() << std::endl;
+	while (i < v.size())
+	{
+		std::cout << i << "th: " << v[i] << std::endl;
+		i++;
+	}
+	//
+	if(!isExistHeader("Path")){
+		this->_stateCode = 400;
+		return false;
+	}
+	path = "." +this->_headers["Path"];
+	if( stat(path.c_str(),&s) == 0 )
+	{
+	    if( s.st_mode & S_IFDIR )
+	    {
+			if (path[(int)path.length() - 1] != '/')
+				path = path + "/";
+			path = path + "index.html";
+	    }
+	    else if( s.st_mode & S_IFREG )
+	    {
+			if (path.find(".bla") != std::string::npos ||
+			path.find(".bad_extension") != std::string::npos)
+				std::cout << "need cgi run" << std::endl;
+	    }
+		this->_stateCode = 200;
+		// this->_headers["Path"] = path;
 		return true;
 	}
-	std::cout << "path is wrong." << std::endl;
 	this->_stateCode = 404;
 	return false;
 }
 
-bool				Request::isValidVersion() {
-	if (isExistHeader("Version") && this->_headers["Version"] == "HTTP1.1")
+bool				ParsedRequest::isValidVersion() {
+	if (isExistHeader("Version") && this->_headers["Version"] == "HTTP/1.1")
 		return true;
 	this->_stateCode = 505;
 	return false;
 }
 
-// bool				Request::isValidContent() {
+// bool				ParsedRequest::isValidContent() {
 // 	std::string method = ;
 // 	// post, put without content-length 411, 400
 // 	this->_stateCode = 200;
@@ -202,20 +269,30 @@ bool				Request::isValidVersion() {
 // 	return true;
 // }
 
-bool				Request::isChunked() {
+bool				ParsedRequest::isAllowedMethod() {
+	if (this->_headers["Path"] == "/" && this->_headers["Type"] != "GET") {
+		this->_stateCode = 405;
+		return false;
+	}
+	return true;
+}
+
+bool				ParsedRequest::isChunked() {
 	return (this->_isChunked);
 }
 
-bool				Request::isValid() {
+bool				ParsedRequest::isValid() {
 	if (!isValidStart())
 		return false;
 	// if (!isValidContent())
 	// 	return false;
+	if (!isAllowedMethod())
+		return false;
 	this->_stateCode = 200;
 	return true;
 }
 
-bool				Request::isExistHeader(std::string in) {
+bool				ParsedRequest::isExistHeader(std::string in) {
 	if (this->_headers.find(in) == this->_headers.end())
 		return false;
 	return true;

@@ -1,5 +1,5 @@
-#ifndef REQUEST_HPP
-# define REQUEST_HPP
+#ifndef PARSED_REQUEST_HPP
+# define PARSED_REQUEST_HPP
 
 # include <string>
 # include <map>
@@ -7,37 +7,42 @@
 # include <vector>
 # include <utility>
 # include <cstring>
+# include <sys/stat.h>
 # include <unistd.h>
+# include <unistd.h>
+# include "Config.hpp"
 # include "WebServerConstant.hpp"
 
-class Request
+class ParsedRequest
 {
 	public:
 		typedef	std::map<std::string, std::string> HeaderType;
 	private:
-		HeaderType	_headers;
-		std::string	_body;
-		std::string	_mimeTypeHeader;
-		std::string	_lastModifiedHeader;
-		std::string _pathTranslated;
-		bool		_isChunked;
-		int			_stateCode;
+		std::string     _mimeTypeHeader;
+		std::string     _lastModifiedHeader;
+		std::string     _pathTranslated;
+		HeaderType		_headers;
+		std::string		_body;
+		bool			_isChunked;
+		int				_stateCode;
+		Config::node *	_config;
 
-		void		parseBody(std::string const &body);
-		void		parseHead(std::string const &request);
+		void			parseBody(std::string const &body);
+		void			parseHead(std::string const &request);
 
-		bool		isValidStart();
-		bool		isValidType();
-		bool		isValidPath();
-		bool		isValidVersion();
+		bool			isValidStart();
+		bool			isValidType();
+		bool			isValidPath();
+		bool			isValidVersion();
 
-		// bool		isValidContent();
+		// bool			isValidContent();
+		bool			isAllowedMethod();
 	public:
-		Request();
-		Request(std::string const &request, bool isChunked);
-		Request(const Request& copy);
-		Request& operator=(const Request& obj);
-		virtual ~Request();
+		ParsedRequest();
+		ParsedRequest(std::string const &request, Config::node *config);
+		ParsedRequest(const ParsedRequest& copy);
+		ParsedRequest& operator=(const ParsedRequest& obj);
+		virtual ~ParsedRequest();
 
 		int			getStateCode();
 		HeaderType	getHeaders() const;

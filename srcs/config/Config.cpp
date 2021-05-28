@@ -10,20 +10,11 @@ Config::node::node(node const &x) {
 }
 
 Config::node::~node() {
-	std::multimap<std::string, node *>::iterator it;
-	std::multimap<std::string, node *>::iterator n_it;
-
-	it = children.begin();
-	while (it != children.end()) {
-		n_it = it;
-		++n_it;
-		delete it->second;
-		children.erase(it);
-		it = n_it;
-	}
 }
 
 Config::node &Config::node::operator=(node const &x) {
+	this->value = x.value;
+	this->children = x.children;
 	return (*this);
 }
 
@@ -37,7 +28,7 @@ Config::node &Config::node::operator()(std::string name, int index) {
     for (std::multimap<std::string, node *>::iterator it = ret.first; it != ret.second; ++it)
 		arr.push_back(it->second);
 	if (arr.size() <= index)
-		throw OutOfBoundsException();
+		throw Config::OutOfBoundsException();
 	return (*arr[index]);
 }
 
@@ -76,8 +67,19 @@ Config::Config(Config const &x) {
 }
 
 Config::~Config() {
-	if (root != NULL)
-		delete root;
+	std::queue<node *> q;
+	node *top;
+	if (root == NULL)
+		return ;	
+
+	q.push(this->root);
+	while (!q.empty()) {
+		top = q.front();
+		for (std::multimap<std::string, node *>::iterator it = top->getChildren().begin(); it != top->getChildren().end(); it++)
+			q.push(it->second);
+		q.pop();
+		delete top;
+	}
 }
 
 Config &Config::operator=(Config const &x) {

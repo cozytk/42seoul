@@ -2,16 +2,19 @@ CXX			= clang++
 CXXFLAGS	= -std=c++98 #-Wall -Wextra -Werror
 
 MAIN		= main.cpp
-LIBFT		= libft.cpp 
+LIBFT		= libft.cpp
 
 CONFIG		= Config.cpp ConfigReader.cpp ConfigSyntax.cpp
 
 SERVER		= ServerManager.cpp Server.cpp
 
+CONNECTION	= ParsedRequest.cpp
+
 SRCS		= $(addprefix srcs/, $(MAIN)) \
 			  $(addprefix srcs/, $(LIBFT)) \
 			  $(addprefix srcs/config/, $(CONFIG)) \
-			  $(addprefix srcs/server/, $(SERVER))
+			  $(addprefix srcs/server/, $(SERVER)) \
+			  $(addprefix srcs/connection/, $(CONNECTION))
 
 INCS		= incs/
 
