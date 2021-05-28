@@ -11,8 +11,6 @@
   <component name="ChangeListManager">
     <list default="true" id="8eafbee1-8a1f-42b1-8e57-670bc8865f4b" name="디폴트 변경 목록" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/Response.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/Response.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/Response.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/Response.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
