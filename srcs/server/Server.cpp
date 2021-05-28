@@ -157,6 +157,9 @@ int Server::recv(int socket) {
 		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
+		RequestInspect inspect(this->_parsed_req);
+		inspect.isValid();
+
 		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
 		return (ALL_RECV);
 	}
@@ -168,6 +171,9 @@ int Server::recv(int socket) {
 		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
+		RequestInspect inspect(this->_parsed_req);
+		inspect.isValid();
+
 		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
 		return (ALL_RECV);
 	}
@@ -182,7 +188,6 @@ int Server::send(int socket) {
 	std::string body;
 	std::string header;
 	/* tmp */
-	this->_parsed_req->isValid();
 	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
 
 		body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
