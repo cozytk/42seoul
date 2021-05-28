@@ -1,9 +1,11 @@
 #include <webserv.hpp>
 
 #include "ServerManager.hpp"
+#include "CGI.hpp"
 
 int main()
 {
+	/*
 	ServerManager manager;
 
 	try
@@ -16,4 +18,9 @@ int main()
 		std::cerr << e.what() << std::endl;
 	}
 	manager.serverClose();
+	*/
+	CGI cgi;
+
+	cgi.execute();
+	std::cout << cgi.getBuffer() << std::endl;
 }

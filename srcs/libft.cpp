@@ -108,6 +108,29 @@ void	*ft::memset(void *_src, int val, size_t size) {
 	return (ptr);
 }
 
+size_t	ft::strlcpy(char *dst, char *src, size_t size)
+{
+	unsigned long	count;
+	unsigned long	ret;
+
+	count = 0;
+	ret = 0;
+	if (!dst || !src)
+		return (0);
+	while (*(src + ret))
+		ret++;
+	if (size > 0)
+	{
+		while (count < size - 1 && *src)
+		{
+			*(dst++) = *(src++);
+			count++;
+		}
+		*dst = '\0';
+	}
+	return (ret);
+}
+
 int		ft::tolower(int c) {
 	if ('A' <= c && c <= 'Z')
 		c += 32;

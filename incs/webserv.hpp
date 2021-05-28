@@ -32,6 +32,8 @@
 # define WAIT_SEND 0
 # define ALL_SEND 1
 
+# define CGI_BUFFER_SIZE 2048
+
 /* libft */
 namespace ft {
 	/* base64 */
@@ -57,6 +59,7 @@ namespace ft {
 	bool		isspace(char c);
 	int			atoi(char *str);
 	void		*memset(void *src, int val, size_t size);
+	size_t		strlcpy(char *dst, char *src, size_t size);
 	int			tolower(int c);
 
 	void trim_space(std::string &str);

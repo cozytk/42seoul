@@ -10,11 +10,14 @@ SERVER		= ServerManager.cpp Server.cpp
 
 CONNECTION	= ParsedRequest.cpp
 
+CGI			= CGI.cpp
+
 SRCS		= $(addprefix srcs/, $(MAIN)) \
 			  $(addprefix srcs/, $(LIBFT)) \
 			  $(addprefix srcs/config/, $(CONFIG)) \
 			  $(addprefix srcs/server/, $(SERVER)) \
-			  $(addprefix srcs/connection/, $(CONNECTION))
+			  $(addprefix srcs/connection/, $(CONNECTION)) \
+			  $(addprefix srcs/, $(CGI))
 
 INCS		= incs/
 
