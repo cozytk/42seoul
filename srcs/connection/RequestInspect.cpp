@@ -19,40 +19,47 @@ _req(copy._req)
 RequestInspect::RequestInspect(ParsedRequest *req):
 _req(req)
 {
-	Config::node				server_node;
-	Config::node				location_node;
-	std::string					root;
-	int							i = 0;
 	ParsedRequest::HeaderType	&header = (*_req).getHeaders();
-	std::string					path = header["Path"];
+	Config::node				server_node;
 	std::string					config_loc;
+	int							i = 0;
+	size_t						last = 0;
 
-/*
-** 	default server root
-*/
-	server_node = *((*this->_req).getConfig());
-	if (server_node.size("root") > 0)
-		this->_root = (*server_node("root"))[0];
-/*
-** 	location init
-*/
+	this->_serv_node = (*this->_req).getConfig();
+	server_node = *this->_serv_node;
 	while (i < server_node.size("location"))
 	{
 		config_loc = (*server_node("location", i))[0];
-		if (path.find(config_loc) == (size_t) 0)
+		last = config_loc.length() - (size_t)1;
+		if (config_loc[last] == '*')
 		{
-			this->_location = config_loc;
+			if (header["Path"].find(config_loc.substr(0, last)) == (size_t) 0)
+			{
+				this->_loc_node = &server_node("location", i);
+				break;
+			}
+		}
+		else if (header["Path"] == config_loc) {
+			this->_loc_node = &server_node("location", i);
 			break;
 		}
 		i++;
 	}
-/*
-** 	location root
-*/
-	// i = 0;
-	// while (i < node("location"))
+
+	configRoot(this->_serv_node);
+	if (this->_loc_node)
+		configRoot(this->_loc_node);
+	configMethod(this->_serv_node);
+	if (this->_loc_node)
+		configMethod(this->_loc_node);
+	while ((size_t)i < this->_allow_methods.size())
+	{
+		std::cout << this->_allow_methods[i] << std::endl;
+		i++;
+	}
 
 }
+
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
@@ -130,45 +137,47 @@ bool				RequestInspect::isValidType() {
 	return false;
 }
 
+void			RequestInspect::configRoot(Config::node* node_ptr)
+{
+	Config::node				node;
+
+	node = *node_ptr;
+	if (node_ptr && node.size("root") > 0)
+		this->_root = (*node("root"))[0];
+}
+
+void			RequestInspect::configMethod(Config::node* node_ptr)
+{
+	size_t						i = 0;
+	if ((*node_ptr).size("allow_method") > 0)
+		this->_allow_methods = *((*node_ptr)("allow_method"));
+	else if (this->_allow_methods.empty()) {
+		std::string methods[8] = {
+			"GET",
+			"HEAD",
+			"POST",
+			"PUT",
+			"DELETE",
+			"CONNECT",
+			"OPTIONS",
+			"TRACE"
+		};
+		std::vector<std::string> tmp(methods, methods + 8);
+		this->_allow_methods = tmp;
+	}
+}
+
 bool				RequestInspect::isValidPath() {
 	struct stat					s;
 	std::string 				res;
 	std::string					path;
 	ParsedRequest::HeaderType	&header = (*_req).getHeaders();
-	Config::node				*config = (*_req).getConfig();
-		//
-	int i = 0;
-	std::cout << "configing" << std::endl;
-	std::cout << "server size: " << (*config).size("location") << std::endl;
-	Config::node node;
-	node = (*config);
-	std::cout << "get location: " << node.size("location") << std::endl;
-	std::vector<std::string> v;
-	i = 0;
-	while (i < node.size("location"))
-	{
-		std::cout << i << " th:" << (*node("location", i))[0] << std::endl;
-		if ((*node("location", i))[0] == "/")
-		{
-			std::cout << "root apply" << std::endl;
-			v = *(*config)("location", i);
-		}
-		i++;
-	}
 
-	i = 0;
-	std::cout << "location size: " << v.size() << std::endl;
-	while (i < v.size())
-	{
-		std::cout << i << "th: " << v[i] << std::endl;
-		i++;
-	}
-	//
 	if(!(*_req).isExistHeader("Path")){
 		(*_req).setStateCode(400);
 		return false;
 	}
-	path = "." + header["Path"];
+	path = this->_root + header["Path"];
 	if( stat(path.c_str(),&s) == 0 )
 	{
 	    if( s.st_mode & S_IFDIR )
@@ -190,11 +199,6 @@ bool				RequestInspect::isValidPath() {
 	(*_req).setStateCode(404);
 	return false;
 }
-
-// void				RequestInspect::applyRoot() {
-
-// 	header["Path"] = this->_root + path;
-// }
 
 bool				RequestInspect::isValidVersion() {
 	ParsedRequest::HeaderType &header = (*_req).getHeaders();
@@ -248,3 +252,13 @@ bool				RequestInspect::isValid() {
 	(*_req).setStateCode(200);
 	return true;
 }
+
+/*
+** root ✅
+** allow_method
+** index
+** client_max_body_size
+** error_page
+** autoindex
+** sever_name maybe
+*/
