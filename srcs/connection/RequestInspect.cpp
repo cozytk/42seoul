@@ -135,35 +135,7 @@ bool				RequestInspect::isValidPath() {
 	std::string 				res;
 	std::string					path;
 	ParsedRequest::HeaderType	&header = (*_req).getHeaders();
-	Config::node				*config = (*_req).getConfig();
-		//
-	int i = 0;
-	std::cout << "configing" << std::endl;
-	std::cout << "server size: " << (*config).size("location") << std::endl;
-	Config::node node;
-	node = (*config);
-	std::cout << "get location: " << node.size("location") << std::endl;
-	std::vector<std::string> v;
-	i = 0;
-	while (i < node.size("location"))
-	{
-		std::cout << i << " th:" << (*node("location", i))[0] << std::endl;
-		if ((*node("location", i))[0] == "/")
-		{
-			std::cout << "root apply" << std::endl;
-			v = *(*config)("location", i);
-		}
-		i++;
-	}
 
-	i = 0;
-	std::cout << "location size: " << v.size() << std::endl;
-	while (i < v.size())
-	{
-		std::cout << i << "th: " << v[i] << std::endl;
-		i++;
-	}
-	//
 	if(!(*_req).isExistHeader("Path")){
 		(*_req).setStateCode(400);
 		return false;
