@@ -118,7 +118,7 @@ bool				RequestInspect::isValidPath() {
 		{
 
 			std::cout << "got cat" << std::endl;
-			v = *(*config)("http", 0)("server")("location", i);
+			v = *(*config)("location", i);
 		}
 		i++;
 	}
@@ -130,11 +130,14 @@ bool				RequestInspect::isValidPath() {
 		std::cout << i << "th: " << v[i] << std::endl;
 		i++;
 	}
+
+	
 	//
 	if(!(*_req).isExistHeader("Path")){
 		(*_req).setStateCode(400);
 		return false;
 	}
+	/*
 	path = "." + header["Path"];
 	if( stat(path.c_str(),&s) == 0 )
 	{
@@ -155,6 +158,7 @@ bool				RequestInspect::isValidPath() {
 		return true;
 	}
 	(*_req).setStateCode(404);
+	*/
 	return false;
 }
 
