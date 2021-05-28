@@ -6,6 +6,7 @@
 # include <vector>
 # include <map>
 # include <stack>
+# include <queue>
 
 /* header C */
 # include <unistd.h>
