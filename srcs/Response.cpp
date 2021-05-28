@@ -127,9 +127,9 @@ void Response::sortMethod(Connection& connection, const Request& request)
 
 	if (method == "TRACE")
 		runTrace(connection, request);
-	else if (request.get_uri_type() == "DIRECTORY")
+	else if (request.getUriType() == "DIRECTORY")
 		return (runAutoindex(connection, request));
-	else if (request.get_uri_type() == "CGI_PROGRAM")
+	else if (request.getUriType() == "CGI_PROGRAM")
 		return (runCGI(connection, request));
 	else if (method == "GET")
 		runGetHead(connection, request, GET);
@@ -168,7 +168,7 @@ void Response::runGetHead(Connection& connection, const Request& request, bool m
 	std::string body;
 
 	try {
-		body = fileToString(path, 20000000);
+		body = fileToString(path, _limitClientBodySize);
 	} catch (std::overflow_error& e) {
 		return (response400(connection, 413));
 	}
@@ -296,6 +296,15 @@ void Response::response400(Connection& connection, int status)
 	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Response::status[status]);
 	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Response::status[status]);
 	body.replace(body.find("#PORT"), 5, ft::to_string(_port));
+	/*
+	 * todo Transfer-Encoding
+	 */
+	headers.push_back(setContentLanguage());
+	headers.push_back("Connection:close");
+	/*
+    * todo response generate, header factoring
+	 */
+
 }
 void Response::response500(Connection& connection, int status, headers_t headers, std::string body)
 {

@@ -20,6 +20,7 @@ class Response
 		std::string _serverName;
 		std::string _errorPage;
 		int _port;
+		int _limitClientBodySize = 20000000;
 	public:
 		Response();
 		Response(const std::string& /* parameter */, ...);
