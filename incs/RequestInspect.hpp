@@ -6,13 +6,16 @@
 class RequestInspect
 {
 	private:
-		ParsedRequest *	_req;
+		ParsedRequest	*_req;
+		std::string		_root;
+		std::string		_location;
 
 		RequestInspect();
 
 		bool			isValidStart();
 		bool			isValidType();
 		bool			isValidPath();
+		// void			applyRoot();
 		bool			isValidVersion();
 
 		// bool			isValidContent();

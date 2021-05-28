@@ -10,17 +10,6 @@ Config::node::node(node const &x) {
 }
 
 Config::node::~node() {
-	std::multimap<std::string, node *>::iterator it;
-	std::multimap<std::string, node *>::iterator n_it;
-
-	it = children.begin();
-	while (it != children.end()) {
-		n_it = it;
-		++n_it;
-		delete it->second;
-		children.erase(it);
-		it = n_it;
-	}
 }
 
 Config::node &Config::node::operator=(node const &x) {

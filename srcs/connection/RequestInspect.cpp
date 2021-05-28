@@ -18,7 +18,41 @@ _req(copy._req)
 
 RequestInspect::RequestInspect(ParsedRequest *req):
 _req(req)
-{}
+{
+	Config::node				server_node;
+	Config::node				location_node;
+	std::string					root;
+	int							i = 0;
+	ParsedRequest::HeaderType	&header = (*_req).getHeaders();
+	std::string					path = header["Path"];
+	std::string					config_loc;
+
+/*
+** 	default server root
+*/
+	server_node = *((*this->_req).getConfig());
+	if (server_node.size("root") > 0)
+		this->_root = (*server_node("root"))[0];
+/*
+** 	location init
+*/
+	while (i < server_node.size("location"))
+	{
+		config_loc = (*server_node("location", i))[0];
+		if (path.find(config_loc) == (size_t) 0)
+		{
+			this->_location = config_loc;
+			break;
+		}
+		i++;
+	}
+/*
+** 	location root
+*/
+	// i = 0;
+	// while (i < node("location"))
+
+}
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
@@ -101,9 +135,9 @@ bool				RequestInspect::isValidPath() {
 	std::string 				res;
 	std::string					path;
 	ParsedRequest::HeaderType	&header = (*_req).getHeaders();
-	Config::node *				config = (*_req).getConfig();
+	Config::node				*config = (*_req).getConfig();
 		//
-		int i = 0;
+	int i = 0;
 	std::cout << "configing" << std::endl;
 	std::cout << "server size: " << (*config).size("location") << std::endl;
 	Config::node node;
@@ -116,8 +150,7 @@ bool				RequestInspect::isValidPath() {
 		std::cout << i << " th:" << (*node("location", i))[0] << std::endl;
 		if ((*node("location", i))[0] == "/")
 		{
-
-			std::cout << "got cat" << std::endl;
+			std::cout << "root apply" << std::endl;
 			v = *(*config)("location", i);
 		}
 		i++;
@@ -130,14 +163,11 @@ bool				RequestInspect::isValidPath() {
 		std::cout << i << "th: " << v[i] << std::endl;
 		i++;
 	}
-
-	
 	//
 	if(!(*_req).isExistHeader("Path")){
 		(*_req).setStateCode(400);
 		return false;
 	}
-	/*
 	path = "." + header["Path"];
 	if( stat(path.c_str(),&s) == 0 )
 	{
@@ -158,9 +188,13 @@ bool				RequestInspect::isValidPath() {
 		return true;
 	}
 	(*_req).setStateCode(404);
-	*/
 	return false;
 }
+
+// void				RequestInspect::applyRoot() {
+
+// 	header["Path"] = this->_root + path;
+// }
 
 bool				RequestInspect::isValidVersion() {
 	ParsedRequest::HeaderType &header = (*_req).getHeaders();
