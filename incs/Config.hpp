@@ -12,6 +12,7 @@ class Config
 	friend class ServerManager;
 	friend class Server;
 	friend class ParsedRequest;
+	friend class RequestInspect;
 
 private:
 	/* node */

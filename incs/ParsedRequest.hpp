@@ -27,13 +27,6 @@ class ParsedRequest
 		void			parseBody(std::string const &body);
 		void			parseHead(std::string const &request);
 
-		bool			isValidStart();
-		bool			isValidType();
-		bool			isValidPath();
-		bool			isValidVersion();
-
-		// bool			isValidContent();
-		bool			isAllowedMethod();
 	public:
 		ParsedRequest();
 		ParsedRequest(std::string const &request, Config::node *config);
@@ -41,13 +34,15 @@ class ParsedRequest
 		ParsedRequest& operator=(const ParsedRequest& obj);
 		virtual ~ParsedRequest();
 
-		int			getStateCode();
-		HeaderType	getHeaders();
-		std::string	getBody();
+		int					getStateCode();
+		HeaderType			&getHeaders();
+		std::string			getBody();
+		Config::node *		getConfig();
 
-		bool		isChunked();
-		bool		isValid();
-		bool		isExistHeader(std::string in);
+		void				setStateCode(int state);
+
+		bool				isChunked();
+		bool				isExistHeader(std::string in);
 
 };
 //Accept-Charsets
