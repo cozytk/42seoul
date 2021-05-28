@@ -43,7 +43,7 @@ class Request
 		HeaderType	getHeaders() const;
 		std::string	getBody();
 		/*
-		 * taekkim add
+		 * taekkim
 		 */
 		std::string getPathTranslated() const;
 

@@ -14,8 +14,12 @@ class Response
 {
 	public:
 		typedef std::vector<std::string> headers_t;
+		static std::map<int, std::string> status;
 	private:
 		std::map<std::string, std::string> _headers;
+		std::string _serverName;
+		std::string _errorPage;
+		int _port;
 	public:
 		Response();
 		Response(const std::string& /* parameter */, ...);
@@ -32,9 +36,14 @@ class Response
 		void response400(Connection& connection, int status, headers_t headers, std::string body);
 		void response500(Connection& connection, int status, headers_t headers, std::string body);
 		std::string fileToString(std::string path, int limit);
+		static std::string getMethod() { return ("");}
 		std::string getMimeTypeHeader(std::string path) const;
-		std::string getDateHeader();
 		static time_t getLastModifiedHeader(const std::string& path);
+		std::string getServerName() const;
+		std::string setLastModified();
+		std::string setServerName();
+		std::string setContentLength(const std::string &body);
+		std::string setContentLanguage();
 };
 
 /* global operator overload */

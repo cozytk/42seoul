@@ -4,6 +4,51 @@
 /* ---------------------------- STATIC VARIABLE ----------------------------- */
 /* ************************************************************************** */
 
+std::map<int, std::string> make_status ()
+{
+	std::map<int, std::string> status_map;
+
+	status_map[100] = "Continue";
+	status_map[200] = "OK";
+	status_map[201] = "Created";
+	status_map[202] = "Accepted";
+	status_map[204] = "No Content";
+	status_map[205] = "Reset Content";
+	status_map[206] = "Partial Content";
+	status_map[299] = "CGI OK";
+	status_map[300] = "Multiple Choice";
+	status_map[301] = "Moved Permanently";
+	status_map[303] = "See Other";
+	status_map[305] = "Use Proxy";
+	status_map[307] = "Temporary Redirect";
+	status_map[400] = "Bad Request";
+	status_map[401] = "Unauthorized";
+	status_map[403] = "Forbidden";
+	status_map[404] = "Not Found";
+	status_map[405] = "Method Not Allowed";
+	status_map[406] = "Not Acceptable";
+	status_map[407] = "Proxy Authentication Required";
+	status_map[408] = "Request Timeout";
+	status_map[409] = "Conflict";
+	status_map[410] = "Gone";
+	status_map[411] = "Length Required";
+	status_map[412] = "Precondition Failed";
+	status_map[413] = "Payload Too Large";
+	status_map[414] = "URI Too Long";
+	status_map[415] = "Unsupported Media Type";
+	status_map[416] = "Requested Range Not Satisfiable";
+	status_map[417] = "Expectation Failed";
+	status_map[500] = "Internal Server Error";
+	status_map[501] = "Not Implemented";
+	status_map[503] = "Service Unavailable";
+	status_map[504] = "Gateway Timeout";
+	status_map[505] = "HTTP Version Not Supported";
+
+	return (status_map);
+}
+
+std::map<int, std::string> Response::status = make_status();
+
 /* static variable code */
 
 /* ************************************************************************** */
@@ -207,13 +252,28 @@ Server::executeDelete(Connection& connection, const Request& request) {
 
 void Response::response100(Connection& connection, int status, headers_t headers, std::string body)
 {
-
 }
 
 void Response::response200(Connection& connection, int status, headers_t headers, std::string body)
 {
-	headers.push_back(getDateHeader());
-	headers.push_back(getServerHeader(this));
+	headers.push_back(setLastModified());
+	headers.push_back(setServerName());
+	/* todo cgi response
+	if (status == CGI_SUCCESS_CODE)
+		createCGIResponse(status, headers, body);
+	*/
+
+	/*
+	 * todo when Trasfer-Encoding, skip
+	 */
+	headers.push_back(setContentLength(body));
+	if (!body.empty())
+		headers.push_back(setContentLanguage());
+	if (connection.getMethod() == "HEAD")
+		body = "";
+	/*
+	 * todo response generate, header factoring
+	 */
 }
 
 void Response::response300(Connection& connection, int status, headers_t headers, std::string body)
@@ -223,9 +283,20 @@ void Response::response300(Connection& connection, int status, headers_t headers
 
 void Response::response400(Connection& connection, int status)
 {
+	headers_t headers = headers_t();
+	std::string body;
 
+	body = "";
+	headers.push_back(setLastModified());
+	headers.push_back(setServerName());
+	/* todo cgi response */
+	body = _errorPage;
+	body.replace(body.find("#ERROR_CODE"), 11, ft::to_string(status));
+	body.replace(body.find("#ERROR_CODE"), 11, ft::to_string(status));
+	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Response::status[status]);
+	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Response::status[status]);
+	body.replace(body.find("#PORT"), 5, ft::to_string(_port));
 }
-
 void Response::response500(Connection& connection, int status, headers_t headers, std::string body)
 {
 
@@ -249,13 +320,19 @@ std::string Response::fileToString(std::string path, int limit)
 	return (str);
 }
 
+std::string Response::getServerName() const
+{
+
+}
+
+
 std::string Response::writeResponseMsg() const
 {
 	std::string msg;
 	std::map<std::string, std::string>::const_iterator it = this->_headers.begin();
 }
 
-std::string getDateHeader()
+std::string Response::setLastModified()
 {
 	char buff[1024];
 	struct tm *t;
@@ -264,4 +341,19 @@ std::string getDateHeader()
 	t = localtime(&now);
 	strftime(buff, 1024, "%a, %d %b %Y %X GMT", t);
 	return ("Last-Modified:" + std::string(buff));
+}
+
+std::string Response::setServerName()
+{
+	return ("Server: " + getServerName());
+}
+
+std::string Response::setContentLength(const std::string& body)
+{
+	return ("Content-Length:" + ft::to_string(body.size()));
+}
+
+std::string Response::setContentLanguage()
+{
+	return ("Content-Language:ko-KR");
 }
