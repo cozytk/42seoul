@@ -12,54 +12,13 @@
 
 RequestInspect::RequestInspect() {}
 
-RequestInspect::RequestInspect(const RequestInspect& copy):
-_req(copy._req)
+RequestInspect::RequestInspect(const RequestInspect& copy)
 {}
 
 RequestInspect::RequestInspect(ParsedRequest *req):
 _req(req)
 {
-	ParsedRequest::HeaderType	&header = (*_req).getHeaders();
-	Config::node				server_node;
-	std::string					config_loc;
-	int							i = 0;
-	size_t						last = 0;
-
-	this->_serv_node = (*this->_req).getConfig();
-	server_node = *this->_serv_node;
-	while (i < server_node.size("location"))
-	{
-		config_loc = (*server_node("location", i))[0];
-		last = config_loc.length() - (size_t)1;
-		if (config_loc[last] == '*')
-		{
-			if (header["Path"].find(config_loc.substr(0, last)) == (size_t) 0)
-			{
-				this->_loc_node = &server_node("location", i);
-				break;
-			}
-		}
-		else if (header["Path"] == config_loc) {
-			this->_loc_node = &server_node("location", i);
-			break;
-		}
-		i++;
-	}
-
-	configRoot(this->_serv_node);
-	if (this->_loc_node)
-		configRoot(this->_loc_node);
-	configMethod(this->_serv_node);
-	if (this->_loc_node)
-		configMethod(this->_loc_node);
-	while ((size_t)i < this->_allow_methods.size())
-	{
-		std::cout << this->_allow_methods[i] << std::endl;
-		i++;
-	}
-
 }
-
 /* ************************************************************************** */
 /* ------------------------------- DESTRUCTOR ------------------------------- */
 /* ************************************************************************** */
@@ -81,8 +40,6 @@ RequestInspect& RequestInspect::operator=(const RequestInspect& obj)
 /* ************************************************************************** */
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
-
-/* getter code */
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
@@ -137,36 +94,6 @@ bool				RequestInspect::isValidType() {
 	return false;
 }
 
-void			RequestInspect::configRoot(Config::node* node_ptr)
-{
-	Config::node				node;
-
-	node = *node_ptr;
-	if (node_ptr && node.size("root") > 0)
-		this->_root = (*node("root"))[0];
-}
-
-void			RequestInspect::configMethod(Config::node* node_ptr)
-{
-	size_t						i = 0;
-	if ((*node_ptr).size("allow_method") > 0)
-		this->_allow_methods = *((*node_ptr)("allow_method"));
-	else if (this->_allow_methods.empty()) {
-		std::string methods[8] = {
-			"GET",
-			"HEAD",
-			"POST",
-			"PUT",
-			"DELETE",
-			"CONNECT",
-			"OPTIONS",
-			"TRACE"
-		};
-		std::vector<std::string> tmp(methods, methods + 8);
-		this->_allow_methods = tmp;
-	}
-}
-
 bool				RequestInspect::isValidPath() {
 	struct stat					s;
 	std::string 				res;
@@ -177,7 +104,7 @@ bool				RequestInspect::isValidPath() {
 		(*_req).setStateCode(400);
 		return false;
 	}
-	path = this->_root + header["Path"];
+	path = this->_req->getRoot() + header["Path"];
 	if( stat(path.c_str(),&s) == 0 )
 	{
 	    if( s.st_mode & S_IFDIR )
@@ -253,12 +180,3 @@ bool				RequestInspect::isValid() {
 	return true;
 }
 
-/*
-** root ✅
-** allow_method
-** index
-** client_max_body_size
-** error_page
-** autoindex
-** sever_name maybe
-*/

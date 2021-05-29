@@ -19,6 +19,7 @@ _config(config)
 	parseHead(request);
 	if (headEnd + 4 < request.length())
 		parseBody(request.substr(headEnd + 4));
+	RequestConfig requestConfig(this);
 }
 
 void				ParsedRequest::parseHead(std::string const &request) {
@@ -109,6 +110,11 @@ std::string			ParsedRequest::getBody()
 	return (this->_body);
 }
 
+std::string			ParsedRequest::getRoot()
+{
+	return (this->_root);
+}
+
 int					ParsedRequest::getStateCode()
 {
 	return (this->_stateCode);
@@ -118,6 +124,7 @@ Config::node *		ParsedRequest::getConfig()
 {
 	return (this->_config);
 }
+
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */

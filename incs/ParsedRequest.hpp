@@ -1,5 +1,6 @@
 #ifndef PARSED_REQUEST_HPP
 # define PARSED_REQUEST_HPP
+class ParsedRequest;
 
 # include <string>
 # include <map>
@@ -10,6 +11,7 @@
 # include <sys/stat.h>
 # include <unistd.h>
 # include "Config.hpp"
+# include "RequestConfig.hpp"
 # include "WebServerConstant.hpp"
 
 class ParsedRequest
@@ -17,11 +19,14 @@ class ParsedRequest
 	public:
 	typedef	std::map<std::string, std::string> HeaderType;
 	private:
-		HeaderType		_headers;
-		std::string		_body;
-		bool			_isChunked;
-		int				_stateCode;
-		Config::node *	_config;
+		HeaderType					_headers;
+		std::string					_body;
+		bool						_isChunked;
+		int							_stateCode;
+		Config::node *				_config;
+		std::string					_root;
+		std::string					_index;
+		std::vector<std::string>	_allow_methods;
 
 		void			parseBody(std::string const &body);
 		void			parseHead(std::string const &request);
@@ -33,15 +38,16 @@ class ParsedRequest
 		ParsedRequest& operator=(const ParsedRequest& obj);
 		virtual ~ParsedRequest();
 
-		int					getStateCode();
-		HeaderType			&getHeaders();
-		std::string			getBody();
-		Config::node *		getConfig();
+		int						getStateCode();
+		HeaderType				&getHeaders();
+		std::string				getBody();
+		std::string				getRoot();
+		Config::node *			getConfig();
 
-		void				setStateCode(int state);
+		void					setStateCode(int state);
 
-		bool				isChunked();
-		bool				isExistHeader(std::string in);
+		bool					isChunked();
+		bool					isExistHeader(std::string in);
 
 };
 //Accept-Charsets
