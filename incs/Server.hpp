@@ -5,7 +5,7 @@
 
 # include "ServerManager.hpp"
 # include "ParsedRequest.hpp"
-# include "AutoIndex.hpp"
+# include "RequestInspect.hpp"
 
 class ServerManager;
 

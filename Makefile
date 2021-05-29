@@ -8,7 +8,7 @@ CONFIG		= Config.cpp ConfigReader.cpp ConfigSyntax.cpp
 
 SERVER		= ServerManager.cpp Server.cpp
 
-CONNECTION	= ParsedRequest.cpp
+CONNECTION	= ParsedRequest.cpp RequestInspect.cpp
 
 CGI			= CGI.cpp
 

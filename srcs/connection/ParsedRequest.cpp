@@ -99,7 +99,7 @@ ParsedRequest& ParsedRequest::operator=(const ParsedRequest& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-ParsedRequest::HeaderType	ParsedRequest::getHeaders()
+ParsedRequest::HeaderType	&ParsedRequest::getHeaders()
 {
 	return (this->_headers);
 }
@@ -114,11 +114,18 @@ int					ParsedRequest::getStateCode()
 	return (this->_stateCode);
 }
 
+Config::node *		ParsedRequest::getConfig()
+{
+	return (this->_config);
+}
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
 
-/* setter code */
+void				ParsedRequest::setStateCode(int state)
+{
+	this->_stateCode = state;
+}
 
 /* ************************************************************************** */
 /* ------------------------------- EXCEPTION -------------------------------- */
@@ -130,155 +137,8 @@ int					ParsedRequest::getStateCode()
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-
-bool				ParsedRequest::isValidStart() {
-	if (!isValidType() || !isValidPath() || !isValidVersion())
-		return false;
-	this->_stateCode = 200;
-	return true;
-}
-
-bool				ParsedRequest::isValidType() {
-	size_t i = -1;
-	std::string	methods[8] = {
-		"GET",
-		"HEAD",
-		"POST",
-		"PUT",
-		"DELETE",
-		"CONNECT",
-		"OPTIONS",
-		"TRACE"
-	};
-	if (!isExistHeader("Type"))
-	{
-		this->_stateCode = 400;
-		return false;
-	}
-	while (++i < 8)
-	{
-		if (this->_headers["Type"] == methods[i])
-			return true;
-	}
-	// get, head can't be 405
-	// todo should check server support method if not return 405
-	this->_stateCode = 400;
-	return false;
-}
-
-bool				ParsedRequest::isValidPath() {
-	std::string path;
-	struct stat s;
-	std::string res;
-
-		//
-		int i = 0;
-	std::cout << "configing" << std::endl;
-	std::cout << "server size: " << (*_config).size("location") << std::endl;
-	Config::node node;
-	node = (*_config);
-	std::cout << "get location: " << node.size("location") << std::endl;
-	std::vector<std::string> v;
-	i = 0;
-	while (i < node.size("location"))
-	{
-		std::cout << i << " th:" << (*node("location", i))[0] << std::endl;
-		if ((*node("location", i))[0] == "/")
-		{
-
-			std::cout << "got cat" << std::endl;
-			v = *(*_config)("http", 0)("server")("location", i);
-		}
-		i++;
-	}
-
-
-	i = 0;
-	std::cout << "location size: " << v.size() << std::endl;
-	while (i < v.size())
-	{
-		std::cout << i << "th: " << v[i] << std::endl;
-		i++;
-	}
-	//
-	if(!isExistHeader("Path")){
-		this->_stateCode = 400;
-		return false;
-	}
-	path = "." +this->_headers["Path"];
-	if( stat(path.c_str(),&s) == 0 )
-	{
-	    if( s.st_mode & S_IFDIR )
-	    {
-			if (path[(int)path.length() - 1] != '/')
-				path = path + "/";
-			path = path + "index.html";
-	    }
-	    else if( s.st_mode & S_IFREG )
-	    {
-			if (path.find(".bla") != std::string::npos ||
-			path.find(".bad_extension") != std::string::npos)
-				std::cout << "need cgi run" << std::endl;
-	    }
-		this->_stateCode = 200;
-		// this->_headers["Path"] = path;
-		return true;
-	}
-	this->_stateCode = 404;
-	return false;
-}
-
-bool				ParsedRequest::isValidVersion() {
-	if (isExistHeader("Version") && this->_headers["Version"] == "HTTP/1.1")
-		return true;
-	this->_stateCode = 505;
-	return false;
-}
-
-// bool				ParsedRequest::isValidContent() {
-// 	std::string method = ;
-// 	// post, put without content-length 411, 400
-// 	this->_stateCode = 200;
-// 	if (this->_headers["Type"] == ft::methods[POST] || method == ft::methods[PUT]) {
-// 		if (isExistHeader("Content-Length")) {
-// 			// ignore content-length since transfer-encoding contained
-// 			if (isExistHeader("Transfer-Encoding") && this->_headers["Transfer-Encoding"] != "identity")
-// 				return true;
-// 			// todo need stoi to check
-// 			if (this->_headers["Content-Length"] == this->_body.length())
-// 				return true;
-// 			// bad request
-// 			this->_stateCode = 400;
-// 			return false;
-// 		}
-// 		// request should contain content-length
-// 		this->_stateCode = 411;
-// 		return false;
-// 	}
-// 	return true;
-// }
-
-bool				ParsedRequest::isAllowedMethod() {
-	if (this->_headers["Path"] == "/" && this->_headers["Type"] != "GET") {
-		this->_stateCode = 405;
-		return false;
-	}
-	return true;
-}
-
 bool				ParsedRequest::isChunked() {
 	return (this->_isChunked);
-}
-
-bool				ParsedRequest::isValid() {
-	if (!isValidStart())
-		return false;
-	// if (!isValidContent())
-	// 	return false;
-	if (!isAllowedMethod())
-		return false;
-	this->_stateCode = 200;
-	return true;
 }
 
 bool				ParsedRequest::isExistHeader(std::string in) {
