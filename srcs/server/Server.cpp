@@ -186,12 +186,16 @@ int Server::send(int socket) {
 	int buf_size;
 
 	std::string body;
+
 	std::string header;
+
 	/* tmp */
+  this->_parsed_req->isValid();
 	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
 
-		body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
+  body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
 
+	
 	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
 		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 	}
@@ -219,7 +223,6 @@ int Server::send(int socket) {
 
 	std::cout << std::endl << "SEND ▼" << std::endl;
 	std::cout << "[" << buf << "]" << std::endl;
-
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
