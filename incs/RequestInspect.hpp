@@ -1,33 +1,30 @@
 #ifndef REQUEST_INSPECT_HPP
 # define REQUEST_INSPECT_HPP
 
-# include "ParsedRequest.hpp"
+#include "RequestConfig.hpp"
 
 class RequestInspect
 {
 	private:
 		ParsedRequest	*_req;
-		std::string		_root;
-		std::string		_location;
 
 		RequestInspect();
-
 		bool			isValidStart();
 		bool			isValidType();
 		bool			isValidPath();
-		// void			applyRoot();
 		bool			isValidVersion();
 
 		// bool			isValidContent();
 		bool			isAllowedMethod();
 	public:
 		RequestInspect(const RequestInspect& copy);
+		RequestInspect(RequestConfig con);
+		RequestInspect(ParsedRequest *req);
 		RequestInspect& operator=(const RequestInspect& obj);
 		virtual ~RequestInspect();
 
-		RequestInspect(ParsedRequest *req);
-
 		bool				isValid();
+		RequestConfig const	&getConfig();
 };
 
 #endif
