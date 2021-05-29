@@ -10,9 +10,9 @@
 
 RequestConfig::RequestConfig() {}
 RequestConfig::RequestConfig(ParsedRequest *req):
-_req(req), _max_body(0), _autoindex(false), _loc_node(NULL)
+_req(req), _loc_node(NULL)
 {
-	ParsedRequest::HeaderType	&header = (*_req).getHeaders();
+	ParsedRequest::HeaderType	&header = req->getHeaders();
 	Config::node				server_node;
 	std::string					config_loc;
 	size_t						i = 0;
@@ -42,7 +42,7 @@ _req(req), _max_body(0), _autoindex(false), _loc_node(NULL)
 		}
 		// config extension
 		else if (config_loc[0] == '.')
-			this->_extension = config_loc.substr(1, config_loc.size() - (size_t)1);
+			this->_req->_extension = config_loc.substr(1, config_loc.size() - (size_t)1);
 		i++;
 	}
 }
@@ -75,10 +75,6 @@ RequestConfig& RequestConfig::operator=(const RequestConfig& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-std::string const &				RequestConfig::getRoot() {
-	return (this->_root);
-}
-
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
@@ -96,8 +92,8 @@ void			RequestConfig::configMethod(Config::node* node_ptr)
 	size_t	i = 0;
 
 	if (node_ptr->size("allow_method") > 0)
-		this->_allow_methods = *((*node_ptr)("allow_method"));
-	else if (this->_allow_methods.empty()) {
+		this->_req->_allow_methods = *((*node_ptr)("allow_method"));
+	else if (this->_req->_allow_methods.empty()) {
 		std::string methods[8] = {
 			"GET",
 			"HEAD",
@@ -109,7 +105,7 @@ void			RequestConfig::configMethod(Config::node* node_ptr)
 			"TRACE"
 		};
 		std::vector<std::string> tmp(methods, methods + 8);
-		this->_allow_methods = tmp;
+		this->_req->_allow_methods = tmp;
 	}
 }
 
@@ -129,13 +125,12 @@ void			RequestConfig::configErrorPage(Config::node* node_ptr)
 			if (node.size(error_code) > 0)
 				error_page_path = (*node(error_code))[0];
 			else
-				error_page_path = this->_root + "error.html";
-			this->_error_page[error_code] = error_page_path;
+				error_page_path = this->_req->_root + "error.html";
+			this->_req->_error_page[error_code] = error_page_path;
 			i++;
 		}
 	}
 }
-
 
 void			RequestConfig::applyConfig(Config::node* node_ptr) {
 	Config::node				node;
@@ -144,16 +139,16 @@ void			RequestConfig::applyConfig(Config::node* node_ptr) {
 	{
 		node = *node_ptr;
 		if (node.size("root") > 0)
-			this->_root = (*node("root"))[0];
+			this->_req->_root = (*node("root"))[0];
 		if (node.size("index") > 0)
-			this->_index = *node("index");
+			this->_req->_index = *node("index");
 		configMethod(node_ptr);
 		if (node.size("client_max_body_size") > 0)
-			this->_max_body = ft::atoi(const_cast<char *>((*node("client_max_body_size"))[0].c_str()));
+			this->_req->_max_body = ft::atoi(const_cast<char *>((*node("client_max_body_size"))[0].c_str()));
 		if (node.size("autoindex") > 0 && (*node("autoindex"))[0] == "on")
-			this->_autoindex = true;
+			this->_req->_autoindex = true;
 		if (node.size("server_name") > 0)
-			this->_server_name = (*node("server_name"))[0];
+			this->_req->_server_name = (*node("server_name"))[0];
 		configErrorPage(node_ptr);
 	}
 }

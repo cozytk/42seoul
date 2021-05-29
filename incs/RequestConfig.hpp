@@ -24,14 +24,6 @@ class RequestConfig
 		ParsedRequest				*_req;
 		Config::node				*_serv_node;
 		Config::node				*_loc_node;
-		std::string					_root;
-		std::string					_extension;
-		std::string					_server_name;
-		int							_max_body;
-		bool						_autoindex;
-		std::vector<std::string>	_index;
-		std::vector<std::string>	_allow_methods;
-		ErrorPage					_error_page;
 
 		void			configErrorPage(Config::node* node_ptr);
 		void			configMethod(Config::node* node_ptr);
@@ -42,8 +34,6 @@ class RequestConfig
 		RequestConfig(const RequestConfig& copy);
 		RequestConfig& operator=(const RequestConfig& obj);
 		virtual ~RequestConfig();
-
-		std::string const &				getRoot();
 
 };
 
