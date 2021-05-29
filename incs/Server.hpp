@@ -7,6 +7,9 @@
 # include "ParsedRequest.hpp"
 # include "RequestInspect.hpp"
 
+#define GET 0
+#define HEAD 1
+
 class ServerManager;
 
 class Server {
@@ -18,12 +21,11 @@ private:
 	friend class Server;
 
 	private:
+		typedef std::vector<std::string> headers_t;
 		std::map<std::string, std::string> _headers;
 		std::string _buffer;
 		std::string _response;
-
 		int _length;
-
 		int _sent;
 
 	public:
@@ -82,5 +84,8 @@ public:
 	int recv(int socket);
 	int send(int socket);
 
+	void runGetHead(ParsedRequest *request, bool method);
+	void response200(Connection& connection, int status, headers_t headers, std::string body);
+	void response400(Connection& connection, int status);
 };
 #endif

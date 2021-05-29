@@ -44,8 +44,6 @@ class ParsedRequest
 		void				setStateCode(int state);
 		bool				isChunked();
 		bool				isExistHeader(std::string in);
-
-
 };
 //Accept-Charsets
 //Accept-Language

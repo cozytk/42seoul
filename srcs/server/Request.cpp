@@ -12,8 +12,8 @@
 
 Request::Request()
 {
-	_method = DEFAULT;
 }
+
 Request::Request(std::string const &request, bool isChuncked):
 		_isChuncked(isChuncked)
 {

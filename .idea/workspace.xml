@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
-    <generated />
+    <generated>
+      <config projectName="webserv" targetName="webserv" />
+    </generated>
   </component>
-  <component name="CMakeSettings">
+  <component name="CMakeSettings" AUTO_RELOAD="true">
     <configurations>
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8eafbee1-8a1f-42b1-8e57-670bc8865f4b" name="디폴트 변경 목록" comment="">
-      <change afterPath="$PROJECT_DIR$/incs/RequestInspect.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/srcs/connection/RequestInspect.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/cgi-sh.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/cgi_tester" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/incs/Config.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/incs/Config.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webserv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/incs/ParsedRequest.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/incs/ParsedRequest.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/incs/Server.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/incs/Server.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sample.conf" beforeDir="false" afterPath="$PROJECT_DIR$/sample.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/srcs/Response.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/Response.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/srcs/Response.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/Response.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/srcs/connection/ParsedRequest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/connection/ParsedRequest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/connection/SayiRequest.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/connection/a.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/connection/req.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/connection/test.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/srcs/libft.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/libft.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/srcs/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/srcs/server/Request.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/server/Request.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/srcs/server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/server/Server.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/srcs/server/ServerManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/server/ServerManager.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +34,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -85,6 +86,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="webserv" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="webserv" TARGET_NAME="webserv" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="webserv" RUN_TARGET_NAME="webserv">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -94,7 +100,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="0d7ce7d0-abb0-4b3c-94b9-cc7fd49a61c6" name="Default Changelist" comment="" />
+      <changelist id="8eafbee1-8a1f-42b1-8e57-670bc8865f4b" name="디폴트 변경 목록" comment="" />
       <created>1617894321165</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -108,6 +114,8 @@
       <workItem from="1622026906180" duration="8725000" />
       <workItem from="1622096371783" duration="3785000" />
       <workItem from="1622181442266" duration="891000" />
+      <workItem from="1622189621180" duration="3344000" />
+      <workItem from="1622277003712" duration="3207000" />
     </task>
     <servers />
   </component>

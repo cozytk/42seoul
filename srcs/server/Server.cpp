@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../../incs/Server.hpp"
 
 /* Request */
 Server::Request::Request() {
@@ -190,9 +190,10 @@ int Server::send(int socket) {
 	/* tmp */
 	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
 
-		body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
+	body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
 
 	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
+		runGetHead(this->_parsed_req, GET);
 		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 	}
 	if (this->_parsed_req->getHeaders()["Type"] == "POST")
@@ -201,6 +202,7 @@ int Server::send(int socket) {
 
 	}
 	if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
+		runGetHead(this->_parsed_req, HEAD);
 		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 		body = "";
 	}
@@ -229,3 +231,120 @@ int Server::send(int socket) {
 	return (WAIT_SEND);
 }
 
+void Server::runGetHead(ParsedRequest *request, bool method)
+{
+	std::string path = request.getConfig()->getChildren().find("");
+	std::string body;
+	headers_t headers(1, getMimeTypeHeader(path));
+
+	try {
+		body = fileToString(path, _getLimitClientBodySize);
+	} catch (std::overflow_error& e) {
+		return (response400(request, 413));
+	}
+	if (headers[0].empty())
+		return (response400(request, 415));
+	headers.push_back(reinterpret_cast<const char *>(getLastModifiedHeader(path)));
+	if (method == HEAD)
+		headers.push_back("content-length:" + ft::to_string(int(body.size())));
+	return (response200(request, 200, headers, body));
+}
+
+void Server::response200(Connection& connection, int status, headers_t headers, std::string body)
+{
+	headers.push_back(setLastModified());
+	headers.push_back(setServerName());
+	/* todo cgi response
+	if (status == CGI_SUCCESS_CODE)
+		createCGIResponse(status, headers, body);
+	*/
+
+	/*
+	 * todo when Trasfer-Encoding, skip
+	 */
+	headers.push_back(setContentLength(body));
+	if (!body.empty())
+		headers.push_back(setContentLanguage());
+	if (connection.getMethod() == "HEAD")
+		body = "";
+	/*
+	 * todo response generate, header factoring
+	 */
+}
+
+void Server::response400(Connection& connection, int status)
+{
+	headers_t headers = headers_t();
+	std::string body;
+
+	body = "";
+	headers.push_back(setLastModified());
+	headers.push_back(setServerName());
+	/* todo cgi response */
+	body = _errorPage;
+	body.replace(body.find("#ERROR_CODE"), 11, ft::to_string(status));
+	body.replace(body.find("#ERROR_CODE"), 11, ft::to_string(status));
+	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Response::status[status]);
+	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Response::status[status]);
+	body.replace(body.find("#PORT"), 5, ft::to_string(_port));
+	/*
+	 * todo Transfer-Encoding
+	 */
+	headers.push_back(setContentLanguage());
+	headers.push_back("Connection:close");
+	/*
+    * todo response generate, header factoring
+	 */
+
+}
+
+std::string fileToString(std::string path, int limit)
+{
+	char buf[1024];
+	int fd;
+	ssize_t cnt = 0;
+	std::string str;
+
+	if ((fd = open(path.c_str(), O_RDONLY)) == -1)
+		throw (std::invalid_argument("Invalid : " + path));
+	while ((cnt = read(fd, buf, 1024)) > 0)
+	{
+		str.append(buf, cnt);
+		if (limit != -1 && str.size() > limit)
+			throw (std::overflow_error("Overflow : " + path));
+	}
+	close(fd);
+	return (str);
+}
+
+std::string writeResponseMsg() const
+{
+	std::string msg;
+	std::map<std::string, std::string>::const_iterator it = this->_headers.begin();
+}
+
+std::string setLastModified()
+{
+	char buff[1024];
+	struct tm *t;
+	time_t now = time(NULL);
+
+	t = localtime(&now);
+	strftime(buff, 1024, "%a, %d %b %Y %X GMT", t);
+	return ("Last-Modified:" + std::string(buff));
+}
+
+std::string setServerName()
+{
+	return ("Server: " + getServerName());
+}
+
+std::string setContentLength(const std::string& body)
+{
+	return ("Content-Length:" + ft::to_string(body.size()));
+}
+
+std::string setContentLanguage()
+{
+	return ("Content-Language:ko-KR");
+}

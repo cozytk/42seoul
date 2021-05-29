@@ -146,8 +146,10 @@ bool				ParsedRequest::isExistHeader(std::string in) {
 		return false;
 	return true;
 }
-
-std::string Request::getPathTranslated() const
+/*
+std::string ParsedRequest::getPathTranslated() const
 {
 	return (_pathTranslated);
 }
+
+*/

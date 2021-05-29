@@ -13,7 +13,6 @@
 class Response
 {
 	public:
-		typedef std::vector<std::string> headers_t;
 		static std::map<int, std::string> status;
 	private:
 		std::map<std::string, std::string> _headers;

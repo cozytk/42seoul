@@ -117,6 +117,12 @@ operator<<(std::ostream& out, const Response& response)
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
+
+
+/*
+ * autoindex
+ */
+
 void Response::sortMethod(Connection& connection, const Request& request)
 {
 	std::string method = request.getHeaders()["Type"];
@@ -146,10 +152,6 @@ void Response::sortMethod(Connection& connection, const Request& request)
 	else
 		throw (400);
 }
-
-/*
- * autoindex
- */
 
 time_t Response::getLastModifiedHeader(const std::string& path)
 {
