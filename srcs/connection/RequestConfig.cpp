@@ -10,16 +10,15 @@
 
 RequestConfig::RequestConfig() {}
 RequestConfig::RequestConfig(ParsedRequest *req):
-_req(req)
+_req(req), _max_body(0), _autoindex(false), _loc_node(NULL)
 {
 	ParsedRequest::HeaderType	&header = (*_req).getHeaders();
 	Config::node				server_node;
 	std::string					config_loc;
-	int							i = 0;
+	size_t						i = 0;
 	size_t						last = 0;
 
 	this->_serv_node = (*this->_req).getConfig();
-	this->_loc_node = NULL;
 	server_node = *this->_serv_node;
 	applyConfig(this->_serv_node);
 	// location config apply
@@ -34,29 +33,18 @@ _req(req)
 			{
 				this->_loc_node = &server_node("location", i);
 				applyConfig(this->_loc_node);
-				break;
 			}
 		}
 		// non wildcard path
 		else if (header["Path"] == config_loc) {
 			this->_loc_node = &server_node("location", i);
 			applyConfig(this->_loc_node);
-			break;
 		}
 		// config extension
-		else if (config_loc[0] == '.') {
-			this->_extension = config_loc.substr(1, config_loc.size() - (size_t)2);
-		}
+		else if (config_loc[0] == '.')
+			this->_extension = config_loc.substr(1, config_loc.size() - (size_t)1);
 		i++;
 	}
-	//=
-	i = 0;
-	while ((size_t)i < this->_allow_methods.size())
-	{
-		std::cout << this->_allow_methods[i] << std::endl;
-		i++;
-	}
-	//=
 }
 
 RequestConfig::RequestConfig(const RequestConfig& copy):
@@ -103,20 +91,11 @@ std::string const &				RequestConfig::getRoot() {
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-void			RequestConfig::configRoot(Config::node* node_ptr)
-{
-	Config::node				node;
-
-	node = *node_ptr;
-	if (node_ptr && node.size("root") > 0)
-		this->_root = (*node("root"))[0];
-}
-
 void			RequestConfig::configMethod(Config::node* node_ptr)
 {
 	size_t	i = 0;
 
-	if ((*node_ptr).size("allow_method") > 0)
+	if (node_ptr->size("allow_method") > 0)
 		this->_allow_methods = *((*node_ptr)("allow_method"));
 	else if (this->_allow_methods.empty()) {
 		std::string methods[8] = {
@@ -134,36 +113,47 @@ void			RequestConfig::configMethod(Config::node* node_ptr)
 	}
 }
 
-// void			RequestConfig::configIndex(Config::node* node_ptr)
-// {
-// 	size_t						i = 0;
-// 	if ((*node_ptr).size("allow_method") > 0)
-// 		this->_allow_methods = *((*node_ptr)("allow_method"));
-// 	else if (this->_allow_methods.empty()) {
-// 		std::string methods[8] = {
-// 			"GET",
-// 			"HEAD",
-// 			"POST",
-// 			"PUT",
-// 			"DELETE",
-// 			"CONNECT",
-// 			"OPTIONS",
-// 			"TRACE"
-// 		};
-// 		std::vector<std::string> tmp(methods, methods + 8);
-// 		this->_allow_methods = tmp;
-// 	}
-// }
+void			RequestConfig::configErrorPage(Config::node* node_ptr)
+{
+	Config::node	node;
+	std::string		error_code;
+	std::string		error_page_path;
+	size_t			i = 0;
 
-
-void			RequestConfig::applyConfig(Config::node* nodeptr) {
-	if (nodeptr)
+	node = *node_ptr;
+	if (node.size("error_page") > 0)
 	{
-		configRoot(nodeptr);
-		configMethod(nodeptr);
-		// configIndex(nodeptr);
-		// configMaxBody(nodeptr);
-		// configErrorPage(nodeptr);
-		// configAutoIndex(nodeptr);
+		while (i < (*node("error_page")).size())
+		{
+			error_code = (*node("error_page"))[i];
+			if (node.size(error_code) > 0)
+				error_page_path = (*node(error_code))[0];
+			else
+				error_page_path = this->_root + "error.html";
+			this->_error_page[error_code] = error_page_path;
+			i++;
+		}
+	}
+}
+
+
+void			RequestConfig::applyConfig(Config::node* node_ptr) {
+	Config::node				node;
+
+	if (node_ptr)
+	{
+		node = *node_ptr;
+		if (node.size("root") > 0)
+			this->_root = (*node("root"))[0];
+		if (node.size("index") > 0)
+			this->_index = *node("index");
+		configMethod(node_ptr);
+		if (node.size("client_max_body_size") > 0)
+			this->_max_body = ft::atoi(const_cast<char *>((*node("client_max_body_size"))[0].c_str()));
+		if (node.size("autoindex") > 0 && (*node("autoindex"))[0] == "on")
+			this->_autoindex = true;
+		if (node.size("server_name") > 0)
+			this->_server_name = (*node("server_name"))[0];
+		configErrorPage(node_ptr);
 	}
 }
