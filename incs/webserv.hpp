@@ -8,16 +8,20 @@
 # include <stack>
 # include <queue>
 
+# include <ctime>
+
 /* header C */
 # include <unistd.h>
 # include <fcntl.h>
 # include <signal.h>
+# include <dirent.h>
 
 /* network C */
 # include <sys/socket.h>
 # include <netinet/in.h>
 
 /* type C */
+# include <sys/stat.h>
 # include <sys/types.h>
 # include <stddef.h>
 

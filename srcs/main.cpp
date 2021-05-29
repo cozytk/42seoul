@@ -1,7 +1,7 @@
 #include <webserv.hpp>
 
 #include "ServerManager.hpp"
-#include "CGI.hpp"
+#include "AutoIndex.hpp"
 
 int main()
 {
@@ -19,8 +19,8 @@ int main()
 	}
 	manager.serverClose();
 	*/
-	CGI cgi;
 
-	cgi.execute();
-	std::cout << cgi.getBuffer() << std::endl;
+	AutoIndex autoindex;
+
+	autoindex.path("/srcs/");
 }

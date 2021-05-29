@@ -1,0 +1,66 @@
+<html>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<style>
+.title {
+	font-size: 50px;
+}
+a {
+	list-style: none;
+	text-decoration: none;
+}
+li {
+	list-style: none;
+	margin: 30px;
+}
+.index {
+	border-bottom: 1px solid #ebebeb;
+	margin-bottom: 20px;
+}
+.name {
+	font-size: 18px;
+	display: inline-block;
+	width: 500px;
+}
+.time {
+	color: #616161;
+	font-size: 15px;
+	display: inline-block;
+	width: 200px;
+	text-align: right;
+}
+.size {
+	color: #616161;
+	font-size: 15px;
+	display: inline-block;
+	width: 100px;
+	text-align: right;
+}
+</style>
+<head>
+	<title>index of /srcs/</title>
+</head>
+<body>
+	<div id="app">
+		<span class="title">Index of {{ path }}</span>
+		<li class="index" v-for="(i, idx) in index" :key="{idx}">
+			<a :href="i.link">
+				<span class="name">{{ i.name }}</span>
+			</a>
+			<span class="time">{{ i.time }}</span>
+			<span class="size">{{ i.size }}</span>
+		</li>
+	</div>
+</body>
+<script>
+	new Vue({
+		el: '#app',
+		data: {
+			path: '/srcs/',
+			index: [
+				{ name: "server.cpp", time: "Sat May 29 16:12:58 2021", size: "8 KB", link: "http://127.0.0.1:8080/test1" },
+				{ name: "server.cpp", time: "Sat May 29 16:12:58 2021", size: "4 KB", link: "http://127.0.0.1:8080/test2" },
+			]
+		}
+	})
+</script>
+</html>

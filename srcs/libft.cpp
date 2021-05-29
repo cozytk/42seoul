@@ -81,6 +81,8 @@ std::string	ft::to_string(int n)
 	std::string ret = "";
 	int number = n;
 
+	if (n == 0)
+		return (std::string("0"));
 	if (n < 0)
 		number *= -1;
 	while (number) {
