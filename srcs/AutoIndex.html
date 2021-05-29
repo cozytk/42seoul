@@ -1,0 +1,61 @@
+<html>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<style>
+.title {
+	font-size: 50px;
+}
+a {
+	list-style: none;
+	text-decoration: none;
+}
+li {
+	list-style: none;
+	margin: 30px;
+}
+.index {
+	border-bottom: 1px solid #ebebeb;
+	margin-bottom: 20px;
+}
+.name {
+	font-size: 18px;
+	display: inline-block;
+	width: 500px;
+}
+.time {
+	color: #616161;
+	font-size: 15px;
+	display: inline-block;
+	width: 200px;
+	text-align: right;
+}
+.size {
+	color: #616161;
+	font-size: 15px;
+	display: inline-block;
+	width: 100px;
+	text-align: right;
+}
+</style>
+<head>
+	<title></title>
+</head>
+<body>
+	<div id="app">
+		<span class="title">Index of {{ path }}</span>
+		<li class="index" v-for="(i, idx) in index" :key="{idx}">
+			<a :href="i.link">
+				<span class="name">{{ i.name }}</span>
+			</a>
+			<span class="time">{{ i.time }}</span>
+			<span class="size">{{ i.size }}</span>
+		</li>
+	</div>
+</body>
+<script>
+	new Vue({
+		el: '#app',
+		data: {	
+		}
+	})
+</script>
+</html>

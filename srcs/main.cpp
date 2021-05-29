@@ -5,7 +5,6 @@
 
 int main()
 {
-	/*
 	ServerManager manager;
 
 	try
@@ -18,9 +17,4 @@ int main()
 		std::cerr << e.what() << std::endl;
 	}
 	manager.serverClose();
-	*/
-
-	AutoIndex autoindex;
-
-	autoindex.path("/srcs/");
 }

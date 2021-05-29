@@ -44,6 +44,8 @@ private:
 	std::string _basepath;
 	std::string _path;
 
+	std::string _page[3];
+
 public:
 	/* exception */
 	class DirectoryException : public std::exception {

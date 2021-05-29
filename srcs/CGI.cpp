@@ -45,7 +45,7 @@ void CGI::setEnvs() {
 	envs["REMOTE_IDENT"] = "";
 	envs["REMOTE_USER"] = "";
 
-	envs["REQUEST_METHOD"] = "GET";//tmp
+	envs["REQUEST_METHOD"] = "";
 	envs["REQUEST_URI"] = "";
 
 	envs["SCRIPT_NAME"] = "";

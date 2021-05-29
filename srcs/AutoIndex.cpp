@@ -8,13 +8,18 @@ std::string AutoIndex::File::units[6] = {"B", "KB", "MB", "GB", "TB", "Ex"};
 AutoIndex::File::File() {
 }
 
-AutoIndex::File::File(File const &x) {
+AutoIndex::File::File(File const &x) :
+	_type(x._type), _name(x._name), _time(x._time), _size(x._size) {
 }
 
 AutoIndex::File::~File() {
 }
 
 AutoIndex::File &AutoIndex::File::operator=(File const &x) {
+	this->_type = x._type;
+	this->_name = x._name;
+	this->_time = x._time;
+	this->_size = x._size;
 	return (*this);
 }
 
@@ -46,6 +51,25 @@ const char *AutoIndex::FileException::what() const throw() {
 
 /* coplien */
 AutoIndex::AutoIndex() {
+	std::string buffer = "";
+	char buf[2048];
+	int auto_fd;
+	int len;
+
+	if ((auto_fd = open("srcs/AutoIndex.html", O_RDONLY)) < 0)
+		throw FileException();
+	while ((len = read(auto_fd, buf, 2047)) > 0) {
+		buf[len] = 0;
+		buffer += buf;
+	}
+	if (len == -1)
+		throw FileException();	
+	buf[len] = 0;
+	buffer += buf;
+	close(auto_fd);
+	this->_page[0] = std::string(buffer.begin(), buffer.begin() + 558);
+	this->_page[1] = std::string(buffer.begin() + 558, buffer.begin() + 933);
+	this->_page[2] = std::string(buffer.begin() + 933, buffer.end());
 }
 
 AutoIndex::AutoIndex(AutoIndex const &x) {
@@ -85,7 +109,6 @@ void AutoIndex::newList(std::string const &path, std::string const &filename) {
 		this->_directory.push_back(file);
 	else
 		this->_file.push_back(file);
-	std::cout << ctime(&file._time) << std::endl;
 }
 
 void AutoIndex::path(std::string const &path) {
@@ -102,4 +125,24 @@ void AutoIndex::path(std::string const &path) {
 }
 
 std::string AutoIndex::make() {
+	std::vector<File>::iterator it;
+	std::string page = this->_page[0];
+
+	page += "Index of " + this->_path;
+	page += this->_page[1];
+	page += "path: \'" + this->_path + "\',\n";
+	page += "index: [\n";
+	for (it = _directory.begin(); it != _directory.end(); it++)
+		page += ("{ name: \"" + it->_name +
+				"/\", time: \"" + std::string(ctime(&it->_time), 0, 24) +
+				"\", size: \"-" +
+				"\", link: \"" + this->_path + it->_name + "\" },\n");
+	for (it = _file.begin(); it != _file.end(); it++)
+		page += ("{ name: \"" + it->_name +
+				"\", time: \"" + std::string(ctime(&it->_time), 0, 24) +
+				"\", size: \"" + it->getSize() +
+				"\", link: \"" + this->_path + it->_name + "\" },\n");
+	page += "]\n";
+	page += this->_page[2];
+	return (page);
 }
