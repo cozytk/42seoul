@@ -46,10 +46,12 @@ private:
 	int							_port;
 	Config::node *				_server_conf;
 	ParsedRequest *				_parsed_req;
+	static std::map<std::string, std::string> _mime_types;
 
 public:
 	/* exception */
-	class CreateException : public std::exception {
+	typedef std::vector<std::string> headers_t;
+		class CreateException : public std::exception {
 		virtual const char *what() const throw();
 	};
 
@@ -85,7 +87,9 @@ public:
 	int send(int socket);
 
 	void runGetHead(ParsedRequest *request, bool method);
-	void response200(Connection& connection, int status, headers_t headers, std::string body);
-	void response400(Connection& connection, int status);
+	std::string getHeaderValue(ParsedRequest *request, std::string key);
+	bool hasKey(std::map<std::string, std::string>_map, std::string key);
+//	void response200(Connection& connection, int status, headers_t headers, std::string body);
+//	void response400(Connection& connection, int status);
 };
 #endif

@@ -1,6 +1,51 @@
 #include "../../incs/Server.hpp"
 
 /* Request */
+
+std::map<std::string, std::string> makeMimeType ()
+{
+	std::map<std::string, std::string> type_map;
+
+	type_map["avi"] = "video/x-msvivdeo";
+	type_map["bin"] = "application/octet-stream";
+	type_map["bmp"] = "image/bmp";
+	type_map["css"] = "text/css";
+	type_map["csv"] = "text/csv";
+	type_map["doc"] = "application/msword";
+	type_map["docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+	type_map["gz"] = "application/gzip";
+	type_map["gif"] = "image/gif";
+	type_map["htm"] = "text/html";
+	type_map["html"] = "text/html";
+	type_map["ico"] = "image/vnd.microsoft.icon";
+	type_map["jepg"] = "image/jepg";
+	type_map["jpg"] = "image/jepg";
+	type_map["js"] = "text/javascript";
+	type_map["json"] = "application/json";
+	type_map["mp3"] = "audio/mpeg";
+	type_map["mpeg"] = "video/mpeg";
+	type_map["png"] = "image/png";
+	type_map["pdf"] = "apllication/pdf";
+	type_map["php"] = "application/x-httpd-php";
+	type_map["ppt"] = "application/vnd.ms-powerpoint";
+	type_map["pptx"] = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+	type_map["rar"] = "application/vnd.rar";
+	type_map["sh"] = "application/x-sh";
+	type_map["svg"] = "image/svg+xml";
+	type_map["tar"] = "application/x-tar";
+	type_map["tif"] = "image/tiff";
+	type_map["txt"] = "text/plain";
+	type_map["wav"] = "audio/wav";
+	type_map["xls"] = "application/xhtml+xml";
+	type_map["xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	type_map["zip"] = "application/zip";
+	type_map["bad_extension"] = "application/bad";
+	type_map["bla"] = "application/42cgi";
+	type_map["pouic"] = "application/pouic";
+	return (type_map);
+}
+std::map<std::string, std::string> Server::_mime_types = makeMimeType();
+
 Server::Request::Request() {
 	this->_buffer = "";
 	this->_response = "";
@@ -234,14 +279,30 @@ int Server::send(int socket) {
 	return (WAIT_SEND);
 }
 
+bool Server::hasKey(std::map<std::string, std::string>_map, std::string key)
+{
+	return (!_map[key].empty());
+}
+
+std::string Server::getHeaderValue(ParsedRequest *request, std::string key)
+{
+	return (request->getHeaders()[key]);
+}
+
 void Server::runGetHead(ParsedRequest *request, bool method)
 {
-	std::string path = request.getConfig()->getChildren().find("");
+	std::map<std::string, std::string>_header = request->getHeaders();
+	std::map<std::string, std::string>::iterator it;
+
+	for (it = _header.begin(); it != _header.end(); it++)
+		std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
+
+	std::string path = getHeaderValue(request, "Path");
 	std::string body;
 	headers_t headers(1, getMimeTypeHeader(path));
 
 	try {
-		body = fileToString(path, _getLimitClientBodySize);
+		body = fileToString(path, );
 	} catch (std::overflow_error& e) {
 		return (response400(request, 413));
 	}
@@ -253,26 +314,33 @@ void Server::runGetHead(ParsedRequest *request, bool method)
 	return (response200(request, 200, headers, body));
 }
 
+/*
 void Server::response200(Connection& connection, int status, headers_t headers, std::string body)
 {
 	headers.push_back(setLastModified());
 	headers.push_back(setServerName());
-	/* todo cgi response
+	*/
+/* todo cgi response
 	if (status == CGI_SUCCESS_CODE)
 		createCGIResponse(status, headers, body);
-	*/
+	*//*
 
-	/*
+
+	*/
+/*
 	 * todo when Trasfer-Encoding, skip
-	 */
+	 *//*
+
 	headers.push_back(setContentLength(body));
 	if (!body.empty())
 		headers.push_back(setContentLanguage());
 	if (connection.getMethod() == "HEAD")
 		body = "";
-	/*
+	*/
+/*
 	 * todo response generate, header factoring
-	 */
+	 *//*
+
 }
 
 void Server::response400(Connection& connection, int status)
@@ -283,21 +351,27 @@ void Server::response400(Connection& connection, int status)
 	body = "";
 	headers.push_back(setLastModified());
 	headers.push_back(setServerName());
-	/* todo cgi response */
+	*/
+/* todo cgi response *//*
+
 	body = _errorPage;
 	body.replace(body.find("#ERROR_CODE"), 11, ft::to_string(status));
 	body.replace(body.find("#ERROR_CODE"), 11, ft::to_string(status));
 	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Response::status[status]);
 	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Response::status[status]);
 	body.replace(body.find("#PORT"), 5, ft::to_string(_port));
-	/*
+	*/
+/*
 	 * todo Transfer-Encoding
-	 */
+	 *//*
+
 	headers.push_back(setContentLanguage());
 	headers.push_back("Connection:close");
-	/*
+	*/
+/*
     * todo response generate, header factoring
-	 */
+	 *//*
+
 
 }
 
@@ -350,4 +424,4 @@ std::string setContentLength(const std::string& body)
 std::string setContentLanguage()
 {
 	return ("Content-Language:ko-KR");
-}
+}*/
