@@ -12,13 +12,14 @@
 
 ParsedRequest::ParsedRequest() {}
 ParsedRequest::ParsedRequest(std::string const &request,  Config::node *config):
-_config(config)
+_config(config), _max_body(-100), _autoindex(false), _stateCode(0)
 {
 	size_t headEnd = request.find("\r\n\r\n");
 //	todo constructor should work without isChucked
 	parseHead(request);
 	if (headEnd + 4 < request.length())
 		parseBody(request.substr(headEnd + 4));
+	RequestConfig requestConfig(this);
 }
 
 void				ParsedRequest::parseHead(std::string const &request) {
@@ -99,25 +100,66 @@ ParsedRequest& ParsedRequest::operator=(const ParsedRequest& obj)
 /* --------------------------------- GETTER --------------------------------- */
 /* ************************************************************************** */
 
-ParsedRequest::HeaderType	&ParsedRequest::getHeaders()
+ParsedRequest::HeaderType		&ParsedRequest::getHeaders()
 {
 	return (this->_headers);
 }
 
-std::string			ParsedRequest::getBody()
+std::string						ParsedRequest::getBody()
 {
 	return (this->_body);
 }
 
-int					ParsedRequest::getStateCode()
+int								ParsedRequest::getStateCode()
 {
 	return (this->_stateCode);
 }
 
-Config::node *		ParsedRequest::getConfig()
+Config::node *					ParsedRequest::getConfig()
 {
 	return (this->_config);
 }
+
+std::string const &				ParsedRequest::getRoot() {
+	return (this->_root);
+}
+
+std::string const &				ParsedRequest::getExtension()
+{
+	return (this->_extension);
+}
+
+std::string const &				ParsedRequest::getServerName()
+{
+	return (this->_server_name);
+}
+
+int const &						ParsedRequest::getMaxBody()
+{
+	return (this->_max_body);
+}
+
+bool const &					ParsedRequest::getAutoIndex()
+{
+	return (this->_autoindex);
+}
+
+std::vector<std::string>		ParsedRequest::getIndex()
+{
+	return (this->_index);
+}
+
+std::vector<std::string>		ParsedRequest::getAllowMethods()
+{
+	return (this->_allow_methods);
+}
+
+ParsedRequest::ErrorPage		ParsedRequest::getErrorPage()
+{
+	return (this->_error_page);
+}
+
+
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */

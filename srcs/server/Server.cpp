@@ -157,6 +157,7 @@ int Server::recv(int socket) {
 		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
+		RequestConfig req_conf(this->_parsed_req);
 		RequestInspect inspect(this->_parsed_req);
 		inspect.isValid();
 
@@ -186,11 +187,14 @@ int Server::send(int socket) {
 	int buf_size;
 
 	std::string body;
+
 	std::string header;
+
 	/* tmp */
+//  this->_parsed_req->isValid();
 	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
 
-	body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
+//  body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
 
 	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
 		runGetHead(this->_parsed_req, GET);
@@ -221,7 +225,6 @@ int Server::send(int socket) {
 
 	std::cout << std::endl << "SEND ▼" << std::endl;
 	std::cout << "[" << buf << "]" << std::endl;
-
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {

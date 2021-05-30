@@ -1,5 +1,6 @@
 #ifndef PARSED_REQUEST_HPP
 # define PARSED_REQUEST_HPP
+class ParsedRequest;
 
 # include <string>
 # include <map>
@@ -10,21 +11,32 @@
 # include <sys/stat.h>
 # include <unistd.h>
 # include "Config.hpp"
+# include "RequestConfig.hpp"
 # include "WebServerConstant.hpp"
 
 class ParsedRequest
 {
+	friend class RequestConfig;
 	public:
-		typedef	std::map<std::string, std::string> HeaderType;
+	typedef	std::map<std::string, std::string> HeaderType;
+	typedef std::map<std::string, std::string>	ErrorPage;
 	private:
-		std::string     _mimeTypeHeader;
-		std::string     _lastModifiedHeader;
-		std::string     _pathTranslated;
-		HeaderType		_headers;
-		std::string		_body;
-		bool			_isChunked;
-		int				_stateCode;
-		Config::node *	_config;
+		HeaderType					_headers;
+		std::string					_body;
+		bool						_isChunked;
+		int							_stateCode;
+		Config::node *				_config;
+		std::string					_root;
+		std::string					_extension;
+		std::string					_server_name;
+		std::string                 _mimeTypeHeader;
+		std::string                 _lastModifiedHeader;
+		std::string                 _pathTranslated;
+		int							_max_body;
+		bool						_autoindex;
+		std::vector<std::string>	_index;
+		std::vector<std::string>	_allow_methods;
+		ErrorPage					_error_page;
 
 		void			parseBody(std::string const &body);
 		void			parseHead(std::string const &request);
@@ -36,14 +48,23 @@ class ParsedRequest
 		ParsedRequest& operator=(const ParsedRequest& obj);
 		virtual ~ParsedRequest();
 
-		int					getStateCode();
-		HeaderType			&getHeaders();
-		std::string			getBody();
-		Config::node *		getConfig();
+		int								getStateCode();
+		HeaderType						&getHeaders();
+		std::string						getBody();
+		Config::node *					getConfig();
+		std::string const &				getRoot();
+		std::string const &				getExtension();
+		std::string const &				getServerName();
+		int const &						getMaxBody();
+		bool const &					getAutoIndex();
+		std::vector<std::string>		getIndex();
+		std::vector<std::string>		getAllowMethods();
+		ErrorPage						getErrorPage();
 
-		void				setStateCode(int state);
-		bool				isChunked();
-		bool				isExistHeader(std::string in);
+		void							setStateCode(int state);
+
+		bool							isChunked();
+		bool							isExistHeader(std::string in);
 };
 //Accept-Charsets
 //Accept-Language

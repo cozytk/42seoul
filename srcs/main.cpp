@@ -1,5 +1,6 @@
 #include "webserv.hpp"
 #include "ServerManager.hpp"
+#include "AutoIndex.hpp"
 
 int main()
 {

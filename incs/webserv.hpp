@@ -9,17 +9,21 @@
 # include <ctime>
 # include <queue>
 
+# include <ctime>
+
 /* header C */
 # include <unistd.h>
 # include <fcntl.h>
 # include <signal.h>
 # include <sys/stat.h>
+# include <dirent.h>
 
 /* network C */
 # include <sys/socket.h>
 # include <netinet/in.h>
 
 /* type C */
+# include <sys/stat.h>
 # include <sys/types.h>
 # include <stddef.h>
 
@@ -33,6 +37,8 @@
 # define ERR_SEND -1
 # define WAIT_SEND 0
 # define ALL_SEND 1
+
+# define CGI_BUFFER_SIZE 2048
 
 /* libft */
 namespace ft {
@@ -59,6 +65,7 @@ namespace ft {
 	bool		isspace(char c);
 	int			atoi(char *str);
 	void		*memset(void *src, int val, size_t size);
+	size_t		strlcpy(char *dst, char *src, size_t size);
 	int			tolower(int c);
 
 	void trim_space(std::string &str);
