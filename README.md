@@ -105,10 +105,11 @@ autoindex.make(); // std::string 을 반환하며 오토인덱스 페이지 (htm
 
 아래는 결과입니다.
 
-
+![](https://i.imgur.com/WP1MVVX.png)
 
 
 # Log
+아직 안 만듦.
 
 # CGI
 `각 환경변수는 request에서 들어온 정보를 바탕으로 정리됨`
