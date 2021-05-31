@@ -10,11 +10,17 @@ SERVER		= ServerManager.cpp Server.cpp
 
 CONNECTION	= ParsedRequest.cpp RequestInspect.cpp RequestConfig.cpp
 
+CGI			= CGI.cpp
+
+AUTOINDEX	= AutoIndex.cpp
+
 SRCS		= $(addprefix srcs/, $(MAIN)) \
 			  $(addprefix srcs/, $(LIBFT)) \
 			  $(addprefix srcs/config/, $(CONFIG)) \
 			  $(addprefix srcs/server/, $(SERVER)) \
-			  $(addprefix srcs/connection/, $(CONNECTION))
+			  $(addprefix srcs/connection/, $(CONNECTION)) \
+			  $(addprefix srcs/, $(CGI)) \
+			  $(addprefix srcs/, $(AUTOINDEX))
 
 INCS		= incs/
 

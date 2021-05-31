@@ -1,5 +1,23 @@
 #include <webserv.hpp>
 
+void ft::Log(LogLevel lv, std::string const &log) {
+	time_t rawtime;
+	tm *timeinfo;
+	char buffer[40];
+	std::string color = "";
+
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+	strftime(buffer, 40, "%F %T", timeinfo);
+	switch (static_cast<int>(lv)) {
+	case Warning:
+		color = YELLOW; break;
+	case Error:
+		color = RED;
+	}
+	std::cout << color << '[' << buffer << "] " << log << RESET << std::endl;
+}
+
 std::string	ft::base64::encode(std::string const &str) {
 	std::string buffer = "";
 	int tmp;
@@ -81,6 +99,8 @@ std::string	ft::to_string(int n)
 	std::string ret = "";
 	int number = n;
 
+	if (n == 0)
+		return (std::string("0"));
 	if (n < 0)
 		number *= -1;
 	while (number) {
@@ -106,6 +126,29 @@ void	*ft::memset(void *_src, int val, size_t size) {
 	while (size-- > 0)
 		*(src++) = val;
 	return (ptr);
+}
+
+size_t	ft::strlcpy(char *dst, char *src, size_t size)
+{
+	unsigned long	count;
+	unsigned long	ret;
+
+	count = 0;
+	ret = 0;
+	if (!dst || !src)
+		return (0);
+	while (*(src + ret))
+		ret++;
+	if (size > 0)
+	{
+		while (count < size - 1 && *src)
+		{
+			*(dst++) = *(src++);
+			count++;
+		}
+		*dst = '\0';
+	}
+	return (ret);
 }
 
 int		ft::tolower(int c) {
