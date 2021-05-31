@@ -198,10 +198,25 @@ int Server::send(int socket) {
 	/* test - autoindex */
 	std::string body;
 	std::string header;
-	AutoIndex a;
-	a.path("/");
-	body = a.make();
-  	header = "HTTP/1.1 200 OK\nServer: webserv\nContent-Type: text/html\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+
+  //this->_parsed_req->isValid();
+	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
+	std::string stateText = this->_parsed_req->getStateText();
+
+  body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
+	
+	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
+		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	}
+	if (this->_parsed_req->getHeaders()["Type"] == "POST")
+	{
+		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+
+	}
+	if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
+		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+		body = "";
+	}
 
 	std::string response = header + body;
 
@@ -223,6 +238,6 @@ int Server::send(int socket) {
 	if (this->_request[socket]->_sent >= response.length()) {
 		return (ALL_SEND);
 	}
-	//delete this->_parsed_req;
+	delete this->_parsed_req;
 	return (WAIT_SEND);
 }
