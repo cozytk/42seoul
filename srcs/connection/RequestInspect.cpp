@@ -102,7 +102,6 @@ bool				RequestInspect::isValidPath() {
 		return false;
 	}
 	// path = this->_req->getRoot() + header["Path"];
-	std::cout << "🦊 is valid path: " << path << std::endl;
 	for (size_t i = 0; i < index.size(); i++)
 	{
 		if (isExistResource(path, index[i]))
