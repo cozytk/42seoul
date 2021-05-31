@@ -91,6 +91,22 @@ config("42test").size("sample") 은 현재 스코드 (42test { ~ }) 에 sample �
 
 
 # Auto Index
+`code`
+```
+#include "AutoIndex.hpp"
+
+...
+
+AutoIndex autoindex; // 사전에 필요한 자원을 생성과 동시에 준비합니다. 따라서 AutoIndex를 매 연결마다 만드는 것은 추천하지 않습니다.
+
+autoindex.path("/srcs/"); // path 를 받아 파일 리스트를 준비합니다.
+autoindex.make(); // std::string 을 반환하며 오토인덱스 페이지 (html)를 반환합니다.
+```
+
+아래는 결과입니다.
+
+
+
 
 # Log
 
