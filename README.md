@@ -109,7 +109,13 @@ autoindex.make(); // std::string 을 반환하며 오토인덱스 페이지 (htm
 
 
 # Log
-아직 안 만듦.
+void ft::Log(LogLevel lv, std::string const &log);
+
+LogLevel 은 Log, Warning, Error 을 가집니다.
+```
+ex)
+ft::Log(Warning, "sample.conf is not valid");
+```
 
 # CGI
 `각 환경변수는 request에서 들어온 정보를 바탕으로 정리됨`
