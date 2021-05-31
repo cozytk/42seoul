@@ -6,13 +6,13 @@
 # include "ConfigReader.hpp"
 # include "ConfigSyntax.hpp"
 
-
 class Config
 {
 	friend class ServerManager;
 	friend class Server;
 	friend class ParsedRequest;
 	friend class RequestInspect;
+	friend class RequestConfig;
 
 private:
 	/* node */

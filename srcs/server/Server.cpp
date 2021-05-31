@@ -159,6 +159,7 @@ int Server::recv(int socket) {
 		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
+		RequestConfig req_conf(this->_parsed_req);
 		RequestInspect inspect(this->_parsed_req);
 		inspect.isValid();
 
