@@ -1,5 +1,7 @@
 #include "Server.hpp"
 
+#include "AutoIndex.hpp"
+
 /* Request */
 Server::Request::Request() {
 	this->_buffer = "";
@@ -186,11 +188,8 @@ int Server::send(int socket) {
 	int buf_size;
 
 	std::string body;
-
 	std::string header;
-
-	/* tmp */
-  this->_parsed_req->isValid();
+  //this->_parsed_req->isValid();
 	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
 
   body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";

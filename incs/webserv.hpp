@@ -38,8 +38,23 @@
 
 # define CGI_BUFFER_SIZE 2048
 
+/* color */
+# define RESET		"\033[0m"
+# define RED		"\033[31m"
+# define YELLOW		"\033[33m"
+
 /* libft */
+/* enum */
+enum LogLevel {
+	Log,
+	Warning,
+	Error
+};
+
 namespace ft {
+	/* log */
+	void Log(LogLevel lv, std::string const &log);
+
 	/* base64 */
 	namespace base64 {
 		static std::string alphabet =

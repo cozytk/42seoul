@@ -1,5 +1,23 @@
 #include <webserv.hpp>
 
+void ft::Log(LogLevel lv, std::string const &log) {
+	time_t rawtime;
+	tm *timeinfo;
+	char buffer[40];
+	std::string color = "";
+
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+	strftime(buffer, 40, "%F %T", timeinfo);
+	switch (static_cast<int>(lv)) {
+	case Warning:
+		color = YELLOW; break;
+	case Error:
+		color = RED;
+	}
+	std::cout << color << '[' << buffer << "] " << log << RESET << std::endl;
+}
+
 std::string	ft::base64::encode(std::string const &str) {
 	std::string buffer = "";
 	int tmp;

@@ -1,10 +1,10 @@
 #include <webserv.hpp>
 
 #include "ServerManager.hpp"
-#include "AutoIndex.hpp"
 
 int main()
 {
+	/*
 	ServerManager manager;
 
 	try
@@ -17,4 +17,8 @@ int main()
 		std::cerr << e.what() << std::endl;
 	}
 	manager.serverClose();
+	*/
+	ft::Log(Log, "test message");
+	ft::Log(Warning, "sample.conf is not valid");
+	ft::Log(Error, "sample.conf is not found");
 }
