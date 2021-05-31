@@ -23,11 +23,13 @@ class ParsedRequest
 	private:
 		HeaderType					_headers;
 		std::string					_body;
+		std::string					_stateText;
 		bool						_isChunked;
 		int							_stateCode;
 
 		Config::node *				_config;
 		std::string					_root;
+		std::string					_configed_path;
 		std::string					_extension;
 		std::string					_server_name;
 		int							_max_body;
@@ -48,8 +50,10 @@ class ParsedRequest
 
 		int								getStateCode();
 		HeaderType						&getHeaders();
-		std::string						getBody();
 		Config::node *					getConfig();
+		std::string						getBody();
+		std::string						getConfigedPath();
+		std::string						getStateText();
 		std::string const &				getRoot();
 		std::string const &				getExtension();
 		std::string const &				getServerName();
@@ -60,6 +64,7 @@ class ParsedRequest
 		ErrorPage						getErrorPage();
 
 		void							setStateCode(int state);
+		void							setStateText(std::string text);
 
 		bool							isChunked();
 		bool							isExistHeader(std::string in);
