@@ -12,33 +12,34 @@ RequestConfig::RequestConfig() {}
 RequestConfig::RequestConfig(ParsedRequest *req):
 _req(req), _loc_node(NULL)
 {
-	ParsedRequest::HeaderType	&header = req->getHeaders();
 	Config::node				server_node;
+	std::string					path = req->getHeaders()["Path"];
 	std::string					config_loc;
 	size_t						i = 0;
 	size_t						last = 0;
 
+	req->_configed_path = path;
 	this->_serv_node = (*this->_req).getConfig();
 	server_node = *this->_serv_node;
 	applyConfig(this->_serv_node);
+	req->_configed_path = req->_root + path;
 	// location config apply
 	while (i < server_node.size("location"))
 	{
 		config_loc = (*server_node("location", i))[0];
-		last = config_loc.length() - (size_t)1;// if use wildcard, location path should end with "/*"
-		// wildcard path
-		if (config_loc[last] == '*')
+		last = config_loc.length();
+		// if use wildcard, location path should end with "/*" ex) "/directory/*"
+		if (config_loc[last] == '*' )
+			last -= (size_t)2;
+		if (this->_loc_node == NULL)
 		{
-			if (header["Path"].find(config_loc.substr(0, last - 1)) == (size_t) 0)
+			// wildcard path
+			if (path.substr(0, last) == config_loc.substr(0, last))
 			{
 				this->_loc_node = &server_node("location", i);
 				applyConfig(this->_loc_node);
+				req->_configed_path = req->_root + path.substr(last, path.length() - last);
 			}
-		}
-		// non wildcard path
-		else if (header["Path"] == config_loc) {
-			this->_loc_node = &server_node("location", i);
-			applyConfig(this->_loc_node);
 		}
 		// config extension
 		else if (config_loc[0] == '.')

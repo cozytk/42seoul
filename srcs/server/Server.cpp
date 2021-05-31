@@ -190,19 +190,19 @@ int Server::send(int socket) {
 	std::string header;
 	/* tmp */
 	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
+	std::string stateText = this->_parsed_req->getStateText();
 
 		body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
-
 	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
-		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 	}
 	if (this->_parsed_req->getHeaders()["Type"] == "POST")
 	{
-		header = "HTTP/1.1 " + stateCode + " NOK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 
 	}
 	if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
-		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 		body = "";
 	}
 

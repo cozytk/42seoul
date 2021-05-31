@@ -12,9 +12,10 @@
 
 ParsedRequest::ParsedRequest() {}
 ParsedRequest::ParsedRequest(std::string const &request,  Config::node *config):
-_config(config), _max_body(-100), _autoindex(false), _stateCode(0)
+_config(config), _max_body(-100), _autoindex(false), _stateCode(200), _root(".")
 {
 	size_t headEnd = request.find("\r\n\r\n");
+	this->_stateText = "OK";
 	parseHead(request);
 	if (headEnd + 4 < request.length())
 		parseBody(request.substr(headEnd + 4));
@@ -100,6 +101,11 @@ ParsedRequest::HeaderType		&ParsedRequest::getHeaders()
 std::string						ParsedRequest::getBody()
 {
 	return (this->_body);
+}
+
+std::string						ParsedRequest::getStateText()
+{
+	return (this->_stateText);
 }
 
 int								ParsedRequest::getStateCode()
