@@ -108,6 +108,11 @@ std::string						ParsedRequest::getStateText()
 	return (this->_stateText);
 }
 
+std::string						ParsedRequest::getConfigedPath()
+{
+	return (this->_configed_path);
+}
+
 int								ParsedRequest::getStateCode()
 {
 	return (this->_stateCode);
@@ -164,6 +169,11 @@ bool				ParsedRequest::isChunked() {
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
+
+void				ParsedRequest::setStateText(std::string text)
+{
+	this->_stateText = text;
+}
 
 void				ParsedRequest::setStateCode(int state)
 {

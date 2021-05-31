@@ -74,7 +74,8 @@ bool				RequestInspect::isValidType() {
 	};
 	if (!_req->isExistHeader("Type"))
 	{
-		_req->setStateCode(400);
+		this->_req->setStateCode(400);
+		this->_req->setStateText("Bad Request");
 		return false;
 	}
 	while (++i < 8)
@@ -84,39 +85,55 @@ bool				RequestInspect::isValidType() {
 	}
 	// get, head can't be 405 but tester approve accessing '/' only get
 	// todo should check server support method if not return 405
-	_req->setStateCode(400);
+	this->_req->setStateCode(400);
+	this->_req->setStateText("Bad Request");
 	return false;
 }
 
 bool				RequestInspect::isValidPath() {
-	struct stat					s;
+	ParsedRequest::HeaderType	&header = this->_req->getHeaders();
+	std::vector<std::string>	index = this->_req->getIndex();
+	std::string					path = this->_req->getConfigedPath();
 	std::string 				res;
-	std::string					path;
-	ParsedRequest::HeaderType	&header = _req->getHeaders();
 
-	if(!_req->isExistHeader("Path")){
-		_req->setStateCode(400);
+	if(!this->_req->isExistHeader("Path")){
+		this->_req->setStateCode(400);
+		this->_req->setStateText("Bad Request");
 		return false;
 	}
-	path = this->_req->getRoot() + header["Path"];
-	if( stat(path.c_str(),&s) == 0 )
+	// path = this->_req->getRoot() + header["Path"];
+	std::cout << "🦊 is valid path: " << path << std::endl;
+	for (size_t i = 0; i < index.size(); i++)
 	{
-	    if( s.st_mode & S_IFDIR )
-	    {
+		if (isExistResource(path, index[i]))
+			return true;
+	}
+	this->_req->setStateCode(404);
+	this->_req->setStateText("Not Found");
+	return false;
+}
+
+bool				RequestInspect::isExistResource(std::string path, std::string index) {
+	struct stat	s;
+
+	if(stat(path.c_str(),&s) == 0)
+	{
+		if(s.st_mode & S_IFDIR)
+		{
 			if (path[(int)path.length() - 1] != '/')
 				path = path + "/";
-			path = path + "index.html";
-	    }
-	    else if( s.st_mode & S_IFREG )
-	    {
+			path = path + index;
+			return (isExistResource(path, ""));
+		}
+		else if(s.st_mode & S_IFREG)
+		{
 			if (path.find(".bla") != std::string::npos ||
 			path.find(".bad_extension") != std::string::npos)
 				std::cout << "need cgi run" << std::endl;
-	    }
+		}
 		// _req->_headers["Path"] = path;
 		return true;
 	}
-	_req->setStateCode(404);
 	return false;
 }
 
@@ -125,7 +142,8 @@ bool				RequestInspect::isValidVersion() {
 
 	if (_req->isExistHeader("Version") && header["Version"] == "HTTP/1.1")
 		return true;
-	_req->setStateCode(505);
+	this->_req->setStateCode(505);
+	this->_req->setStateText("Version Not Supported");
 	return false;
 }
 
@@ -141,11 +159,13 @@ bool				RequestInspect::isValidVersion() {
 // 			if (_req->_headers["Content-Length"] == _req->_body.length())
 // 				return true;
 // 			// bad request
-// 			_req->setStateCode(400);
+// 			this->_req->setStateCode(400);
+// 			this->_req->setStateText(400);
 // 			return false;
 // 		}
 // 		// request should contain content-length
-// 		_req->setStateCode(411);
+// 		this->_req->setStateCode(411);
+// 		this->_req->setStateText(411);
 // 		return false;
 // 	}
 // 	return true;
@@ -163,6 +183,7 @@ bool				RequestInspect::isAllowedMethod() {
 		i++;
 	}
 	this->_req->setStateCode(405);
+	this->_req->setStateText("Method Not Allowed");
 	return false;
 }
 

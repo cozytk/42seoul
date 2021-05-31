@@ -52,6 +52,7 @@ class ParsedRequest
 		HeaderType						&getHeaders();
 		Config::node *					getConfig();
 		std::string						getBody();
+		std::string						getConfigedPath();
 		std::string						getStateText();
 		std::string const &				getRoot();
 		std::string const &				getExtension();
@@ -63,6 +64,7 @@ class ParsedRequest
 		ErrorPage						getErrorPage();
 
 		void							setStateCode(int state);
+		void							setStateText(std::string text);
 
 		bool							isChunked();
 		bool							isExistHeader(std::string in);

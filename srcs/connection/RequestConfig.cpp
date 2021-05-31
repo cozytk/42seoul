@@ -28,18 +28,14 @@ _req(req), _loc_node(NULL)
 	{
 		config_loc = (*server_node("location", i))[0];
 		last = config_loc.length();
-		// if use wildcard, location path should end with "/*" ex) "/directory/*"
 		if (config_loc[last] == '*' )
 			last -= (size_t)2;
-		if (this->_loc_node == NULL)
+		// wildcard path
+		if (path.substr(0, last) == config_loc.substr(0, last))
 		{
-			// wildcard path
-			if (path.substr(0, last) == config_loc.substr(0, last))
-			{
-				this->_loc_node = &server_node("location", i);
-				applyConfig(this->_loc_node);
-				req->_configed_path = req->_root + path.substr(last, path.length() - last);
-			}
+			this->_loc_node = &server_node("location", i);
+			applyConfig(this->_loc_node);
+			req->_configed_path = req->_root + path.substr(last, path.length() - last);
 		}
 		// config extension
 		else if (config_loc[0] == '.')
