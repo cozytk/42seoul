@@ -3,7 +3,7 @@
 void ft::Log(LogLevel lv, std::string const &log) {
 	time_t rawtime;
 	tm *timeinfo;
-	char buffer[40];
+	char buffer[24];
 	std::string color = "";
 
 	time(&rawtime);

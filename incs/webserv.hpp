@@ -26,6 +26,8 @@
 # include <stddef.h>
 
 /* macro */
+# define DEFAULT_CONF "./sample.conf"
+
 # define RECV_BUFFER_SIZE 65536
 # define ERR_RECV -1
 # define WAIT_RECV 0
