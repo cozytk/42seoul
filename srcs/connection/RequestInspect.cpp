@@ -44,13 +44,9 @@ RequestInspect& RequestInspect::operator=(const RequestInspect& obj)
 /* --------------------------------- SETTER --------------------------------- */
 /* ************************************************************************** */
 
-/* setter code */
-
 /* ************************************************************************** */
 /* ------------------------------- EXCEPTION -------------------------------- */
 /* ************************************************************************** */
-
-/* exception code */
 
 /* ************************************************************************** */
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
@@ -156,13 +152,18 @@ bool				RequestInspect::isValidVersion() {
 // }
 
 bool				RequestInspect::isAllowedMethod() {
-	ParsedRequest::HeaderType &header = _req->getHeaders();
+	ParsedRequest::HeaderType	&header = this->_req->getHeaders();
+	std::vector<std::string>	allowed = this->_req->getAllowMethods();
+	size_t						i = 0;
 
-	if (header["Path"] == "/" && header["Type"] != "GET") {
-		_req->setStateCode(405);
-		return false;
+	while (i < this->_req->getAllowMethods().size())
+	{
+		if (header["Type"] == allowed[i] )
+			return true;
+		i++;
 	}
-	return true;
+	this->_req->setStateCode(405);
+	return false;
 }
 
 bool				RequestInspect::isValid() {
