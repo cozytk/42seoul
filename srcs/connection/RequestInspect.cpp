@@ -33,7 +33,6 @@ RequestInspect& RequestInspect::operator=(const RequestInspect& obj)
 {
 	if (this == &obj)
 		return (*this);
-	/* overload= code */
 	return (*this);
 }
 
@@ -88,7 +87,7 @@ bool				RequestInspect::isValidType() {
 		if (header["Type"] == methods[i])
 			return true;
 	}
-	// get, head can't be 405
+	// get, head can't be 405 but tester approve accessing '/' only get
 	// todo should check server support method if not return 405
 	(*_req).setStateCode(400);
 	return false;

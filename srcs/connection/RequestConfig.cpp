@@ -89,8 +89,6 @@ RequestConfig& RequestConfig::operator=(const RequestConfig& obj)
 
 void			RequestConfig::configMethod(Config::node* node_ptr)
 {
-	size_t	i = 0;
-
 	if (node_ptr->size("allow_method") > 0)
 		this->_req->_allow_methods = *((*node_ptr)("allow_method"));
 	else if (this->_req->_allow_methods.empty()) {

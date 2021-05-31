@@ -15,7 +15,6 @@ ParsedRequest::ParsedRequest(std::string const &request,  Config::node *config):
 _config(config), _max_body(-100), _autoindex(false), _stateCode(0)
 {
 	size_t headEnd = request.find("\r\n\r\n");
-//	todo constructor should work without isChucked
 	parseHead(request);
 	if (headEnd + 4 < request.length())
 		parseBody(request.substr(headEnd + 4));
@@ -26,6 +25,7 @@ void				ParsedRequest::parseHead(std::string const &request) {
 	size_t headEnd = request.find("\r\n\r\n");
 	size_t head = 0;
 	size_t tail = 0;
+	size_t colone = 0;
 
 	// Find request type
 	tail = request.find(" ");
@@ -44,8 +44,7 @@ void				ParsedRequest::parseHead(std::string const &request) {
 	// Map all headers from a key to a value
 	while(tail < headEnd)
 	{
-		size_t colone = 0;
-
+		// colone = 0;
 		head = tail + 2;
 		colone = request.find(": ", head);
 		tail = request.find("\r\n", colone + 2);
@@ -58,12 +57,6 @@ void				ParsedRequest::parseBody(std::string const &body)
 		this->_isChunked = true;
 	if (this->_isChunked)
 	{
-		// size_t crlf = body.find("\r\n");
-		// if (crlf == 0)
-		// {
-		// 	this->_stateCode = 400;
-		// 	return ;
-		// }
 		if (body.find("0\r\n") != std::string::npos)
 			this->_isChunked = false;
 	}
@@ -92,7 +85,6 @@ ParsedRequest& ParsedRequest::operator=(const ParsedRequest& obj)
 {
 	if (this == &obj)
 		return (*this);
-	/* overload= code */
 	return (*this);
 }
 
@@ -159,6 +151,9 @@ ParsedRequest::ErrorPage		ParsedRequest::getErrorPage()
 	return (this->_error_page);
 }
 
+bool				ParsedRequest::isChunked() {
+	return (this->_isChunked);
+}
 
 /* ************************************************************************** */
 /* --------------------------------- SETTER --------------------------------- */
@@ -173,15 +168,9 @@ void				ParsedRequest::setStateCode(int state)
 /* ------------------------------- EXCEPTION -------------------------------- */
 /* ************************************************************************** */
 
-/* exception code */
-
 /* ************************************************************************** */
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
-
-bool				ParsedRequest::isChunked() {
-	return (this->_isChunked);
-}
 
 bool				ParsedRequest::isExistHeader(std::string in) {
 	if (this->_headers.find(in) == this->_headers.end())
