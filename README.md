@@ -1,4 +1,17 @@
 # Config
+
+### Rule
+괄호 { } 는 반드시 닫혀야 합니다.
+block_name val1 val2 {
+  ...
+}
+
+블록 선언 (괄호)이 아닌 모든 변수 선언은 ;로 끝나야 합니다.
+```
+val_name value1 value2 value3;
+```
+
+### Usage
 Config 클래스는 아래와 같이 선언되고 사용됩니다.
 
 
@@ -6,7 +19,7 @@ Config 클래스는 아래와 같이 선언되고 사용됩니다.
 ```
 42test {
   sample 1 2 3 4 {
-    root html java ruby_on_rails "s p a c e"
+    root html java ruby_on_rails "s p a c e";
   }
 }
 
