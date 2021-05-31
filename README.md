@@ -1,3 +1,89 @@
+# Config
+Config 클래스는 아래와 같이 선언되고 사용됩니다.
+
+
+`sample.conf`
+```
+42test {
+  sample 1 2 3 4 {
+    root html java ruby_on_rails "s p a c e"
+  }
+}
+
+user
+{
+  u {
+    a {
+      b value1 {
+      }
+    }
+  }
+}
+```
+
+`code`
+```
+#include "Config.hpp"
+...
+
+Config config;
+config.file("./sample.conf"); // sample.conf 파일을 분석하여 트리로 구조화
+
+std::cout << (*config("42test", 0)("sample", 0))[0] << std::endl;
+std::cout << (*config("42test", 0)("sample", 0)("root", 0))[2] << std::endl;
+```
+
+출력)
+```
+1
+ruby_on_rails
+```
+
+설명
+```
+블록에 접근할 때 사용합니다.
+node& operator()(std::string const &name, int index = 0);
+
+해당 블록이 현재 스코프에 몇 개 존재하는 지 반환합니다.
+int size(std::string name);
+
+변수값을 반환합니다. 변수값은 하나가 아닐 수 있으므로 벡터 형태로 반환하게 됩니다.
+std::vector<std::string> &operator*();
+
+ex)
+config("a") 는 config("a", 0)와 같은 위치의 블록을 참조합니다
+
+config("42test")는 아래 블록을 참조하게 됩니다.
+
+42test {
+  sample 1 2 3 4 {
+    root html java ruby_on_rails "s p a c e"
+  }
+}
+
+config("42test")("sample") 는 아래 블록을 참조하게 됩니다.
+sample 1 2 3 4 {
+  root html java ruby_on_rails "s p a c e"
+}
+
+*config("42test")("sample") 는 벡터를 반환하며 ["1", "2", "3", "4"] 의 형태를 가지게 됩니다.
+*config("42test")("sample")("root") 는 벡터를 반환하며 ["html", "java", "ruby_on_rails", "s p a c e"] 의 형태를 가지게 됩니다.
+
+config.size("42test") 는 현재 스코프 (제일 바깥)에 42test 블록이 하나 존재하므로 1을 반환합니다.
+
+config("42test").size("sample") 은 현재 스코드 (42test { ~ }) 에 sample 블록이 하나 존재하므로 1을 반환합니다.
+```
+
+
+# Auto Index
+
+# Log
+
+# CGI
+`각 환경변수는 request에서 들어온 정보를 바탕으로 정리됨`
+
+
+
 # Server -> Request (Reqeust 진입점)
 ### 일반적인 RECV
 
