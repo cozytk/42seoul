@@ -149,8 +149,32 @@ bool				RequestInspect::isAllowedMethod() {
 	return false;
 }
 
+bool				RequestInspect::isAuthorized() {
+	ParsedRequest::HeaderType	&header = this->_req->getHeaders();
+	std::string 				id = this->_req->getId();
+	std::string 				pw = this->_req->getPw();
+	std::string 				auth;
+
+	// need auth
+	if (pw != "")
+	{
+		if (header.find("Authorization") != header.end())
+		{
+			auth = header["Authorization"];
+			if (id + ":" + pw == ft::base64::decode(auth.substr(6, auth.length())))
+				return true;
+		}
+		this->_req->setStateCode(401);
+		this->_req->setStateText("Unauthorized");
+		return false;
+	}
+	return true;
+}
+
 bool				RequestInspect::isValid() {
 	if (!isValidStart())
+		return false;
+	if (!isAuthorized())
 		return false;
 
 	return true;

@@ -16,6 +16,7 @@ class RequestInspect
 
 		bool			isAllowedMethod();
 		bool			isExistResource(std::string path, std::string index);
+		bool			isAuthorized();
 	public:
 		RequestInspect(const RequestInspect& copy);
 		RequestInspect(RequestConfig con);

@@ -206,6 +206,7 @@ int Server::send(int socket) {
 
 	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
 		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+		// header = "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 	}
 	if (this->_parsed_req->getHeaders()["Type"] == "POST")
 	{
