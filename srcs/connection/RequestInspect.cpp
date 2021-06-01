@@ -62,31 +62,15 @@ bool				RequestInspect::isValidStart() {
 bool				RequestInspect::isValidType() {
 	ParsedRequest::HeaderType &header = _req->getHeaders();
 	size_t i = -1;
-	std::string	methods[8] = {
-		"GET",
-		"HEAD",
-		"POST",
-		"PUT",
-		"DELETE",
-		"CONNECT",
-		"OPTIONS",
-		"TRACE"
-	};
+
 	if (!_req->isExistHeader("Type"))
 	{
 		this->_req->setStateCode(400);
 		this->_req->setStateText("Bad Request");
 		return false;
 	}
-	while (++i < 8)
-	{
-		if (header["Type"] == methods[i])
-			return true;
-	}
-	// get, head can't be 405 but tester approve accessing '/' only get
-	// todo should check server support method if not return 405
-	this->_req->setStateCode(400);
-	this->_req->setStateText("Bad Request");
+	if (isAllowedMethod())
+		return true;
 	return false;
 }
 
@@ -101,7 +85,6 @@ bool				RequestInspect::isValidPath() {
 		this->_req->setStateText("Bad Request");
 		return false;
 	}
-	// path = this->_req->getRoot() + header["Path"];
 	for (size_t i = 0; i < index.size(); i++)
 	{
 		if (isExistResource(path, index[i]))
@@ -146,30 +129,6 @@ bool				RequestInspect::isValidVersion() {
 	return false;
 }
 
-// bool				RequestInspect::isValidContent() {
-// 	std::string method = ;
-// 	// post, put without content-length 411, 400
-// 	if (_req->_headers["Type"] == ft::methods[POST] || method == ft::methods[PUT]) {
-// 		if (_req->isExistHeader("Content-Length")) {
-// 			// ignore content-length since transfer-encoding contained
-// 			if (_req->isExistHeader("Transfer-Encoding") && _req->_headers["Transfer-Encoding"] != "identity")
-// 				return true;
-// 			// todo need stoi to check
-// 			if (_req->_headers["Content-Length"] == _req->_body.length())
-// 				return true;
-// 			// bad request
-// 			this->_req->setStateCode(400);
-// 			this->_req->setStateText(400);
-// 			return false;
-// 		}
-// 		// request should contain content-length
-// 		this->_req->setStateCode(411);
-// 		this->_req->setStateText(411);
-// 		return false;
-// 	}
-// 	return true;
-// }
-
 bool				RequestInspect::isAllowedMethod() {
 	ParsedRequest::HeaderType	&header = this->_req->getHeaders();
 	std::vector<std::string>	allowed = this->_req->getAllowMethods();
@@ -181,18 +140,43 @@ bool				RequestInspect::isAllowedMethod() {
 			return true;
 		i++;
 	}
+	// get, head can't be 405 but tester approve accessing '/' only get,
+	// on the ohter hand webserv work differently.
+	// if allow_method is configed, allow_method inspect will precede.
+	// so get, head can response with 405.
 	this->_req->setStateCode(405);
 	this->_req->setStateText("Method Not Allowed");
 	return false;
 }
 
+bool				RequestInspect::isAuthorized() {
+	ParsedRequest::HeaderType	&header = this->_req->getHeaders();
+	std::string 				id = this->_req->getId();
+	std::string 				pw = this->_req->getPw();
+	std::string 				auth;
+
+	// need auth
+	if (pw != "")
+	{
+		if (header.find("Authorization") != header.end())
+		{
+			auth = header["Authorization"];
+			if (id + ":" + pw == ft::base64::decode(auth.substr(6, auth.length())))
+				return true;
+		}
+		this->_req->setStateCode(401);
+		this->_req->setStateText("Unauthorized");
+		return false;
+	}
+	return true;
+}
+
 bool				RequestInspect::isValid() {
 	if (!isValidStart())
 		return false;
-	// if (!isValidContent())
-	// 	return false;
-	if (!isAllowedMethod())
+	if (!isAuthorized())
 		return false;
+
 	return true;
 }
 

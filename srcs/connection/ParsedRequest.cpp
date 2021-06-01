@@ -19,7 +19,6 @@ _config(config), _max_body(-100), _autoindex(false), _stateCode(200), _root(".")
 	parseHead(request);
 	if (headEnd + 4 < request.length())
 		parseBody(request.substr(headEnd + 4));
-	RequestConfig requestConfig(this);
 }
 
 void				ParsedRequest::parseHead(std::string const &request) {
@@ -108,6 +107,16 @@ std::string						ParsedRequest::getStateText()
 	return (this->_stateText);
 }
 
+std::string						ParsedRequest::getId()
+{
+	return (this->_id);
+}
+
+std::string						ParsedRequest::getPw()
+{
+	return (this->_pw);
+}
+
 std::string						ParsedRequest::getConfigedPath()
 {
 	return (this->_configed_path);
@@ -162,7 +171,7 @@ ParsedRequest::ErrorPage		ParsedRequest::getErrorPage()
 	return (this->_error_page);
 }
 
-bool				ParsedRequest::isChunked() {
+bool							ParsedRequest::isChunked() {
 	return (this->_isChunked);
 }
 

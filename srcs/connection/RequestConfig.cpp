@@ -28,17 +28,17 @@ _req(req), _loc_node(NULL)
 	{
 		config_loc = (*server_node("location", i))[0];
 		last = config_loc.length();
-		if (config_loc[last] == '*' )
-			last -= (size_t)2;
 		// wildcard path
-		if (path.substr(0, last) == config_loc.substr(0, last))
+		if (config_loc[last - (size_t)1] == '*')
 		{
-			this->_loc_node = &server_node("location", i);
-			applyConfig(this->_loc_node);
-			req->_configed_path = req->_root + path.substr(last, path.length() - last);
+			last -= (size_t)2;
+			replacePath(path.substr(0, last), config_loc.substr(0, last), &server_node("location", i), last);
 		}
+		// non wildcard path
+		else
+			replacePath(path, config_loc, &server_node("location", i), last);
 		// config extension
-		else if (config_loc[0] == '.')
+		if (config_loc[0] == '.')
 			this->_req->_extension = config_loc.substr(1, config_loc.size() - (size_t)1);
 		i++;
 	}
@@ -145,5 +145,18 @@ void			RequestConfig::applyConfig(Config::node* node_ptr) {
 		if (node.size("server_name") > 0)
 			this->_req->_server_name = (*node("server_name"))[0];
 		configErrorPage(node_ptr);
+		if (node.size("id") > 0)
+			this->_req->_id = (*node("id"))[0];
+		if (node.size("pw") > 0)
+			this->_req->_pw = (*node("pw"))[0];
+	}
+}
+
+void			RequestConfig::replacePath(std::string path, std::string config_loc, Config::node * server_node, size_t last) {
+	if (path == config_loc)
+	{
+		this->_loc_node = server_node;
+		applyConfig(this->_loc_node);
+		this->_req->_configed_path = this->_req->_root + path.substr(last, path.length() - last);
 	}
 }
