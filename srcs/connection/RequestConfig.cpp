@@ -31,7 +31,8 @@ _req(req), _loc_node(NULL)
 		if (config_loc[last] == '*' )
 			last -= (size_t)2;
 		// wildcard path
-		if (path.substr(0, last) == config_loc.substr(0, last))
+		if (config_loc == path ||
+			(config_loc[last] == '*' && path.substr(0, last) == config_loc.substr(0, last)))
 		{
 			this->_loc_node = &server_node("location", i);
 			applyConfig(this->_loc_node);
@@ -145,5 +146,9 @@ void			RequestConfig::applyConfig(Config::node* node_ptr) {
 		if (node.size("server_name") > 0)
 			this->_req->_server_name = (*node("server_name"))[0];
 		configErrorPage(node_ptr);
+		if (node.size("id") > 0)
+			this->_req->_id = (*node("id"))[0];
+		if (node.size("pw") > 0)
+			this->_req->_pw = (*node("pw"))[0];
 	}
 }

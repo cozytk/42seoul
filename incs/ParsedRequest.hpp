@@ -32,6 +32,8 @@ class ParsedRequest
 		std::string					_configed_path;
 		std::string					_extension;
 		std::string					_server_name;
+		std::string					_id;
+		std::string					_pw;
 		int							_max_body;
 		bool						_autoindex;
 		std::vector<std::string>	_index;
@@ -54,6 +56,8 @@ class ParsedRequest
 		std::string						getBody();
 		std::string						getConfigedPath();
 		std::string						getStateText();
+		std::string						getId();
+		std::string						getPw();
 		std::string const &				getRoot();
 		std::string const &				getExtension();
 		std::string const &				getServerName();

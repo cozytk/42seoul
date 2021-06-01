@@ -146,30 +146,6 @@ bool				RequestInspect::isValidVersion() {
 	return false;
 }
 
-// bool				RequestInspect::isValidContent() {
-// 	std::string method = ;
-// 	// post, put without content-length 411, 400
-// 	if (_req->_headers["Type"] == ft::methods[POST] || method == ft::methods[PUT]) {
-// 		if (_req->isExistHeader("Content-Length")) {
-// 			// ignore content-length since transfer-encoding contained
-// 			if (_req->isExistHeader("Transfer-Encoding") && _req->_headers["Transfer-Encoding"] != "identity")
-// 				return true;
-// 			// todo need stoi to check
-// 			if (_req->_headers["Content-Length"] == _req->_body.length())
-// 				return true;
-// 			// bad request
-// 			this->_req->setStateCode(400);
-// 			this->_req->setStateText(400);
-// 			return false;
-// 		}
-// 		// request should contain content-length
-// 		this->_req->setStateCode(411);
-// 		this->_req->setStateText(411);
-// 		return false;
-// 	}
-// 	return true;
-// }
-
 bool				RequestInspect::isAllowedMethod() {
 	ParsedRequest::HeaderType	&header = this->_req->getHeaders();
 	std::vector<std::string>	allowed = this->_req->getAllowMethods();
@@ -189,8 +165,6 @@ bool				RequestInspect::isAllowedMethod() {
 bool				RequestInspect::isValid() {
 	if (!isValidStart())
 		return false;
-	// if (!isValidContent())
-	// 	return false;
 	if (!isAllowedMethod())
 		return false;
 	return true;

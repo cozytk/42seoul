@@ -158,16 +158,15 @@ int Server::recv(int socket) {
 	if (this->_request[socket]->_length != -1 &&
 	this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length) {
 		ft::trim_space(this->_request[socket]->_buffer);
-		/*
+
 		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		RequestConfig req_conf(this->_parsed_req);
 		RequestInspect inspect(this->_parsed_req);
 		inspect.isValid();
-
 		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
-		*/
+
 		return (ALL_RECV);
 	}
 	if (this->_request[socket]->_length == -1 &&
@@ -176,15 +175,15 @@ int Server::recv(int socket) {
 		this->_request[socket]->_buffer.find("\r\n0\r\n") != std::string::npos) {
 		ft::trim_space(this->_request[socket]->_buffer);
 
-		/*
 		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		RequestInspect inspect(this->_parsed_req);
+		RequestConfig req_conf(this->_parsed_req);
 		inspect.isValid();
 
 		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
-		*/
+
 		return (ALL_RECV);
 	}
 	return (WAIT_RECV);
@@ -204,7 +203,7 @@ int Server::send(int socket) {
 	std::string stateText = this->_parsed_req->getStateText();
 
   body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
-	
+
 	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
 		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 	}
@@ -230,10 +229,10 @@ int Server::send(int socket) {
 	if (len == 0)
 		return (ERR_SEND);
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
-	/*
+
 	std::cout << std::endl << "SEND ▼" << std::endl;
 	std::cout << "[" << buf << "]" << std::endl;
-	*/
+
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
 		return (ALL_SEND);

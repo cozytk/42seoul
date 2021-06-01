@@ -14,7 +14,6 @@ class RequestInspect
 		bool			isValidPath();
 		bool			isValidVersion();
 
-		// bool			isValidContent();
 		bool			isAllowedMethod();
 		bool			isExistResource(std::string path, std::string index);
 	public:
