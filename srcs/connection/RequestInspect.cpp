@@ -62,31 +62,15 @@ bool				RequestInspect::isValidStart() {
 bool				RequestInspect::isValidType() {
 	ParsedRequest::HeaderType &header = _req->getHeaders();
 	size_t i = -1;
-	std::string	methods[8] = {
-		"GET",
-		"HEAD",
-		"POST",
-		"PUT",
-		"DELETE",
-		"CONNECT",
-		"OPTIONS",
-		"TRACE"
-	};
+
 	if (!_req->isExistHeader("Type"))
 	{
 		this->_req->setStateCode(400);
 		this->_req->setStateText("Bad Request");
 		return false;
 	}
-	while (++i < 8)
-	{
-		if (header["Type"] == methods[i])
-			return true;
-	}
-	// get, head can't be 405 but tester approve accessing '/' only get
-	// todo should check server support method if not return 405
-	this->_req->setStateCode(400);
-	this->_req->setStateText("Bad Request");
+	if (isAllowedMethod())
+		return true;
 	return false;
 }
 
@@ -101,7 +85,6 @@ bool				RequestInspect::isValidPath() {
 		this->_req->setStateText("Bad Request");
 		return false;
 	}
-	// path = this->_req->getRoot() + header["Path"];
 	for (size_t i = 0; i < index.size(); i++)
 	{
 		if (isExistResource(path, index[i]))
@@ -157,6 +140,10 @@ bool				RequestInspect::isAllowedMethod() {
 			return true;
 		i++;
 	}
+	// get, head can't be 405 but tester approve accessing '/' only get,
+	// on the ohter hand webserv work differently.
+	// if allow_method is configed, allow_method inspect will precede.
+	// so get, head can response with 405.
 	this->_req->setStateCode(405);
 	this->_req->setStateText("Method Not Allowed");
 	return false;
@@ -165,8 +152,7 @@ bool				RequestInspect::isAllowedMethod() {
 bool				RequestInspect::isValid() {
 	if (!isValidStart())
 		return false;
-	if (!isAllowedMethod())
-		return false;
+
 	return true;
 }
 
