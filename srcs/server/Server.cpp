@@ -2,6 +2,48 @@
 
 /* Request */
 
+std::map<int, std::string> make_status ()
+{
+	std::map<int, std::string> status_list;
+	status_list[100] = "Continue";
+	status_list[200] = "OK"; status_list[201] = "Created";
+	status_list[202] = "Accepted";
+	status_list[204] = "No Content";
+	status_list[205] = "Reset Content";
+	status_list[206] = "Partial Content";
+	status_list[299] = "CGI OK";
+	status_list[300] = "Multiple Choice";
+	status_list[301] = "Moved Permanently";
+	status_list[303] = "See Other";
+	status_list[305] = "Use Proxy";
+	status_list[307] = "Temporary Redirect";
+	status_list[400] = "Bad Request";
+	status_list[401] = "Unauthorized";
+	status_list[403] = "Forbidden";
+	status_list[404] = "Not Found";
+	status_list[405] = "Method Not Allowed";
+	status_list[406] = "Not Acceptable";
+	status_list[407] = "Proxy Authentication Required";
+	status_list[408] = "Request Timeout";
+	status_list[409] = "Conflict";
+	status_list[410] = "Gone";
+	status_list[411] = "Length Required";
+	status_list[412] = "Precondition Failed";
+	status_list[413] = "Payload Too Large";
+	status_list[414] = "URI Too Long";
+	status_list[415] = "Unsupported Media Type";
+	status_list[416] = "Requested Range Not Satisfiable";
+	status_list[417] = "Expectation Failed";
+	status_list[500] = "Internal Server Error";
+	status_list[501] = "Not Implemented";
+	status_list[503] = "Service Unavailable";
+	status_list[504] = "Gateway Timeout";
+	status_list[505] = "HTTP Version Not Supported";
+	return (status_list);
+}
+
+std::map<int, std::string> Server::_status = make_status();
+
 std::map<std::string, std::string> makeMimeType ()
 {
 	std::map<std::string, std::string> type_map;
@@ -112,6 +154,20 @@ const char *Server::SendException::what() const throw() {
 
 /* coplien */
 Server::Server() {
+	/*
+	std::map<std::string, std::string>_config_map = _server_conf->getChildren()
+
+	if (hasKey(server_map, "server_name"))
+		m_server_name = server_map["server_name"];
+	else
+		m_server_name = "noname";
+	m_host = server_map["host"];
+	m_port = ft::stoi(server_map["port"]);
+	m_request_uri_limit_size = ft::stoi(server_map["REQUEST_URI_LIMIT_SIZE"]);
+	m_request_header_limit_size = ft::stoi(server_map["REQUEST_HEADER_LIMIT_SIZE"]);
+	m_limit_client_body_size = ft::stoi(server_map["LIMIT_CLIENT_BODY_SIZE"]);
+	m_default_error_page = ft::getStringFromFile(server_map["DEFAULT_ERROR_PAGE"]);
+	 */
 }
 
 Server::Server(Server const &x) {
@@ -232,8 +288,8 @@ int Server::send(int socket) {
 	int buf_size;
 
 	std::string body;
-
 	std::string header;
+	std::string response;
 
 	/* tmp */
 //  this->_parsed_req->isValid();
@@ -241,22 +297,29 @@ int Server::send(int socket) {
 
 //  body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
 
+	std::map<std::string, std::string>_header = _parsed_req->getHeaders();
+	std::map<std::string, std::string>::iterator it;
+
+	for (it = _header.begin(); it != _header.end(); it++)
+		std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
+	std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
+	std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
+
 	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
-		runGetHead(this->_parsed_req, GET);
+//		response = "HTTP/1.1" + stateCode + runGetHead(this->_parsed_req, GET);
 		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 	}
 	if (this->_parsed_req->getHeaders()["Type"] == "POST")
 	{
-		header = "HTTP/1.1 " + stateCode + " NOK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+		response = "HTTP/1.1 " + stateCode + " NOK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 
 	}
 	if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
-		runGetHead(this->_parsed_req, HEAD);
+//		response = "HTTP/1.1" + stateCode + runGetHead(this->_parsed_req, HEAD);
 		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 		body = "";
 	}
 
-	std::string response = header + body;
 
 	/* re */
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
@@ -289,93 +352,102 @@ std::string Server::getHeaderValue(ParsedRequest *request, std::string key)
 	return (request->getHeaders()[key]);
 }
 
-void Server::runGetHead(ParsedRequest *request, bool method)
+time_t Server::getLastModifiedHeader(std::string path)
+{
+	struct stat buf;
+	ft::memset(&buf, 0, sizeof(struct stat));
+	stat(path.c_str(), &buf);
+	return (buf.st_mtimespec.tv_sec);
+}
+
+std::string Server::runGetHead(ParsedRequest *request, bool method)
 {
 	std::map<std::string, std::string>_header = request->getHeaders();
 	std::map<std::string, std::string>::iterator it;
 
 	for (it = _header.begin(); it != _header.end(); it++)
 		std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
+		std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
+		std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
+
+//	for (auto it = _server_conf->getChildren().begin(); it != _server_conf->getChildren().end(); it++)
+//		std::cout << "[" << it->first << "]" << std::endl;
+
+
 
 	std::string path = getHeaderValue(request, "Path");
 	std::string body;
-	headers_t headers(1, getMimeTypeHeader(path));
+	std::vector<std::string> headers(1, path);
+//	headers_t headers(1, getMimeTypeHeader(path));
 
 	try {
-		body = fileToString(path, );
+		body = fileToString(path, request->getMaxBody());
 	} catch (std::overflow_error& e) {
 		return (response400(request, 413));
 	}
 	if (headers[0].empty())
 		return (response400(request, 415));
-	headers.push_back(reinterpret_cast<const char *>(getLastModifiedHeader(path)));
+	headers.push_back(setLastModifiedHeader());
+//	headers.push_back(reinterpret_cast<const char *>(getLastModifiedHeader(path)));
 	if (method == HEAD)
 		headers.push_back("content-length:" + ft::to_string(int(body.size())));
 	return (response200(request, 200, headers, body));
 }
 
-/*
-void Server::response200(Connection& connection, int status, headers_t headers, std::string body)
+std::string Server::response200(ParsedRequest *request, int status, std::vector<std::string> headers, std::string body)
 {
-	headers.push_back(setLastModified());
+	std::string ret;
+	headers.push_back(setLastModifiedHeader());
 	headers.push_back(setServerName());
-	*/
 /* todo cgi response
 	if (status == CGI_SUCCESS_CODE)
 		createCGIResponse(status, headers, body);
-	*//*
-
-
 	*/
-/*
-	 * todo when Trasfer-Encoding, skip
-	 *//*
+
+//	todo when Trasfer-Encoding, skip
 
 	headers.push_back(setContentLength(body));
 	if (!body.empty())
 		headers.push_back(setContentLanguage());
-	if (connection.getMethod() == "HEAD")
+	if (getHeaderValue(request, "Type") == "HEAD")
 		body = "";
-	*/
-/*
-	 * todo response generate, header factoring
-	 *//*
+	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
+		ret += *it;
+	return (ret);
+	 // todo response generate, header factoring
+
 
 }
 
-void Server::response400(Connection& connection, int status)
+std::string Server::response400(ParsedRequest *request, int status)
 {
-	headers_t headers = headers_t();
+	std::string ret;
+	std::vector<std::string> headers;
 	std::string body;
 
 	body = "";
-	headers.push_back(setLastModified());
+	headers.push_back(setLastModifiedHeader());
 	headers.push_back(setServerName());
-	*/
-/* todo cgi response *//*
+/* todo cgi response */
 
-	body = _errorPage;
+	body = "errorpage";
 	body.replace(body.find("#ERROR_CODE"), 11, ft::to_string(status));
 	body.replace(body.find("#ERROR_CODE"), 11, ft::to_string(status));
-	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Response::status[status]);
-	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Response::status[status]);
+	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Server::_status[status]);
+	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Server::_status[status]);
 	body.replace(body.find("#PORT"), 5, ft::to_string(_port));
-	*/
-/*
-	 * todo Transfer-Encoding
-	 *//*
+	 //todo Transfer-Encoding
 
 	headers.push_back(setContentLanguage());
 	headers.push_back("Connection:close");
-	*/
-/*
-    * todo response generate, header factoring
-	 *//*
-
-
+	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
+		ret += *it;
+	return (ret);
+    // todo response generate, header factoring
 }
 
-std::string fileToString(std::string path, int limit)
+
+std::string Server::fileToString(std::string path, int limit)
 {
 	char buf[1024];
 	int fd;
@@ -394,13 +466,8 @@ std::string fileToString(std::string path, int limit)
 	return (str);
 }
 
-std::string writeResponseMsg() const
-{
-	std::string msg;
-	std::map<std::string, std::string>::const_iterator it = this->_headers.begin();
-}
 
-std::string setLastModified()
+std::string Server::setLastModifiedHeader()
 {
 	char buff[1024];
 	struct tm *t;
@@ -411,17 +478,18 @@ std::string setLastModified()
 	return ("Last-Modified:" + std::string(buff));
 }
 
-std::string setServerName()
+std::string Server::setServerName()
 {
-	return ("Server: " + getServerName());
+	return ("Server: ");
+//	eturn ("Server: " + getServerName());
 }
 
-std::string setContentLength(const std::string& body)
+std::string Server::setContentLength(const std::string& body)
 {
 	return ("Content-Length:" + ft::to_string(body.size()));
 }
 
-std::string setContentLanguage()
+std::string Server::setContentLanguage()
 {
 	return ("Content-Language:ko-KR");
-}*/
+}

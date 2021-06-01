@@ -21,7 +21,6 @@ private:
 	friend class Server;
 
 	private:
-		typedef std::vector<std::string> headers_t;
 		std::map<std::string, std::string> _headers;
 		std::string _buffer;
 		std::string _response;
@@ -47,6 +46,11 @@ private:
 	Config::node *				_server_conf;
 	ParsedRequest *				_parsed_req;
 	static std::map<std::string, std::string> _mime_types;
+	static std::map<int, std::string> _status;
+	size_t                      _uriLimitSize;
+	size_t                      __headerLimitSize;
+	size_t                      _limitClientBodySize;
+	std::string                 _defaultErrorPage;
 
 public:
 	/* exception */
@@ -86,10 +90,16 @@ public:
 	int recv(int socket);
 	int send(int socket);
 
-	void runGetHead(ParsedRequest *request, bool method);
+	std::string runGetHead(ParsedRequest *request, bool method);
 	std::string getHeaderValue(ParsedRequest *request, std::string key);
 	bool hasKey(std::map<std::string, std::string>_map, std::string key);
-//	void response200(Connection& connection, int status, headers_t headers, std::string body);
-//	void response400(Connection& connection, int status);
+	std::string fileToString(std::string path, int limit);
+	time_t getLastModifiedHeader(std::string path);
+	std::string response200(ParsedRequest *request, int status, headers_t headers, std::string body);
+	std::string response400(ParsedRequest *connection, int status);
+	std::string setLastModifiedHeader();
+	std::string setServerName();
+	std::string setContentLength(const std::string& body);
+	std::string setContentLanguage();
 };
 #endif
