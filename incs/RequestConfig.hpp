@@ -28,6 +28,7 @@ class RequestConfig
 		void			configErrorPage(Config::node* node_ptr);
 		void			configMethod(Config::node* node_ptr);
 		void			applyConfig(Config::node* node_ptr);
+		void			replacePath(std::string path, std::string config_loc, Config::node * server_node, size_t last);
 	public:
 		RequestConfig();
 		RequestConfig(ParsedRequest *req);

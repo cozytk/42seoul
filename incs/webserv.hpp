@@ -29,6 +29,8 @@
 # include <stddef.h>
 
 /* macro */
+# define DEFAULT_CONF "./sample.conf"
+
 # define RECV_BUFFER_SIZE 65536
 # define ERR_RECV -1
 # define WAIT_RECV 0
@@ -41,8 +43,23 @@
 
 # define CGI_BUFFER_SIZE 2048
 
+/* color */
+# define RESET		"\033[0m"
+# define RED		"\033[31m"
+# define YELLOW		"\033[33m"
+
 /* libft */
+/* enum */
+enum LogLevel {
+	Log,
+	Warning,
+	Error
+};
+
 namespace ft {
+	/* log */
+	void Log(LogLevel lv, std::string const &log);
+
 	/* base64 */
 	namespace base64 {
 		static std::string alphabet =

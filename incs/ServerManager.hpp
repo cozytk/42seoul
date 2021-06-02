@@ -10,6 +10,7 @@ class Server;
 
 class ServerManager {
 private:
+	/* member */
 	Config					_config;
 	std::map<int, Server *>	_servers;
 	std::map<int, Server *>	_readable;
@@ -18,13 +19,26 @@ private:
 	ft::fds fds;
 	int inspect_range;
 
+	/* func */
 	Server *newServer(Config::node *block);
+
+	void write(struct ft::fds &fds_loop);
+	void read(struct ft::fds &fds_loop);
+	void accept(struct ft::fds &fds_loop);
 
 public:
 	/* static */
 	static bool alive;
 
 	/* exception */
+	class ArgvException : public std::exception {
+		virtual const char *what() const throw();
+	};
+
+	class NoServerMemberException : public std::exception {
+		virtual const char *what() const throw();
+	};
+
 	class NetFunctionException : public std::exception {
 		virtual const char *what() const throw();
 	};
@@ -36,8 +50,7 @@ public:
 
 	ServerManager &operator=(ServerManager const &x);
 
-	void config(std::string const &path);
-
+	void config(int argc, char **argv);
 	void run();
 
 	/* signal */

@@ -1,5 +1,7 @@
 #include "../../incs/Server.hpp"
 
+#include "AutoIndex.hpp"
+
 /* Request */
 
 std::map<int, std::string> make_status ()
@@ -209,7 +211,7 @@ void Server::socketBind() {
 void Server::run() {
 	if (listen(this->_socket, 512) == -1)
 		throw ListenException();
-	std::cout << this->_socket << " is being run (port: " << this->_port << ")" << std::endl;
+	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " is listening");
 }
 
 int Server::accept() {
@@ -219,6 +221,7 @@ int Server::accept() {
 		throw AcceptException();
 	fcntl(socket, F_SETFL, O_NONBLOCK);
 	this->_request.insert(std::make_pair<int, Request *>(socket, new Request));
+	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => ACCEPT");
 	return (socket);
 }
 
@@ -234,9 +237,10 @@ int Server::recv(int socket) {
 		throw ReceiveException();
 	if (len == 0)
 	{
-		std::cout << "[disconnected;]" << std::endl;
+		ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => DISCONNECTED by socket " + ft::to_string(socket));
 		return (ERR_RECV);
 	}
+	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => RECEIVE => " + ft::to_string(buffer.length()) + " bytes");
 	this->_request[socket]->_buffer += buffer;
 	if (this->_request[socket]->_length == -1 && this->_request[socket]->_buffer.find("\r\n\r\n") == std::string::npos)
 		return (WAIT_RECV);
@@ -255,14 +259,15 @@ int Server::recv(int socket) {
 	if (this->_request[socket]->_length != -1 &&
 	this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length) {
 		ft::trim_space(this->_request[socket]->_buffer);
+
 		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		RequestConfig req_conf(this->_parsed_req);
 		RequestInspect inspect(this->_parsed_req);
 		inspect.isValid();
-
 		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
+
 		return (ALL_RECV);
 	}
 	if (this->_request[socket]->_length == -1 &&
@@ -270,13 +275,16 @@ int Server::recv(int socket) {
 		this->_request[socket]->_headers["transfer-encoding"] == "chunked" &&
 		this->_request[socket]->_buffer.find("\r\n0\r\n") != std::string::npos) {
 		ft::trim_space(this->_request[socket]->_buffer);
+
 		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
 		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		RequestInspect inspect(this->_parsed_req);
+		RequestConfig req_conf(this->_parsed_req);
 		inspect.isValid();
 
 		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
+
 		return (ALL_RECV);
 	}
 	return (WAIT_RECV);
@@ -288,43 +296,19 @@ int Server::send(int socket) {
 	int buf_size;
 
 	std::string response;
-
-	/* tmp */
-//  this->_parsed_req->isValid();
-//  body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
-
-	std::map<std::string, std::string>_header = _parsed_req->getHeaders();
-	std::map<std::string, std::string>::iterator it;
-
-	for (it = _header.begin(); it != _header.end(); it++)
-	{
-		std::cout << "KEY is <" << it->first << "> VALUES is <" << it->second << ">" << std::endl;
-		std::cout << "KEY is <" << it->first << "> VALUES is <" << it->second << ">" << std::endl;
-		std::cout << "KEY is <" << it->first << "> VALUES is <" << it->second << ">" << std::endl;
-	}
-
 	ParsedRequest *parsed_req = this->_parsed_req;
-
 
 	if (parsed_req->getHeaders()["Type"] == "GET") {
 		response = runGet(parsed_req);
-//		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 	}
-	else if (parsed_req->getHeaders()["Type"] == "POST")
-	{
+	else if (parsed_req->getHeaders()["Type"] == "POST") {
 		response = runPost(parsed_req);
-//		response = "HTTP/1.1 " + stateCode + " NOK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-
 	}
 	else if (parsed_req->getHeaders()["Type"] == "DELETE") {
 		response = runDelete(parsed_req);
-//		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-//		body = "";
 	}
 	else
 		parsed_req->setStateCode(400);
-
-	/* re */
 
 	response = "HTTP/1.1 " + std::to_string(parsed_req->getStateCode()) + " " + isOK(parsed_req->getStateCode()) + "\r\n" + response;
 
@@ -336,6 +320,7 @@ int Server::send(int socket) {
 		throw SendException();
 	if (len == 0)
 		return (ERR_SEND);
+	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
 
 	std::cout << std::endl << "SEND ▼" << std::endl;
 	std::cout << buf << std::endl;
