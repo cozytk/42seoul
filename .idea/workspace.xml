@@ -12,22 +12,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3d1734bf-99fd-4704-99ff-212b218c777d" name="디폴트 변경 목록" comment="디폴트 변경 목록">
-      <change afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/directory/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/YoupiBanane/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/incs/ParsedRequest.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/incs/ParsedRequest.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/incs/RequestConfig.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/incs/RequestConfig.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/incs/RequestInspect.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/incs/RequestInspect.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/incs/ServerManager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/incs/ServerManager.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/incs/webserv.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/incs/webserv.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sample.conf" beforeDir="false" afterPath="$PROJECT_DIR$/sample.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/connection/ParsedRequest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/connection/ParsedRequest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/connection/RequestConfig.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/connection/RequestConfig.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/connection/RequestInspect.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/connection/RequestInspect.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/libft.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/libft.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/srcs/server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/server/Server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/srcs/server/ServerManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/server/ServerManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webserv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -158,21 +145,5 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/srcs/server/Server.cpp</url>
-          <line>313</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/srcs/server/Server.cpp</url>
-          <line>360</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

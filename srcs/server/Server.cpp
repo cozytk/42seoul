@@ -392,9 +392,10 @@ std::string Server::getLastModifiedHeader(ParsedRequest *request)
 {
 	struct stat st;
 
-	stat(request->get`)
-//	todo return ("Last-Modified : " + lastModified);
-	return ("Last-Modified : temp");
+	stat(request->getConfigedPath().c_str(), &st);
+//	todo cutomize to real lastModified
+	std::string ret(ctime(&st.st_mtime));
+	return ("Last-Modified : " + ret);
 }
 
 std::string Server::getConnectionHeader(ParsedRequest *request)
