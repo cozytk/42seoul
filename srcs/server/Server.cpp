@@ -287,39 +287,42 @@ int Server::send(int socket) {
 	int len;
 	int buf_size;
 
-	std::string body;
-	std::string header;
 	std::string response;
 
 	/* tmp */
 //  this->_parsed_req->isValid();
-	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
-
 //  body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
 
 	std::map<std::string, std::string>_header = _parsed_req->getHeaders();
 	std::map<std::string, std::string>::iterator it;
 
 	for (it = _header.begin(); it != _header.end(); it++)
-		std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
-	std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
-	std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
-
-	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
-//		response = "HTTP/1.1" + stateCode + runGetHead(this->_parsed_req, GET);
-		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-	}
-	if (this->_parsed_req->getHeaders()["Type"] == "POST")
 	{
-		response = "HTTP/1.1 " + stateCode + " NOK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-
-	}
-	if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
-//		response = "HTTP/1.1" + stateCode + runGetHead(this->_parsed_req, HEAD);
-		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-		body = "";
+		std::cout << "KEY is <" << it->first << "> VALUES is <" << it->second << ">" << std::endl;
+		std::cout << "KEY is <" << it->first << "> VALUES is <" << it->second << ">" << std::endl;
+		std::cout << "KEY is <" << it->first << "> VALUES is <" << it->second << ">" << std::endl;
 	}
 
+	ParsedRequest *parsed_req = this->_parsed_req;
+
+
+	if (parsed_req->getHeaders()["Type"] == "GET") {
+		response = runGet(parsed_req);
+//		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	}
+	else if (parsed_req->getHeaders()["Type"] == "POST")
+	{
+		response = runPost(parsed_req);
+//		response = "HTTP/1.1 " + stateCode + " NOK\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+
+	}
+	else if (parsed_req->getHeaders()["Type"] == "DELETE") {
+		response = runDelete(parsed_req);
+//		header = "HTTP/1.1 " + stateCode + " NOK\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+//		body = "";
+	}
+	else
+		parsed_req->setStateCode(400);
 
 	/* re */
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
@@ -332,7 +335,8 @@ int Server::send(int socket) {
 		return (ERR_SEND);
 
 	std::cout << std::endl << "SEND ▼" << std::endl;
-	std::cout << "[" << buf << "]" << std::endl;
+	std::cout << "HTTP/1.1 " << std::to_string(parsed_req->getStateCode()) << " " << isOK(parsed_req->getStateCode()) << std::endl;
+	std::cout << buf << std::endl;
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
@@ -342,154 +346,78 @@ int Server::send(int socket) {
 	return (WAIT_SEND);
 }
 
-bool Server::hasKey(std::map<std::string, std::string>_map, std::string key)
+std::string Server::runGet(ParsedRequest *request)
 {
-	return (!_map[key].empty());
-}
-
-std::string Server::getHeaderValue(ParsedRequest *request, std::string key)
-{
-	return (request->getHeaders()[key]);
-}
-
-time_t Server::getLastModifiedHeader(std::string path)
-{
-	struct stat buf;
-	ft::memset(&buf, 0, sizeof(struct stat));
-	stat(path.c_str(), &buf);
-	return (buf.st_mtimespec.tv_sec);
-}
-
-std::string Server::runGetHead(ParsedRequest *request, bool method)
-{
-	std::map<std::string, std::string>_header = request->getHeaders();
-	std::map<std::string, std::string>::iterator it;
-
-	for (it = _header.begin(); it != _header.end(); it++)
-		std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
-		std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
-		std::cout << "KEY is <" <<  it->first << "> VALUES is <" << it->second << ">" << std::endl;
-
-//	for (auto it = _server_conf->getChildren().begin(); it != _server_conf->getChildren().end(); it++)
-//		std::cout << "[" << it->first << "]" << std::endl;
-
-
-
-	std::string path = getHeaderValue(request, "Path");
-	std::string body;
-	std::vector<std::string> headers(1, path);
-//	headers_t headers(1, getMimeTypeHeader(path));
-
-	try {
-		body = fileToString(path, request->getMaxBody());
-	} catch (std::overflow_error& e) {
-		return (response400(request, 413));
-	}
-	if (headers[0].empty())
-		return (response400(request, 415));
-	headers.push_back(setLastModifiedHeader());
-//	headers.push_back(reinterpret_cast<const char *>(getLastModifiedHeader(path)));
-	if (method == HEAD)
-		headers.push_back("content-length:" + ft::to_string(int(body.size())));
-	return (response200(request, 200, headers, body));
-}
-
-std::string Server::response200(ParsedRequest *request, int status, std::vector<std::string> headers, std::string body)
-{
-	std::string ret;
-	headers.push_back(setLastModifiedHeader());
-	headers.push_back(setServerName());
-/* todo cgi response
-	if (status == CGI_SUCCESS_CODE)
-		createCGIResponse(status, headers, body);
-	*/
-
-//	todo when Trasfer-Encoding, skip
-
-	headers.push_back(setContentLength(body));
-	if (!body.empty())
-		headers.push_back(setContentLanguage());
-	if (getHeaderValue(request, "Type") == "HEAD")
-		body = "";
-	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
-		ret += *it;
-	return (ret);
-	 // todo response generate, header factoring
-
-
-}
-
-std::string Server::response400(ParsedRequest *request, int status)
-{
-	std::string ret;
 	std::vector<std::string> headers;
-	std::string body;
+	std::string ret;
 
-	body = "";
-	headers.push_back(setLastModifiedHeader());
-	headers.push_back(setServerName());
-/* todo cgi response */
-
-	body = "errorpage";
-	body.replace(body.find("#ERROR_CODE"), 11, ft::to_string(status));
-	body.replace(body.find("#ERROR_CODE"), 11, ft::to_string(status));
-	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Server::_status[status]);
-	body.replace(body.find("#ERROR_DESCRIPTION"), 18, Server::_status[status]);
-	body.replace(body.find("#PORT"), 5, ft::to_string(_port));
-	 //todo Transfer-Encoding
-
-	headers.push_back(setContentLanguage());
-	headers.push_back("Connection:close");
+	headers.push_back(getServerHeader(request));
+	headers.push_back(getDateHeader(request));
+	headers.push_back(getContentTypeHeader(request));
+	headers.push_back(getContentLengthHeader(request));
+	headers.push_back(getLastModifiedHeader(request));
+	headers.push_back(getConnectionHeader(request));
+	request->setStateCode(200);
 	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
-		ret += *it;
+		ret += *it + "\r\n";
+	ret += "\r\n";
+	ret += request->getBody() + "\r\n";
 	return (ret);
-    // todo response generate, header factoring
+}
+
+std::string Server::runPost(ParsedRequest *request)
+{
+	return (runGet(request));
+}
+
+std::string Server::runDelete(ParsedRequest *request)
+{
+	return ("temp");
+}
+
+std::string Server::getServerHeader(ParsedRequest *request)
+{
+	return ("Server : " + request->getServerName());
+}
+
+std::string Server::getDateHeader(ParsedRequest *request)
+{
+	std::string calculated_time;
+
+	// todo make form like Wed, 02 Jun 2021 11:24:33 GMT
+//	return ("Date : " + calculated_time);
+	return ("Date : temp");
 }
 
 
-std::string Server::fileToString(std::string path, int limit)
+std::string Server::getContentTypeHeader(ParsedRequest *request)
 {
-	char buf[1024];
-	int fd;
-	ssize_t cnt = 0;
-	std::string str;
+	// todo load content-type
+	return ("Content-type : temp");
+}
 
-	if ((fd = open(path.c_str(), O_RDONLY)) == -1)
-		throw (std::invalid_argument("Invalid : " + path));
-	while ((cnt = read(fd, buf, 1024)) > 0)
-	{
-		str.append(buf, cnt);
-		if (limit != -1 && str.size() > limit)
-			throw (std::overflow_error("Overflow : " + path));
-	}
-	close(fd);
-	return (str);
+std::string Server::getContentLengthHeader(ParsedRequest *request)
+{
+	return ("Content-Length : " + std::to_string(int(request->getBody().length())));
+}
+
+std::string Server::getLastModifiedHeader(ParsedRequest *request)
+{
+//	todo return ("Last-Modified : " + lastModified);
+	return ("Last-Modified : temp");
+}
+
+std::string Server::getConnectionHeader(ParsedRequest *request)
+{
+//	todo return ("Last-Modified : " + lastModified);
+	return ("Connection : keep-alive");
 }
 
 
-std::string Server::setLastModifiedHeader()
+std::string Server::isOK(int state)
 {
-	char buff[1024];
-	struct tm *t;
-	time_t now = time(NULL);
-
-	t = localtime(&now);
-	strftime(buff, 1024, "%a, %d %b %Y %X GMT", t);
-	return ("Last-Modified:" + std::string(buff));
-}
-
-std::string Server::setServerName()
-{
-	return ("Server: ");
-//	eturn ("Server: " + getServerName());
-}
-
-std::string Server::setContentLength(const std::string& body)
-{
-	return ("Content-Length:" + ft::to_string(body.size()));
-}
-
-std::string Server::setContentLanguage()
-{
-	return ("Content-Language:ko-KR");
+	if (state / 100 == 2)
+		return ("OK");
+	else
+		return ("KO");
 }

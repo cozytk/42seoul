@@ -90,16 +90,16 @@ public:
 	int recv(int socket);
 	int send(int socket);
 
-	std::string runGetHead(ParsedRequest *request, bool method);
-	std::string getHeaderValue(ParsedRequest *request, std::string key);
-	bool hasKey(std::map<std::string, std::string>_map, std::string key);
-	std::string fileToString(std::string path, int limit);
+	std::string runGet(ParsedRequest *request);
+	std::string runPost(ParsedRequest *request);
+	std::string runDelete(ParsedRequest *request);
 	time_t getLastModifiedHeader(std::string path);
-	std::string response200(ParsedRequest *request, int status, headers_t headers, std::string body);
-	std::string response400(ParsedRequest *connection, int status);
-	std::string setLastModifiedHeader();
-	std::string setServerName();
-	std::string setContentLength(const std::string& body);
-	std::string setContentLanguage();
+	std::string getServerHeader(ParsedRequest *request);
+	std::string getDateHeader(ParsedRequest *request);
+	std::string getContentTypeHeader(ParsedRequest *request);
+	std::string getContentLengthHeader(ParsedRequest *request);
+	std::string getLastModifiedHeader(ParsedRequest *request);
+	std::string getConnectionHeader(ParsedRequest *request);
+	std::string isOK(int state);
 };
 #endif

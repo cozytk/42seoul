@@ -8,6 +8,7 @@
 # include <stack>
 # include <ctime>
 # include <queue>
+# include <string>
 
 # include <ctime>
 

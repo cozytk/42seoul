@@ -12,7 +12,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3d1734bf-99fd-4704-99ff-212b218c777d" name="디폴트 변경 목록" comment="디폴트 변경 목록">
+      <change afterPath="$PROJECT_DIR$/html/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sample.conf.backup" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/YoupiBanane/Yeah/not_happy.bad_extension" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YoupiBanane/nop/other.pouic" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YoupiBanane/nop/youpi.bad_extension" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YoupiBanane/youpi.bad_extension" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YoupiBanane/youpi.bla" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/incs/Server.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/incs/Server.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/incs/webserv.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/incs/webserv.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sample.conf" beforeDir="false" afterPath="$PROJECT_DIR$/sample.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/srcs/server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/server/Server.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +39,7 @@
       <list>
         <option value="CMakeLists.txt" />
         <option value="HTTP Request" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -53,6 +65,7 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
@@ -141,16 +154,5 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/srcs/server/Server.cpp</url>
-          <line>347</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
