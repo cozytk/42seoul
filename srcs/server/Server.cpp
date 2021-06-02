@@ -325,6 +325,9 @@ int Server::send(int socket) {
 		parsed_req->setStateCode(400);
 
 	/* re */
+
+	response = "HTTP/1.1 " + std::to_string(parsed_req->getStateCode()) + " " + isOK(parsed_req->getStateCode()) + "\r\n" + response;
+
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
 		response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
 	buf = std::string(response, this->_request[socket]->_sent, buf_size);
@@ -335,7 +338,6 @@ int Server::send(int socket) {
 		return (ERR_SEND);
 
 	std::cout << std::endl << "SEND ▼" << std::endl;
-	std::cout << "HTTP/1.1 " << std::to_string(parsed_req->getStateCode()) << " " << isOK(parsed_req->getStateCode()) << std::endl;
 	std::cout << buf << std::endl;
 
 	this->_request[socket]->_sent += len;
@@ -403,6 +405,9 @@ std::string Server::getContentLengthHeader(ParsedRequest *request)
 
 std::string Server::getLastModifiedHeader(ParsedRequest *request)
 {
+	struct stat st;
+
+	stat(request->get`)
 //	todo return ("Last-Modified : " + lastModified);
 	return ("Last-Modified : temp");
 }
