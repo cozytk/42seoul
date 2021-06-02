@@ -369,11 +369,10 @@ std::string Server::getServerHeader(ParsedRequest *request)
 
 std::string Server::getDateHeader(ParsedRequest *request)
 {
-	std::string calculated_time;
-
+	time_t now = time(NULL);
+	std::string ret = (ctime(&now));
 	// todo make form like Wed, 02 Jun 2021 11:24:33 GMT
-//	return ("Date : " + calculated_time);
-	return ("Date : temp");
+	return ("Date : " + ret);
 }
 
 

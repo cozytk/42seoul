@@ -13,8 +13,8 @@
   <component name="ChangeListManager">
     <list default="true" id="3d1734bf-99fd-4704-99ff-212b218c777d" name="디폴트 변경 목록" comment="디폴트 변경 목록">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/srcs/server/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/srcs/server/Server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webserv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
