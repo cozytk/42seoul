@@ -204,19 +204,20 @@ int Server::send(int socket) {
 
   body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
 
-	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
-		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-		// header = "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-	}
-	if (this->_parsed_req->getHeaders()["Type"] == "POST")
-	{
-		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	// if (this->_parsed_req->getHeaders()["Type"] == "GET") {
+	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	// 	// header = "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	// }
+	// if (this->_parsed_req->getHeaders()["Type"] == "POST")
+	// {
+	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
 
-	}
-	if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
+	// }
+	// if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
+	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	// 	body = "";
+	// }
 		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-		body = "";
-	}
 
 	std::string response = header + body;
 
