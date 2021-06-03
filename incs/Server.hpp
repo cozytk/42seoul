@@ -100,6 +100,7 @@ public:
 	std::string getContentLengthHeader(ParsedRequest *request);
 	std::string getLastModifiedHeader(ParsedRequest *request);
 	std::string getConnectionHeader(ParsedRequest *request);
-	std::string isOK(int state);
+	std::string getStateText(int state);
+	std::string erase_white_space(std::string &s);
 };
 #endif

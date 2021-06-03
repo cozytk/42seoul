@@ -8,7 +8,8 @@ std::map<int, std::string> make_status ()
 {
 	std::map<int, std::string> status_list;
 	status_list[100] = "Continue";
-	status_list[200] = "OK"; status_list[201] = "Created";
+	status_list[200] = "OK";
+	status_list[201] = "Created";
 	status_list[202] = "Accepted";
 	status_list[204] = "No Content";
 	status_list[205] = "Reset Content";
@@ -310,7 +311,7 @@ int Server::send(int socket) {
 	else
 		parsed_req->setStateCode(400);
 
-	response = "HTTP/1.1 " + std::to_string(parsed_req->getStateCode()) + " " + isOK(parsed_req->getStateCode()) + "\r\n" + response;
+	response = "HTTP/1.1 " + std::to_string(parsed_req->getStateCode()) + " " + getStateText(parsed_req->getStateCode()) + "\r\n" + response;
 
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
 		response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
@@ -338,15 +339,18 @@ std::string Server::runGet(ParsedRequest *request)
 	std::vector<std::string> headers;
 	std::string ret;
 
+	request->setStateCode(200);
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
 	headers.push_back(getContentTypeHeader(request));
 	headers.push_back(getContentLengthHeader(request));
 	headers.push_back(getLastModifiedHeader(request));
 	headers.push_back(getConnectionHeader(request));
-	request->setStateCode(200);
 	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
+	{
+		erase_white_space(*it);
 		ret += *it + "\r\n";
+	}
 	ret += "\r\n";
 	ret += request->getBody() + "\r\n";
 	return (ret);
@@ -354,12 +358,49 @@ std::string Server::runGet(ParsedRequest *request)
 
 std::string Server::runPost(ParsedRequest *request)
 {
-	return (runGet(request));
+	std::vector<std::string> headers;
+	std::string ret;
+
+	if (request->getBody().length() == 0)
+		return (runGet(request));
+	request->setStateCode(400);
+	headers.push_back(getServerHeader(request));
+	headers.push_back(getDateHeader(request));
+	headers.push_back(getContentTypeHeader(request));
+	headers.push_back(getContentLengthHeader(request));
+	headers.push_back(getLastModifiedHeader(request));
+	headers.push_back(getConnectionHeader(request));
+	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
+	{
+		erase_white_space(*it);
+		ret += *it + "\r\n";
+	}
+	ret += "\r\n";
+	ret += request->getBody() + "\r\n";
+	return (ret);
 }
 
 std::string Server::runDelete(ParsedRequest *request)
 {
-	return ("temp");
+	std::vector<std::string> headers;
+	std::string ret;
+
+	unlink(request->getConfigedPath().c_str());
+	request->setStateCode(204);
+	headers.push_back(getServerHeader(request));
+	headers.push_back(getDateHeader(request));
+	headers.push_back(getContentTypeHeader(request));
+	headers.push_back(getContentLengthHeader(request));
+	headers.push_back(getLastModifiedHeader(request));
+	headers.push_back(getConnectionHeader(request));
+	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
+	{
+		erase_white_space(*it);
+		ret += *it;
+	}
+	ret += "\r\n";
+	ret += request->getBody() + "\r\n";
+	return (ret);
 }
 
 std::string Server::getServerHeader(ParsedRequest *request)
@@ -393,21 +434,30 @@ std::string Server::getLastModifiedHeader(ParsedRequest *request)
 
 	stat(request->getConfigedPath().c_str(), &st);
 //	todo cutomize to real lastModified
+//  todo not expecting time
 	std::string ret(ctime(&st.st_mtime));
 	return ("Last-Modified : " + ret);
 }
 
 std::string Server::getConnectionHeader(ParsedRequest *request)
 {
-//	todo return ("Last-Modified : " + lastModified);
-	return ("Connection : keep-alive");
+	if (request->getStateCode() / 100 == 2)
+		return ("Connection : keep-alive");
+	else
+		return ("Connection : close");
 }
 
 
-std::string Server::isOK(int state)
+std::string Server::getStateText(int state)
 {
-	if (state / 100 == 2)
-		return ("OK");
-	else
-		return ("KO");
+	return (_status[state]);
+}
+
+std::string Server::erase_white_space(std::string &s)
+{
+	if (s.find_last_of('\n') == s.length() - 1)
+		s.resize(s.length() - 1);
+	if (s.find_last_of('\r') == s.length() - 1)
+		s.resize(s.length() - 1);
+	return (s);
 }
