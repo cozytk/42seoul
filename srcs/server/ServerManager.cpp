@@ -199,10 +199,14 @@ void ServerManager::serverClose() {
 	ft::Log(Error, "Interrupt");
 	std::map<int, Server *>::iterator server;
 
+	/*
 	for (server = this->_servers.begin(); server != this->_servers.end(); server++)
 		::close(server->first);
 	for (server = this->_readable.begin(); server != this->_readable.end(); server++)
 		::close(server->first);
 	for (server = this->_writable.begin(); server != this->_writable.end(); server++)
 		::close(server->first);
+	*/
+	for (int i = 0; i < this->inspect_range + 1; i++)
+		::close(i);
 }

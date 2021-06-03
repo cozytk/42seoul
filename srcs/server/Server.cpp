@@ -299,6 +299,8 @@ int Server::send(int socket) {
 	std::string response;
 	ParsedRequest *parsed_req = this->_parsed_req;
 
+	std::string header;
+	std::string body;
   //this->_parsed_req->isValid();
 	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
 	std::string stateText = this->_parsed_req->getStateText();
@@ -328,7 +330,7 @@ int Server::send(int socket) {
 		}
 		body += '0';
 	}
-	std::string response = header + body;
+	response = header + body;
 
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
 		response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
