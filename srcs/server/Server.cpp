@@ -446,7 +446,6 @@ std::string Server::indexJoin(const std::string &str, const std::string &index)
 FILE*       Server::getIndexedPath(ParsedRequest *request)
 {
 	FILE* file;
-	std::string str;
 	std::vector<std::string> i_vec = request->getIndex();
 
 	if (request->getIndex().empty())
