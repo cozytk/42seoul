@@ -7,6 +7,9 @@
 # include "ParsedRequest.hpp"
 # include "RequestInspect.hpp"
 
+#define GET 0
+#define HEAD 1
+
 class ServerManager;
 
 class Server {
@@ -21,9 +24,7 @@ private:
 		std::map<std::string, std::string> _headers;
 		std::string _buffer;
 		std::string _response;
-
 		int _length;
-
 		int _sent;
 
 	public:
@@ -44,10 +45,17 @@ private:
 	int							_port;
 	Config::node *				_server_conf;
 	ParsedRequest *				_parsed_req;
+	static std::map<std::string, std::string> _mime_types;
+	static std::map<int, std::string> _status;
+	size_t                      _uriLimitSize;
+	size_t                      __headerLimitSize;
+	size_t                      _limitClientBodySize;
+	std::string                 _defaultErrorPage;
 
 public:
 	/* exception */
-	class CreateException : public std::exception {
+	typedef std::vector<std::string> headers_t;
+		class CreateException : public std::exception {
 		virtual const char *what() const throw();
 	};
 
@@ -82,5 +90,17 @@ public:
 	int recv(int socket);
 	int send(int socket);
 
+	std::string runGet(ParsedRequest *request);
+	std::string runPost(ParsedRequest *request);
+	std::string runDelete(ParsedRequest *request);
+	time_t getLastModifiedHeader(std::string path);
+	std::string getServerHeader(ParsedRequest *request);
+	std::string getDateHeader(ParsedRequest *request);
+	std::string getContentTypeHeader(ParsedRequest *request);
+	std::string getContentLengthHeader(ParsedRequest *request);
+	std::string getLastModifiedHeader(ParsedRequest *request);
+	std::string getConnectionHeader(ParsedRequest *request);
+	std::string getStateText(int state);
+	std::string erase_white_space(std::string &s);
 };
 #endif

@@ -26,7 +26,6 @@ class ParsedRequest
 		std::string					_stateText;
 		bool						_isChunked;
 		int							_stateCode;
-
 		Config::node *				_config;
 		std::string					_root;
 		std::string					_configed_path;

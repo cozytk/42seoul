@@ -1,8 +1,96 @@
-#include "Server.hpp"
+#include "../../incs/Server.hpp"
 
 #include "AutoIndex.hpp"
 
 /* Request */
+
+std::map<int, std::string> make_status ()
+{
+	std::map<int, std::string> status_list;
+	status_list[100] = "Continue";
+	status_list[200] = "OK";
+	status_list[201] = "Created";
+	status_list[202] = "Accepted";
+	status_list[204] = "No Content";
+	status_list[205] = "Reset Content";
+	status_list[206] = "Partial Content";
+	status_list[299] = "CGI OK";
+	status_list[300] = "Multiple Choice";
+	status_list[301] = "Moved Permanently";
+	status_list[303] = "See Other";
+	status_list[305] = "Use Proxy";
+	status_list[307] = "Temporary Redirect";
+	status_list[400] = "Bad Request";
+	status_list[401] = "Unauthorized";
+	status_list[403] = "Forbidden";
+	status_list[404] = "Not Found";
+	status_list[405] = "Method Not Allowed";
+	status_list[406] = "Not Acceptable";
+	status_list[407] = "Proxy Authentication Required";
+	status_list[408] = "Request Timeout";
+	status_list[409] = "Conflict";
+	status_list[410] = "Gone";
+	status_list[411] = "Length Required";
+	status_list[412] = "Precondition Failed";
+	status_list[413] = "Payload Too Large";
+	status_list[414] = "URI Too Long";
+	status_list[415] = "Unsupported Media Type";
+	status_list[416] = "Requested Range Not Satisfiable";
+	status_list[417] = "Expectation Failed";
+	status_list[500] = "Internal Server Error";
+	status_list[501] = "Not Implemented";
+	status_list[503] = "Service Unavailable";
+	status_list[504] = "Gateway Timeout";
+	status_list[505] = "HTTP Version Not Supported";
+	return (status_list);
+}
+
+std::map<int, std::string> Server::_status = make_status();
+
+std::map<std::string, std::string> makeMimeType ()
+{
+	std::map<std::string, std::string> type_map;
+
+	type_map["avi"] = "video/x-msvivdeo";
+	type_map["bin"] = "application/octet-stream";
+	type_map["bmp"] = "image/bmp";
+	type_map["css"] = "text/css";
+	type_map["csv"] = "text/csv";
+	type_map["doc"] = "application/msword";
+	type_map["docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+	type_map["gz"] = "application/gzip";
+	type_map["gif"] = "image/gif";
+	type_map["htm"] = "text/html";
+	type_map["html"] = "text/html";
+	type_map["ico"] = "image/vnd.microsoft.icon";
+	type_map["jepg"] = "image/jepg";
+	type_map["jpg"] = "image/jepg";
+	type_map["js"] = "text/javascript";
+	type_map["json"] = "application/json";
+	type_map["mp3"] = "audio/mpeg";
+	type_map["mpeg"] = "video/mpeg";
+	type_map["png"] = "image/png";
+	type_map["pdf"] = "apllication/pdf";
+	type_map["php"] = "application/x-httpd-php";
+	type_map["ppt"] = "application/vnd.ms-powerpoint";
+	type_map["pptx"] = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+	type_map["rar"] = "application/vnd.rar";
+	type_map["sh"] = "application/x-sh";
+	type_map["svg"] = "image/svg+xml";
+	type_map["tar"] = "application/x-tar";
+	type_map["tif"] = "image/tiff";
+	type_map["txt"] = "text/plain";
+	type_map["wav"] = "audio/wav";
+	type_map["xls"] = "application/xhtml+xml";
+	type_map["xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	type_map["zip"] = "application/zip";
+	type_map["bad_extension"] = "application/bad";
+	type_map["bla"] = "application/42cgi";
+	type_map["pouic"] = "application/pouic";
+	return (type_map);
+}
+std::map<std::string, std::string> Server::_mime_types = makeMimeType();
+
 Server::Request::Request() {
 	this->_buffer = "";
 	this->_response = "";
@@ -69,6 +157,20 @@ const char *Server::SendException::what() const throw() {
 
 /* coplien */
 Server::Server() {
+	/*
+	std::map<std::string, std::string>_config_map = _server_conf->getChildren()
+
+	if (hasKey(server_map, "server_name"))
+		m_server_name = server_map["server_name"];
+	else
+		m_server_name = "noname";
+	m_host = server_map["host"];
+	m_port = ft::stoi(server_map["port"]);
+	m_request_uri_limit_size = ft::stoi(server_map["REQUEST_URI_LIMIT_SIZE"]);
+	m_request_header_limit_size = ft::stoi(server_map["REQUEST_HEADER_LIMIT_SIZE"]);
+	m_limit_client_body_size = ft::stoi(server_map["LIMIT_CLIENT_BODY_SIZE"]);
+	m_default_error_page = ft::getStringFromFile(server_map["DEFAULT_ERROR_PAGE"]);
+	 */
 }
 
 Server::Server(Server const &x) {
@@ -194,33 +296,23 @@ int Server::send(int socket) {
 	int len;
 	int buf_size;
 
-	/* test - autoindex */
-	std::string body;
-	std::string header;
+	std::string response;
+	ParsedRequest *parsed_req = this->_parsed_req;
 
-  //this->_parsed_req->isValid();
-	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
-	std::string stateText = this->_parsed_req->getStateText();
-
-  body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
-
-	if (this->_parsed_req->getHeaders()["Type"] == "GET") {
-		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-		// header = "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	if (parsed_req->getHeaders()["Type"] == "GET") {
+		response = runGet(parsed_req);
 	}
-	if (this->_parsed_req->getHeaders()["Type"] == "POST")
-	{
-		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-
+	else if (parsed_req->getHeaders()["Type"] == "POST") {
+		response = runPost(parsed_req);
 	}
-	if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
-		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-		body = "";
+	else if (parsed_req->getHeaders()["Type"] == "DELETE") {
+		response = runDelete(parsed_req);
 	}
+	else
+		parsed_req->setStateCode(400);
 
-	std::string response = header + body;
+	response = "HTTP/1.1 " + std::to_string(parsed_req->getStateCode()) + " " + getStateText(parsed_req->getStateCode()) + "\r\n" + response;
 
-	/* send */
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
 		response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
 	buf = std::string(response, this->_request[socket]->_sent, buf_size);
@@ -232,7 +324,7 @@ int Server::send(int socket) {
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
 
 	std::cout << std::endl << "SEND ▼" << std::endl;
-	std::cout << "[" << buf << "]" << std::endl;
+	std::cout << buf << std::endl;
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
@@ -240,4 +332,132 @@ int Server::send(int socket) {
 	}
 	delete this->_parsed_req;
 	return (WAIT_SEND);
+}
+
+std::string Server::runGet(ParsedRequest *request)
+{
+	std::vector<std::string> headers;
+	std::string ret;
+
+	request->setStateCode(200);
+	headers.push_back(getServerHeader(request));
+	headers.push_back(getDateHeader(request));
+	headers.push_back(getContentTypeHeader(request));
+	headers.push_back(getContentLengthHeader(request));
+	headers.push_back(getLastModifiedHeader(request));
+	headers.push_back(getConnectionHeader(request));
+	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
+	{
+		erase_white_space(*it);
+		ret += *it + "\r\n";
+	}
+	ret += "\r\n";
+	ret += request->getBody() + "\r\n";
+	return (ret);
+}
+
+std::string Server::runPost(ParsedRequest *request)
+{
+	std::vector<std::string> headers;
+	std::string ret;
+
+	if (request->getBody().length() == 0)
+		return (runGet(request));
+	request->setStateCode(400);
+	headers.push_back(getServerHeader(request));
+	headers.push_back(getDateHeader(request));
+	headers.push_back(getContentTypeHeader(request));
+	headers.push_back(getContentLengthHeader(request));
+	headers.push_back(getLastModifiedHeader(request));
+	headers.push_back(getConnectionHeader(request));
+	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
+	{
+		erase_white_space(*it);
+		ret += *it + "\r\n";
+	}
+	ret += "\r\n";
+	ret += request->getBody() + "\r\n";
+	return (ret);
+}
+
+std::string Server::runDelete(ParsedRequest *request)
+{
+	std::vector<std::string> headers;
+	std::string ret;
+
+	unlink(request->getConfigedPath().c_str());
+	request->setStateCode(204);
+	headers.push_back(getServerHeader(request));
+	headers.push_back(getDateHeader(request));
+	headers.push_back(getContentTypeHeader(request));
+	headers.push_back(getContentLengthHeader(request));
+	headers.push_back(getLastModifiedHeader(request));
+	headers.push_back(getConnectionHeader(request));
+	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
+	{
+		erase_white_space(*it);
+		ret += *it;
+	}
+	ret += "\r\n";
+	ret += request->getBody() + "\r\n";
+	return (ret);
+}
+
+std::string Server::getServerHeader(ParsedRequest *request)
+{
+	return ("Server : " + request->getServerName());
+}
+
+std::string Server::getDateHeader(ParsedRequest *request)
+{
+	time_t now = time(NULL);
+	std::string ret = (ctime(&now));
+	// todo make form like Wed, 02 Jun 2021 11:24:33 GMT
+	return ("Date : " + ret);
+}
+
+
+std::string Server::getContentTypeHeader(ParsedRequest *request)
+{
+	// todo load content-type
+	return ("Content-type : temp");
+}
+
+std::string Server::getContentLengthHeader(ParsedRequest *request)
+{
+	return ("Content-Length : " + std::to_string(int(request->getBody().length())));
+}
+
+std::string Server::getLastModifiedHeader(ParsedRequest *request)
+{
+	struct stat st;
+
+	stat(request->getConfigedPath().c_str(), &st);
+//	todo cutomize to real lastModified
+//  todo not expecting time
+	std::string ret(ctime(&st.st_mtime));
+	return ("Last-Modified : " + ret);
+}
+
+std::string Server::getConnectionHeader(ParsedRequest *request)
+{
+	if (request->getStateCode() / 100 == 2)
+		return ("Connection : keep-alive");
+	else
+		return ("Connection : close");
+}
+
+
+std::string Server::getStateText(int state)
+{
+	return (_status[state]);
+}
+
+std::string Server::erase_white_space(std::string &s)
+{
+	if (s.find_last_of('\n') == s.length() - 1)
+		s.resize(s.length() - 1);
+	if (s.find_last_of('\r') == s.length() - 1)
+		s.resize(s.length() - 1);
+	return (s);
 }

@@ -1,4 +1,4 @@
-#include "ServerManager.hpp"
+#include "../../incs/ServerManager.hpp"
 
 /* signal */
 bool ServerManager::alive = true;
