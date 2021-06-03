@@ -278,13 +278,13 @@ int Server::recv(int socket) {
 		ft::trim_space(this->_request[socket]->_buffer);
 
 		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
-		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
+		// std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		RequestInspect inspect(this->_parsed_req);
 		RequestConfig req_conf(this->_parsed_req);
 		inspect.isValid();
 
-		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
+		// std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
 
 		return (ALL_RECV);
 	}
@@ -299,19 +299,36 @@ int Server::send(int socket) {
 	std::string response;
 	ParsedRequest *parsed_req = this->_parsed_req;
 
-	if (parsed_req->getHeaders()["Type"] == "GET") {
-		response = runGet(parsed_req);
-	}
-	else if (parsed_req->getHeaders()["Type"] == "POST") {
-		response = runPost(parsed_req);
-	}
-	else if (parsed_req->getHeaders()["Type"] == "DELETE") {
-		response = runDelete(parsed_req);
-	}
-	else
-		parsed_req->setStateCode(400);
+  //this->_parsed_req->isValid();
+	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
+	std::string stateText = this->_parsed_req->getStateText();
 
-	response = "HTTP/1.1 " + std::to_string(parsed_req->getStateCode()) + " " + getStateText(parsed_req->getStateCode()) + "\r\n" + response;
+  body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
+
+	// if (this->_parsed_req->getHeaders()["Type"] == "GET") {
+	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	// 	// header = "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	// }
+	// if (this->_parsed_req->getHeaders()["Type"] == "POST")
+	// {
+	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+
+	// }
+	// if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
+	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	// 	body = "";
+	// }
+		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	if (this->_parsed_req->getHeaders()["Type"] == "PUT") {
+		header = "HTTP/1.1 201 " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+		body = "";
+		for (size_t i = 0; i < (size_t)1000; i++)
+		{
+			body += "e";
+		}
+		body += '0';
+	}
+	std::string response = header + body;
 
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
 		response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
@@ -323,8 +340,8 @@ int Server::send(int socket) {
 		return (ERR_SEND);
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
 
-	std::cout << std::endl << "SEND ▼" << std::endl;
-	std::cout << buf << std::endl;
+	// std::cout << std::endl << "SEND ▼" << std::endl;
+	// std::cout << "[" << buf << "]" << std::endl;
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {

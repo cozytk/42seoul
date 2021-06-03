@@ -32,10 +32,11 @@ _req(req), _loc_node(NULL)
 		if (config_loc[last - (size_t)1] == '*')
 		{
 			last -= (size_t)2;
-			replacePath(path.substr(0, last), config_loc.substr(0, last), &server_node("location", i), last);
+			if (path != config_loc.substr(0, last) && path.find(config_loc.substr(0, last)) == 0)
+				replacePath(path, config_loc.substr(0, last), &server_node("location", i), last);
 		}
 		// non wildcard path
-		else
+		else if (path == config_loc)
 			replacePath(path, config_loc, &server_node("location", i), last);
 		// config extension
 		if (config_loc[0] == '.')
@@ -149,14 +150,13 @@ void			RequestConfig::applyConfig(Config::node* node_ptr) {
 			this->_req->_id = (*node("id"))[0];
 		if (node.size("pw") > 0)
 			this->_req->_pw = (*node("pw"))[0];
+		if (node.size("cgi_pass") > 0)
+			this->_req->_cgi_pass = (*node("cgi_pass"))[0];
 	}
 }
 
 void			RequestConfig::replacePath(std::string path, std::string config_loc, Config::node * server_node, size_t last) {
-	if (path == config_loc)
-	{
 		this->_loc_node = server_node;
 		applyConfig(this->_loc_node);
 		this->_req->_configed_path = this->_req->_root + path.substr(last, path.length() - last);
-	}
 }

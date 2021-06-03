@@ -113,7 +113,6 @@ bool				RequestInspect::isExistResource(std::string path, std::string index) {
 			path.find(".bad_extension") != std::string::npos)
 				std::cout << "need cgi run" << std::endl;
 		}
-		// _req->_headers["Path"] = path;
 		return true;
 	}
 	return false;
