@@ -6,7 +6,9 @@
 # include <vector>
 # include <map>
 # include <stack>
+# include <ctime>
 # include <queue>
+# include <string>
 
 # include <ctime>
 
@@ -14,6 +16,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <signal.h>
+# include <sys/stat.h>
 # include <dirent.h>
 
 /* network C */
