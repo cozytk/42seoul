@@ -47,10 +47,12 @@ private:
 	ParsedRequest *				_parsed_req;
 	static std::map<std::string, std::string> _mime_types;
 	static std::map<int, std::string> _status;
+
 	size_t                      _uriLimitSize;
 	size_t                      __headerLimitSize;
 	size_t                      _limitClientBodySize;
 	std::string                 _defaultErrorPage;
+	std::string                 _response_body;
 
 public:
 	/* exception */
@@ -93,7 +95,6 @@ public:
 	std::string runGet(ParsedRequest *request);
 	std::string runPost(ParsedRequest *request);
 	std::string runDelete(ParsedRequest *request);
-	time_t getLastModifiedHeader(std::string path);
 	std::string getServerHeader(ParsedRequest *request);
 	std::string getDateHeader(ParsedRequest *request);
 	std::string getContentTypeHeader(ParsedRequest *request);
@@ -101,6 +102,12 @@ public:
 	std::string getLastModifiedHeader(ParsedRequest *request);
 	std::string getConnectionHeader(ParsedRequest *request);
 	std::string getStateText(int state);
+	std::string getResponseBody(ParsedRequest *request);
+	bool        setResponseBody(ParsedRequest *request);
+//	std::string getIndexedPath(ParsedRequest *request);
 	std::string erase_white_space(std::string &s);
+	bool        isAllowedMethod(ParsedRequest *request, std::string &method);
+	std::string response200(ParsedRequest *request);
+	std::string response400(ParsedRequest *request);
 };
 #endif
