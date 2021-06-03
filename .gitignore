@@ -180,4 +180,4 @@ CMakeLists.txt
 .idea/*
 cmake-build-debug/
 main.cpp
-file_should_after_next
+file_should_exist_after
