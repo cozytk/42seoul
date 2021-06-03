@@ -104,10 +104,11 @@ public:
 	std::string getStateText(int state);
 	std::string getResponseBody(ParsedRequest *request);
 	bool        setResponseBody(ParsedRequest *request);
-//	std::string getIndexedPath(ParsedRequest *request);
+	FILE*       getIndexedPath(ParsedRequest *request);
 	std::string erase_white_space(std::string &s);
 	bool        isAllowedMethod(ParsedRequest *request, std::string &method);
 	std::string response200(ParsedRequest *request);
 	std::string response400(ParsedRequest *request);
+	std::string indexJoin(const std::string &str, const std::string &index);
 };
 #endif

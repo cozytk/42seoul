@@ -317,6 +317,7 @@ int Server::send(int socket) {
 		parsed_req->setStateCode(400);
 		response = response400(parsed_req);
 	}
+	response = "HTTP/1.1 " + std::to_string(parsed_req->getStateCode()) + " " + _status[parsed_req->getStateCode()] + "\r\n" + response;
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
 	           response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
 	buf = std::string(response, this->_request[socket]->_sent, buf_size);
@@ -332,9 +333,13 @@ int Server::send(int socket) {
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
+		response.clear();
+		buf.clear();
 		return (ALL_SEND);
 	}
 	delete this->_parsed_req;
+	response.clear();
+	buf.clear();
 	return (WAIT_SEND);
 }
 
@@ -427,12 +432,32 @@ std::string Server::getResponseBody(ParsedRequest *request)
 	return (this->_response_body);
 }
 
-/*std::string       Server::getIndexedPath(ParsedRequest *request)
+std::string Server::indexJoin(const std::string &str, const std::string &index)
 {
-	if (request->getIndex().empty())
-		return (request->getConfigedPath());
+	std::string ret;
 
-}*/
+	if (str[str.length() - 1] == '/')
+		ret = str + index;
+	else
+		ret = str + "/" + index;
+	return (ret);
+}
+
+FILE*       Server::getIndexedPath(ParsedRequest *request)
+{
+	FILE* file;
+	std::string str;
+	std::vector<std::string> i_vec = request->getIndex();
+
+	if (request->getIndex().empty())
+		return (0);
+	for (std::vector<std::string>::iterator it = i_vec.begin(); it != i_vec.end(); it++)
+	{
+		if ((file = fopen((indexJoin(request->getConfigedPath(), *it)).c_str(), "r")))
+			return (file);
+	}
+	return (0);
+}
 
 bool        Server::setResponseBody(ParsedRequest *request)
 {
@@ -445,8 +470,12 @@ bool        Server::setResponseBody(ParsedRequest *request)
 	char *buf;
 	long max_body = request->getMaxBody();
 
-//	if (!(file = fopen(getIndexedPath(request).c_str(), "r")))
-	if (!(file = fopen(request->getConfigedPath().c_str(), "r")))
+	/*
+	 * 이거 비교연산자 앞이 true 면 앞만 실행하나
+	 */
+
+	if (!(file = fopen(request->getConfigedPath().c_str(), "r")) || \
+		 (file = this->getIndexedPath(request)))
 	{
 		request->setStateCode(404);
 		return false;
@@ -468,6 +497,7 @@ bool        Server::setResponseBody(ParsedRequest *request)
 	}
 	this->_response_body = buf;
 	delete buf;
+	buf = 0;
 	fclose(file);
 	return true;
 }
@@ -513,7 +543,6 @@ std::string Server::response400(ParsedRequest *request)
 	headers.push_back(getContentLengthHeader(request));
 	headers.push_back(getLastModifiedHeader(request));
 	headers.push_back(getConnectionHeader(request));
-	headers.push_back(this->getResponseBody(request));
 	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
 	{
 		erase_white_space(*it);
