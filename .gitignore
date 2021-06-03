@@ -176,5 +176,5 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/macos,clion,c++
 
 CMakeLists.txt
-.gitignore
-.idea
+.idea/
+cmake-build-debug/
