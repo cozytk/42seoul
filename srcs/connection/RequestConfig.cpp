@@ -150,6 +150,8 @@ void			RequestConfig::applyConfig(Config::node* node_ptr) {
 			this->_req->_id = (*node("id"))[0];
 		if (node.size("pw") > 0)
 			this->_req->_pw = (*node("pw"))[0];
+		if (node.size("cgi_pass") > 0)
+			this->_req->_cgi_pass = (*node("cgi_pass"))[0];
 	}
 }
 

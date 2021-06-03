@@ -176,13 +176,13 @@ int Server::recv(int socket) {
 		ft::trim_space(this->_request[socket]->_buffer);
 
 		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
-		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
+		// std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		RequestInspect inspect(this->_parsed_req);
 		RequestConfig req_conf(this->_parsed_req);
 		inspect.isValid();
 
-		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
+		// std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
 
 		return (ALL_RECV);
 	}
@@ -218,7 +218,15 @@ int Server::send(int socket) {
 	// 	body = "";
 	// }
 		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-
+	if (this->_parsed_req->getHeaders()["Type"] == "PUT") {
+		header = "HTTP/1.1 201 " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+		body = "";
+		for (size_t i = 0; i < (size_t)1000; i++)
+		{
+			body += "e";
+		}
+		body += '0';
+	}
 	std::string response = header + body;
 
 	/* send */
@@ -232,8 +240,8 @@ int Server::send(int socket) {
 		return (ERR_SEND);
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
 
-	std::cout << std::endl << "SEND ▼" << std::endl;
-	std::cout << "[" << buf << "]" << std::endl;
+	// std::cout << std::endl << "SEND ▼" << std::endl;
+	// std::cout << "[" << buf << "]" << std::endl;
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {

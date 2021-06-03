@@ -14,6 +14,9 @@ class RequestConfig;
 ** extension ⏸
 ** autoindex ✅
 ** sever_name ✅
+** id ✅
+** pw ✅
+** cgi_pass ✅
 */
 
 class RequestConfig
