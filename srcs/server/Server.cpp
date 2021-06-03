@@ -278,13 +278,13 @@ int Server::recv(int socket) {
 		ft::trim_space(this->_request[socket]->_buffer);
 
 		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
-		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
+		// std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		RequestInspect inspect(this->_parsed_req);
 		RequestConfig req_conf(this->_parsed_req);
 		inspect.isValid();
 
-		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
+		// std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
 
 		return (ALL_RECV);
 	}
@@ -317,9 +317,6 @@ int Server::send(int socket) {
 		parsed_req->setStateCode(400);
 		response = response400(parsed_req);
 	}
-
-	response = "HTTP/1.1 " + std::to_string(parsed_req->getStateCode()) + " " + getStateText(parsed_req->getStateCode()) + "\r\n" + response;
-
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
 	           response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
 	buf = std::string(response, this->_request[socket]->_sent, buf_size);
@@ -330,8 +327,8 @@ int Server::send(int socket) {
 		return (ERR_SEND);
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
 
-	std::cout << std::endl << "SEND ▼" << std::endl;
-	std::cout << buf << std::endl;
+	 std::cout << std::endl << "SEND ▼" << std::endl;
+	 std::cout << "[" << buf << "]" << std::endl;
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {

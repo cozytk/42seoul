@@ -122,6 +122,11 @@ std::string						ParsedRequest::getConfigedPath()
 	return (this->_configed_path);
 }
 
+std::string						ParsedRequest::getCGIPass()
+{
+	return (this->_cgi_pass);
+}
+
 int								ParsedRequest::getStateCode()
 {
 	return (this->_stateCode);
