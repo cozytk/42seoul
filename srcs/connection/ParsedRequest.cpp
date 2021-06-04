@@ -194,6 +194,11 @@ void				ParsedRequest::setStateCode(int state)
 	this->_stateCode = state;
 }
 
+
+void				ParsedRequest::setConfigedPath(std::string path)
+{
+	this->_configed_path = path;
+}
 /* ************************************************************************** */
 /* ------------------------------- EXCEPTION -------------------------------- */
 /* ************************************************************************** */
