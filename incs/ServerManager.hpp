@@ -5,12 +5,14 @@
 
 # include "Server.hpp"
 # include "Config.hpp"
+# include "CGI.hpp"
 
 class Server;
 
 class ServerManager {
 private:
 	/* member */
+	CGI                     _cgi;
 	Config					_config;
 	std::map<int, Server *>	_servers;
 	std::map<int, Server *>	_readable;

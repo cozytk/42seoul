@@ -30,7 +30,7 @@ public:
 
 	void setEnvs();
 	char **getEnvs();
-	void execute();
+	void execute(const std::string &file, const std::string &body);
 
 	std::string &getBuffer();
 };

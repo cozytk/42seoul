@@ -71,11 +71,9 @@ char **CGI::getEnvs() {
 	return (ret);
 }
 
-void CGI::execute() {
+void CGI::execute(const std::string &file, const std::string &body) {
 
 	/* example */
-	std::string body = "name=webserv&key=val";
-
 	std::string &buffer = this->_buffer;
 	char buf[CGI_BUFFER_SIZE + 1];
 	char **argv;
@@ -96,7 +94,7 @@ void CGI::execute() {
 	if (pid == 0) {
 		dup2(fd_in, STDIN_FILENO);
 		dup2(fd_out, STDOUT_FILENO);
-		execve("./test/cgi_tester", NULL, argv);
+		execve(file.c_str(), NULL, argv);
 		std::cout << "CGI Error: 500 Internal" << std::endl;
 		exit(0);
 	}

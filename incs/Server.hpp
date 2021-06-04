@@ -6,6 +6,7 @@
 # include "ServerManager.hpp"
 # include "ParsedRequest.hpp"
 # include "RequestInspect.hpp"
+# include "CGI.hpp"
 
 #define GET 0
 #define HEAD 1
@@ -90,7 +91,7 @@ public:
 
 	int accept();
 	int recv(int socket);
-	int send(int socket);
+	int send(int socket, CGI &cgi);
 
 	std::string runGet(ParsedRequest *request);
 	std::string runPost(ParsedRequest *request);
@@ -103,12 +104,12 @@ public:
 	std::string getConnectionHeader(ParsedRequest *request);
 	std::string getStateText(int state);
 	std::string getResponseBody(ParsedRequest *request);
-	bool        setResponseBody(ParsedRequest *request);
-	FILE*       getIndexedPath(ParsedRequest *request);
+	std::string getDefaultErrorPage(ParsedRequest* request);
+	void        setResponseBody(ParsedRequest *request);
 	std::string erase_white_space(std::string &s);
 	bool        isAllowedMethod(ParsedRequest *request, std::string &method);
 	std::string response200(ParsedRequest *request);
 	std::string response400(ParsedRequest *request);
-	std::string indexJoin(const std::string &str, const std::string &index);
+	std::string responseCGI(ParsedRequest *request, const std::string & body);
 };
 #endif

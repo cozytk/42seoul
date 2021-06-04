@@ -292,7 +292,7 @@ int Server::recv(int socket) {
 	return (WAIT_RECV);
 }
 
-int Server::send(int socket) {
+int Server::send(int socket, CGI &cgi) {
 	std::string buf;
 	int len;
 	int buf_size;
@@ -300,9 +300,12 @@ int Server::send(int socket) {
 	std::string response;
 	ParsedRequest *parsed_req = this->_parsed_req;
 
-	if (!isAllowedMethod(parsed_req, parsed_req->getHeaders()["Type"])) {
-		parsed_req->setStateCode(405);
+	if (parsed_req->getStateCode() / 100 == 4) {
 		response = response400(parsed_req);
+	}
+	else if (!parsed_req->getCGIPass().empty()) {
+		cgi.execute(parsed_req->getCGIPass(), parsed_req->getBody());
+		responseCGI(parsed_req, cgi.getBuffer());
 	}
 	else if (parsed_req->getHeaders()["Type"] == "GET") {
 		response = runGet(parsed_req);
@@ -346,34 +349,21 @@ int Server::send(int socket) {
 
 std::string Server::runGet(ParsedRequest *request)
 {
-	std::vector<std::string> headers;
-	std::string ret;
-
-	if (request->getStateCode() / 100 == 4 || !setResponseBody(request))
-		return (response400(request));
+	setResponseBody(request);
 	request->setStateCode(200);
-//	if (request->getStateCode() / 100 == 2)
 	return (response200(request));
 }
 
 std::string Server::runPost(ParsedRequest *request)
 {
-	std::vector<std::string> headers;
-	std::string ret;
-
 	if (request->getBody().length() == 0)
 		return (runGet(request));
 	request->setStateCode(400);
-	if (request->getStateCode() / 100 == 2)
-		return (response200(request));
 	return (response400(request));
 }
 
 std::string Server::runDelete(ParsedRequest *request)
 {
-	std::vector<std::string> headers;
-	std::string ret;
-
 	unlink(request->getConfigedPath().c_str());
 	if (request->getStateCode() / 100 == 2)
 		return (response200(request));
@@ -399,9 +389,11 @@ std::string Server::getDateHeader(ParsedRequest *request)
 	return ("Date: " + ret);
 }
 
-
 std::string Server::getContentTypeHeader(ParsedRequest *request)
 {
+	/*
+	 * todo classify content-type by MIME-types
+	 */
 	return ("Content-type: text/plain");
 }
 
@@ -437,54 +429,30 @@ std::string Server::getStateText(int state)
 std::string Server::getResponseBody(ParsedRequest *request)
 {
 	return (this->_response_body);
+
 }
 
-std::string Server::indexJoin(const std::string &str, const std::string &index)
+std::string Server::getDefaultErrorPage(ParsedRequest* request)
 {
-	std::string ret;
-
-	if (str[str.length() - 1] == '/')
-		ret = str + index;
-	else
-		ret = str + "/" + index;
-	return (ret);
+	return ("<body>" + std::to_string(request->getStateCode()) + " " + request->getStateText() + "<body>");
 }
 
-FILE*       Server::getIndexedPath(ParsedRequest *request)
-{
-	FILE* file;
-	std::vector<std::string> i_vec = request->getIndex();
-
-	if (request->getIndex().empty())
-		return (0);
-	for (std::vector<std::string>::iterator it = i_vec.begin(); it != i_vec.end(); it++)
-	{
-		if ((file = fopen((indexJoin(request->getConfigedPath(), *it)).c_str(), "r")))
-			return (file);
-	}
-	return (0);
-}
-
-bool        Server::setResponseBody(ParsedRequest *request)
+void        Server::setResponseBody(ParsedRequest *request)
 {
 	/*
 	 * Use cstdio instead of fstream -> fstream is slower than cstdio.
 	 * todo (bonus) char to wchar for unicord
-	 * todo apply index
 	 */
 	FILE *file;
 	char *buf;
 	long max_body = request->getMaxBody();
 
-	/*
-	 * 이거 비교연산자 앞이 true 면 앞만 실행하나
-	 */
-
-	if (!(file = fopen(request->getConfigedPath().c_str(), "r")) || \
-		 (file = this->getIndexedPath(request)))
+	if (request->getStateCode() / 100 == 2)
+		file = fopen(request->getConfigedPath().c_str(), "r");
+	else if (!(file = fopen(request->getErrorPage()[std::to_string(request->getStateCode())].c_str(), "r")))
 	{
-		request->setStateCode(404);
-		return false;
+		this->_response_body = getDefaultErrorPage(request);
+		return ;
 	}
 	if (max_body >= 0)
 	{
@@ -505,7 +473,7 @@ bool        Server::setResponseBody(ParsedRequest *request)
 	delete buf;
 	buf = 0;
 	fclose(file);
-	return true;
+	return ;
 }
 
 std::string Server::erase_white_space(std::string &s)
@@ -543,11 +511,11 @@ std::string Server::response400(ParsedRequest *request)
 	std::vector<std::string> headers;
 	std::string ret;
 
+	setResponseBody(request);
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
 	headers.push_back(getContentTypeHeader(request));
 	headers.push_back(getContentLengthHeader(request));
-	headers.push_back(getLastModifiedHeader(request));
 	headers.push_back(getConnectionHeader(request));
 	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
 	{
@@ -557,6 +525,11 @@ std::string Server::response400(ParsedRequest *request)
 	ret += "\r\n";
 	ret += this->getResponseBody(request);
 	return (ret);
+}
+
+std::string Server::responseCGI(ParsedRequest *request, const std::string & body)
+{
+	return ("Status: " + std::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\n" + body + "\r\n");
 }
 
 bool Server::isAllowedMethod(ParsedRequest *request, std::string &method)

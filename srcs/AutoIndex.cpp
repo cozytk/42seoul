@@ -1,7 +1,6 @@
 # include "AutoIndex.hpp"
 
-/* File */
-/* static */
+/* File */ /* static */
 std::string AutoIndex::File::units[6] = {"B", "KB", "MB", "GB", "TB", "Ex"};
 
 /* coplien */

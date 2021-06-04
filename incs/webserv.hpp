@@ -7,9 +7,11 @@
 # include <map>
 # include <stack>
 # include <ctime>
+# include <cstdio>
 # include <queue>
 # include <string>
 # include <fstream>
+# include <utility>
 
 # include <ctime>
 
