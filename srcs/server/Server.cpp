@@ -280,7 +280,7 @@ int Server::recv(int socket) {
 		ft::trim_space(this->_request[socket]->_buffer);
 
 		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
-		// std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
+		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		RequestInspect inspect(this->_parsed_req);
 		RequestConfig req_conf(this->_parsed_req);
@@ -294,16 +294,26 @@ int Server::recv(int socket) {
 	return (WAIT_RECV);
 }
 
-int Server::send(int socket, CGI &cgi) {
+int Server::send(int socket, CGI &cgi)
+{
 	std::string buf;
 	int len;
 	int buf_size;
 
 	std::string response;
 	ParsedRequest *parsed_req = this->_parsed_req;
-
-	if (parsed_req->getStateCode() / 100 == 4) {
+//	if (_request[socket]->_headers["Host"].empty())
+//	{
+//		parsed_req->setStateCode(400);
+//		response = response400(parsed_req);
+//	}
+	if (parsed_req->getStateCode() / 100 != 2){
 		response = response400(parsed_req);
+	}
+	else if (parsed_req->getAutoIndex())
+	{
+		_response_body = _auto_index.make();
+		response = response200(parsed_req);
 	}
 	else if (!parsed_req->getCGIPass().empty()) {
 		cgi.execute(parsed_req->getCGIPass(), parsed_req->getBody());
@@ -322,7 +332,7 @@ int Server::send(int socket, CGI &cgi) {
 		parsed_req->setStateCode(400);
 		response = response400(parsed_req);
 	}
-	response = "HTTP/1.1 " + std::to_string(parsed_req->getStateCode()) + " " + _status[parsed_req->getStateCode()] + "\r\n" + response;
+	response = "HTTP/1.1 " + ft::to_string(parsed_req->getStateCode()) + " " + _status[parsed_req->getStateCode()] + "\r\n" + response;
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
 	           response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
 	buf = std::string(response, this->_request[socket]->_sent, buf_size);
@@ -383,32 +393,41 @@ std::string Server::getServerHeader(ParsedRequest *request)
 std::string Server::getDateHeader(ParsedRequest *request)
 {
 	time_t now = time(NULL);
-	std::string ret = (ctime(&now));
-	// todo make form like Wed, 02 Jun 2021 11:24:33 GMT
+	char buf[1024];
+	struct tm *local_tm;
+
+	local_tm = localtime(&now);
+	strftime(buf, sizeof(buf), "%a, %d %b %Y %X GMT", local_tm);
+	std::string ret(buf);
 	return ("Date: " + ret);
 }
 
 std::string Server::getContentTypeHeader(ParsedRequest *request)
 {
-	/*
-	 * todo classify content-type by MIME-types
-	 */
-	return ("Content-type: text/plain");
+	std::string path = request->getConfigedPath();
+	std::string mime_type = _mime_types[path.substr(path.rfind('.') + 1)];
+
+	if (mime_type.empty())
+		mime_type = "application/octet-stream";
+	return ("Content-type: " + mime_type);
 }
 
 std::string Server::getContentLengthHeader(ParsedRequest *request)
 {
-	return ("Content-Length: " + std::to_string(int(getResponseBody(request).length())));
+	return ("Content-Length: " + ft::to_string(int(getResponseBody(request).length())));
 }
 
 std::string Server::getLastModifiedHeader(ParsedRequest *request)
 {
 	struct stat st;
+	char buf[1024];
+	struct tm *local_tm;
 
+	ft::memset(&st, 0, sizeof(struct stat));
 	stat(request->getConfigedPath().c_str(), &st);
-//	todo cutomize to real lastModified
-//  todo not expecting time
-	std::string ret(ctime(&st.st_mtime));
+	local_tm = localtime(&st.st_mtime);
+	strftime(buf, sizeof(buf), "%a, %d %b %Y %X GMT", local_tm);
+	std::string ret(buf);
 	return ("Last-Modified: " + ret);
 }
 
@@ -420,11 +439,6 @@ std::string Server::getConnectionHeader(ParsedRequest *request)
 		return ("Connection: close");
 }
 
-std::string Server::getStateText(int state)
-{
-	return (this->_status[state]);
-}
-
 std::string Server::getResponseBody(ParsedRequest *request)
 {
 	return (this->_response_body);
@@ -433,7 +447,7 @@ std::string Server::getResponseBody(ParsedRequest *request)
 
 std::string Server::getDefaultErrorPage(ParsedRequest* request)
 {
-	return ("<html><body>" + std::to_string(request->getStateCode()) + " " + request->getStateText() + "</body></html>");
+	return ("<html><body><h1>" + ft::to_string(request->getStateCode()) + " " + _status[request->getStateCode()] + "</h1></body></html>");
 }
 
 void        Server::setResponseBody(ParsedRequest *request)
@@ -448,7 +462,7 @@ void        Server::setResponseBody(ParsedRequest *request)
 
 	if (request->getStateCode() / 100 == 2)
 		file = fopen(request->getConfigedPath().c_str(), "r");
-	else if (!(file = fopen(request->getErrorPage()[std::to_string(request->getStateCode())].c_str(), "r")))
+	else if (!(file = fopen(request->getErrorPage()[ft::to_string(request->getStateCode())].c_str(), "r")))
 	{
 		this->_response_body = getDefaultErrorPage(request);
 		return ;
@@ -527,5 +541,5 @@ std::string Server::response400(ParsedRequest *request)
 
 std::string Server::responseCGI(ParsedRequest *request, const std::string & body)
 {
-	return ("Status: " + std::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\n" + body + "\r\n");
+	return ("Status: " + ft::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\n" + body + "\r\n");
 }

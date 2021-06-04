@@ -56,6 +56,7 @@ CMakeFiles/webserv.dir/srcs/libft.cpp.o
  ../incs/webserv.hpp
  /Users/taekkim/webserv/srcs/libft.cpp
 CMakeFiles/webserv.dir/srcs/main.cpp.o
+ ../incs/AutoIndex.hpp
  ../incs/CGI.hpp
  ../incs/Config.hpp
  ../incs/ConfigReader.hpp
@@ -84,6 +85,7 @@ CMakeFiles/webserv.dir/srcs/server/Server.cpp.o
  /Users/taekkim/webserv/srcs/server/Server.cpp
 CMakeFiles/webserv.dir/srcs/server/ServerManager.cpp.o
  ../incs/webserv.hpp
+ /Users/taekkim/webserv/incs/AutoIndex.hpp
  /Users/taekkim/webserv/incs/CGI.hpp
  /Users/taekkim/webserv/incs/Config.hpp
  /Users/taekkim/webserv/incs/ConfigReader.hpp

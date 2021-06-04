@@ -7,6 +7,7 @@
 # include "ParsedRequest.hpp"
 # include "RequestInspect.hpp"
 # include "CGI.hpp"
+# include "AutoIndex.hpp"
 
 #define GET 0
 #define HEAD 1
@@ -40,6 +41,7 @@ private:
 		void clear();
 	};
 
+	AutoIndex                   _auto_index;
 	std::map<int, Request *>	_request;
 	sockaddr_in					_addr;
 	int							_socket;

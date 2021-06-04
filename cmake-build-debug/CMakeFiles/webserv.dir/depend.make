@@ -55,6 +55,7 @@ CMakeFiles/webserv.dir/srcs/connection/RequestInspect.cpp.o: ../srcs/connection/
 CMakeFiles/webserv.dir/srcs/libft.cpp.o: ../incs/webserv.hpp
 CMakeFiles/webserv.dir/srcs/libft.cpp.o: ../srcs/libft.cpp
 
+CMakeFiles/webserv.dir/srcs/main.cpp.o: ../incs/AutoIndex.hpp
 CMakeFiles/webserv.dir/srcs/main.cpp.o: ../incs/CGI.hpp
 CMakeFiles/webserv.dir/srcs/main.cpp.o: ../incs/Config.hpp
 CMakeFiles/webserv.dir/srcs/main.cpp.o: ../incs/ConfigReader.hpp
@@ -83,6 +84,7 @@ CMakeFiles/webserv.dir/srcs/server/Server.cpp.o: ../incs/WebServerConstant.hpp
 CMakeFiles/webserv.dir/srcs/server/Server.cpp.o: ../srcs/server/Server.cpp
 
 CMakeFiles/webserv.dir/srcs/server/ServerManager.cpp.o: ../incs/webserv.hpp
+CMakeFiles/webserv.dir/srcs/server/ServerManager.cpp.o: ../incs/AutoIndex.hpp
 CMakeFiles/webserv.dir/srcs/server/ServerManager.cpp.o: ../incs/CGI.hpp
 CMakeFiles/webserv.dir/srcs/server/ServerManager.cpp.o: ../incs/Config.hpp
 CMakeFiles/webserv.dir/srcs/server/ServerManager.cpp.o: ../incs/ConfigReader.hpp
