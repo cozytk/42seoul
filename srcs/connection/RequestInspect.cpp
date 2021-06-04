@@ -105,7 +105,12 @@ bool				RequestInspect::isExistResource(std::string path, std::string index) {
 			if (path[(int)path.length() - 1] != '/')
 				path = path + "/";
 			path = path + index;
-			return (isExistResource(path, ""));
+			if (isExistResource(path, ""))
+			{
+				this->_req->setConfigedPath(path);
+				return (true);
+			}
+			return (false);
 		}
 		else if(s.st_mode & S_IFREG)
 		{

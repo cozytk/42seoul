@@ -70,6 +70,7 @@ class ParsedRequest
 
 		void							setStateCode(int state);
 		void							setStateText(std::string text);
+		void							setConfigedPath(std::string path);
 
 		bool							isChunked();
 		bool							isExistHeader(std::string in);
