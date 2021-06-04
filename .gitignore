@@ -179,3 +179,5 @@ CMakeLists.txt
 .idea/
 .idea/*
 cmake-build-debug/
+main.cpp
+file_should_exist_after

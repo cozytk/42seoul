@@ -299,41 +299,27 @@ int Server::send(int socket) {
 	std::string response;
 	ParsedRequest *parsed_req = this->_parsed_req;
 
-	std::string header;
-	std::string body;
-  //this->_parsed_req->isValid();
-	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
-	std::string stateText = this->_parsed_req->getStateText();
-
-  body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
-
-	// if (this->_parsed_req->getHeaders()["Type"] == "GET") {
-	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-	// 	// header = "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-	// }
-	// if (this->_parsed_req->getHeaders()["Type"] == "POST")
-	// {
-	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-
-	// }
-	// if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
-	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-	// 	body = "";
-	// }
-		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-	if (this->_parsed_req->getHeaders()["Type"] == "PUT") {
-		header = "HTTP/1.1 201 " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
-		body = "";
-		for (size_t i = 0; i < (size_t)1000; i++)
-		{
-			body += "e";
-		}
-		body += '0';
+	if (!isAllowedMethod(parsed_req, parsed_req->getHeaders()["Type"])) {
+		parsed_req->setStateCode(405);
+		response = response400(parsed_req);
 	}
-	response = header + body;
-
+	else if (parsed_req->getHeaders()["Type"] == "GET") {
+		response = runGet(parsed_req);
+	}
+	else if (parsed_req->getHeaders()["Type"] == "POST") {
+		response = runPost(parsed_req);
+	}
+	else if (parsed_req->getHeaders()["Type"] == "DELETE") {
+		response = runDelete(parsed_req);
+	}
+	else
+	{
+		parsed_req->setStateCode(400);
+		response = response400(parsed_req);
+	}
+	response = "HTTP/1.1 " + std::to_string(parsed_req->getStateCode()) + " " + _status[parsed_req->getStateCode()] + "\r\n" + response;
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
-		response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
+	           response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
 	buf = std::string(response, this->_request[socket]->_sent, buf_size);
 	len = ::send(socket, buf.c_str(), buf.length(), 0);
 	if (len == -1)
@@ -342,14 +328,18 @@ int Server::send(int socket) {
 		return (ERR_SEND);
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
 
-	// std::cout << std::endl << "SEND ▼" << std::endl;
-	// std::cout << "[" << buf << "]" << std::endl;
+	 std::cout << std::endl << "SEND ▼" << std::endl;
+	 std::cout << "[" << buf << "]" << std::endl;
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
+		response.clear();
+		buf.clear();
 		return (ALL_SEND);
 	}
 	delete this->_parsed_req;
+	response.clear();
+	buf.clear();
 	return (WAIT_SEND);
 }
 
@@ -358,21 +348,11 @@ std::string Server::runGet(ParsedRequest *request)
 	std::vector<std::string> headers;
 	std::string ret;
 
+	if (request->getStateCode() / 100 == 4 || !setResponseBody(request))
+		return (response400(request));
 	request->setStateCode(200);
-	headers.push_back(getServerHeader(request));
-	headers.push_back(getDateHeader(request));
-	headers.push_back(getContentTypeHeader(request));
-	headers.push_back(getContentLengthHeader(request));
-	headers.push_back(getLastModifiedHeader(request));
-	headers.push_back(getConnectionHeader(request));
-	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
-	{
-		erase_white_space(*it);
-		ret += *it + "\r\n";
-	}
-	ret += "\r\n";
-	ret += request->getBody() + "\r\n";
-	return (ret);
+//	if (request->getStateCode() / 100 == 2)
+	return (response200(request));
 }
 
 std::string Server::runPost(ParsedRequest *request)
@@ -383,6 +363,158 @@ std::string Server::runPost(ParsedRequest *request)
 	if (request->getBody().length() == 0)
 		return (runGet(request));
 	request->setStateCode(400);
+	if (request->getStateCode() / 100 == 2)
+		return (response200(request));
+	return (response400(request));
+}
+
+std::string Server::runDelete(ParsedRequest *request)
+{
+	std::vector<std::string> headers;
+	std::string ret;
+
+	unlink(request->getConfigedPath().c_str());
+	if (request->getStateCode() / 100 == 2)
+		return (response200(request));
+	return (response400(request));
+}
+
+std::string Server::getServerHeader(ParsedRequest *request)
+{
+	return ("Server: " + request->getServerName());
+}
+
+std::string Server::getDateHeader(ParsedRequest *request)
+{
+	time_t now = time(NULL);
+	std::string ret = (ctime(&now));
+	// todo make form like Wed, 02 Jun 2021 11:24:33 GMT
+	return ("Date: " + ret);
+}
+
+
+std::string Server::getContentTypeHeader(ParsedRequest *request)
+{
+	return ("Content-type: text/plain");
+}
+
+std::string Server::getContentLengthHeader(ParsedRequest *request)
+{
+	return ("Content-Length: " + std::to_string(int(getResponseBody(request).length())));
+}
+
+std::string Server::getLastModifiedHeader(ParsedRequest *request)
+{
+	struct stat st;
+
+	stat(request->getConfigedPath().c_str(), &st);
+//	todo cutomize to real lastModified
+//  todo not expecting time
+	std::string ret(ctime(&st.st_mtime));
+	return ("Last-Modified: " + ret);
+}
+
+std::string Server::getConnectionHeader(ParsedRequest *request)
+{
+	if (request->getStateCode() / 100 == 2)
+		return ("Connection: keep-alive");
+	else
+		return ("Connection: close");
+}
+
+std::string Server::getStateText(int state)
+{
+	return (this->_status[state]);
+}
+
+std::string Server::getResponseBody(ParsedRequest *request)
+{
+	return (this->_response_body);
+}
+
+std::string Server::indexJoin(const std::string &str, const std::string &index)
+{
+	std::string ret;
+
+	if (str[str.length() - 1] == '/')
+		ret = str + index;
+	else
+		ret = str + "/" + index;
+	return (ret);
+}
+
+FILE*       Server::getIndexedPath(ParsedRequest *request)
+{
+	FILE* file;
+	std::vector<std::string> i_vec = request->getIndex();
+
+	if (request->getIndex().empty())
+		return (0);
+	for (std::vector<std::string>::iterator it = i_vec.begin(); it != i_vec.end(); it++)
+	{
+		if ((file = fopen((indexJoin(request->getConfigedPath(), *it)).c_str(), "r")))
+			return (file);
+	}
+	return (0);
+}
+
+bool        Server::setResponseBody(ParsedRequest *request)
+{
+	/*
+	 * Use cstdio instead of fstream -> fstream is slower than cstdio.
+	 * todo (bonus) char to wchar for unicord
+	 * todo apply index
+	 */
+	FILE *file;
+	char *buf;
+	long max_body = request->getMaxBody();
+
+	/*
+	 * 이거 비교연산자 앞이 true 면 앞만 실행하나
+	 */
+
+	if (!(file = fopen(request->getConfigedPath().c_str(), "r")) || \
+		 (file = this->getIndexedPath(request)))
+	{
+		request->setStateCode(404);
+		return false;
+	}
+	if (max_body >= 0)
+	{
+		buf = new char[max_body + 1]();
+		fread(buf, 1, max_body, file);
+		buf[max_body] = '\0';
+	}
+	else
+	{
+		fseek(file, 0, SEEK_END);
+		max_body = ftell(file);
+		rewind(file);
+		buf = new char[max_body + 1]();
+		fread(buf, 1, max_body, file);
+		buf[max_body] = '\0';
+	}
+	this->_response_body = buf;
+	delete buf;
+	buf = 0;
+	fclose(file);
+	return true;
+}
+
+std::string Server::erase_white_space(std::string &s)
+{
+	if (s.find_last_of('\n') == s.length() - 1)
+		s.resize(s.length() - 1);
+	if (s.find_last_of('\r') == s.length() - 1)
+		s.resize(s.length() - 1);
+	return (s);
+}
+
+std::string Server::response200(ParsedRequest *request)
+{
+	std::vector<std::string> headers;
+	std::string ret;
+
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
 	headers.push_back(getContentTypeHeader(request));
@@ -395,17 +527,15 @@ std::string Server::runPost(ParsedRequest *request)
 		ret += *it + "\r\n";
 	}
 	ret += "\r\n";
-	ret += request->getBody() + "\r\n";
+	ret += this->getResponseBody(request);
 	return (ret);
 }
 
-std::string Server::runDelete(ParsedRequest *request)
+std::string Server::response400(ParsedRequest *request)
 {
 	std::vector<std::string> headers;
 	std::string ret;
 
-	unlink(request->getConfigedPath().c_str());
-	request->setStateCode(204);
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
 	headers.push_back(getContentTypeHeader(request));
@@ -415,68 +545,21 @@ std::string Server::runDelete(ParsedRequest *request)
 	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
 	{
 		erase_white_space(*it);
-		ret += *it;
+		ret += *it + "\r\n";
 	}
 	ret += "\r\n";
-	ret += request->getBody() + "\r\n";
+	ret += this->getResponseBody(request);
 	return (ret);
 }
 
-std::string Server::getServerHeader(ParsedRequest *request)
+bool Server::isAllowedMethod(ParsedRequest *request, std::string &method)
 {
-	return ("Server : " + request->getServerName());
-}
+	std::vector<std::string> methodList = request->getAllowMethods();
 
-std::string Server::getDateHeader(ParsedRequest *request)
-{
-	time_t now = time(NULL);
-	std::string ret = (ctime(&now));
-	// todo make form like Wed, 02 Jun 2021 11:24:33 GMT
-	return ("Date : " + ret);
-}
-
-
-std::string Server::getContentTypeHeader(ParsedRequest *request)
-{
-	// todo load content-type
-	return ("Content-type : temp");
-}
-
-std::string Server::getContentLengthHeader(ParsedRequest *request)
-{
-	return ("Content-Length : " + std::to_string(int(request->getBody().length())));
-}
-
-std::string Server::getLastModifiedHeader(ParsedRequest *request)
-{
-	struct stat st;
-
-	stat(request->getConfigedPath().c_str(), &st);
-//	todo cutomize to real lastModified
-//  todo not expecting time
-	std::string ret(ctime(&st.st_mtime));
-	return ("Last-Modified : " + ret);
-}
-
-std::string Server::getConnectionHeader(ParsedRequest *request)
-{
-	if (request->getStateCode() / 100 == 2)
-		return ("Connection : keep-alive");
-	else
-		return ("Connection : close");
-}
-
-
-std::string Server::getStateText(int state)
-{
-	return (_status[state]);
-}
-
-std::string Server::erase_white_space(std::string &s)
-{
-	if (s.find_last_of('\n') == s.length() - 1)
-		s.resize(s.length() - 1);
-	if (s.find_last_of('\r') == s.length() - 1)
-		s.resize(s.length() - 1);
-	return (s);
+	for (std::vector<std::string>::iterator it = methodList.begin(); it != methodList.end(); it++)
+	{
+		if (*it == method)
+			return true;
+	}
+	return false;
 }
