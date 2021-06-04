@@ -107,7 +107,6 @@ public:
 	std::string getDefaultErrorPage(ParsedRequest* request);
 	void        setResponseBody(ParsedRequest *request);
 	std::string erase_white_space(std::string &s);
-	bool        isAllowedMethod(ParsedRequest *request, std::string &method);
 	std::string response200(ParsedRequest *request);
 	std::string response400(ParsedRequest *request);
 	std::string responseCGI(ParsedRequest *request, const std::string & body);

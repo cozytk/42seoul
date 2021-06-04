@@ -87,8 +87,10 @@ std::map<std::string, std::string> makeMimeType ()
 	type_map["bad_extension"] = "application/bad";
 	type_map["bla"] = "application/42cgi";
 	type_map["pouic"] = "application/pouic";
+
 	return (type_map);
 }
+
 std::map<std::string, std::string> Server::_mime_types = makeMimeType();
 
 Server::Request::Request() {
@@ -316,8 +318,7 @@ int Server::send(int socket, CGI &cgi) {
 	else if (parsed_req->getHeaders()["Type"] == "DELETE") {
 		response = runDelete(parsed_req);
 	}
-	else
-	{
+	else {
 		parsed_req->setStateCode(400);
 		response = response400(parsed_req);
 	}
@@ -365,9 +366,7 @@ std::string Server::runPost(ParsedRequest *request)
 std::string Server::runDelete(ParsedRequest *request)
 {
 	unlink(request->getConfigedPath().c_str());
-	if (request->getStateCode() / 100 == 2)
-		return (response200(request));
-	return (response400(request));
+	return (getDateHeader(request) + "\r\n\r\n<html><body>File deleted.</body></html>\r\n");
 }
 
 // std::string Server::runPut(ParsedRequest *request, int state) {
@@ -434,7 +433,7 @@ std::string Server::getResponseBody(ParsedRequest *request)
 
 std::string Server::getDefaultErrorPage(ParsedRequest* request)
 {
-	return ("<body>" + std::to_string(request->getStateCode()) + " " + request->getStateText() + "<body>");
+	return ("<html><body>" + std::to_string(request->getStateCode()) + " " + request->getStateText() + "</body></html>");
 }
 
 void        Server::setResponseBody(ParsedRequest *request)
@@ -463,8 +462,7 @@ void        Server::setResponseBody(ParsedRequest *request)
 	else
 	{
 		fseek(file, 0, SEEK_END);
-		max_body = ftell(file);
-		rewind(file);
+		max_body = ftell(file); rewind(file);
 		buf = new char[max_body + 1]();
 		fread(buf, 1, max_body, file);
 		buf[max_body] = '\0';
@@ -530,16 +528,4 @@ std::string Server::response400(ParsedRequest *request)
 std::string Server::responseCGI(ParsedRequest *request, const std::string & body)
 {
 	return ("Status: " + std::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\n" + body + "\r\n");
-}
-
-bool Server::isAllowedMethod(ParsedRequest *request, std::string &method)
-{
-	std::vector<std::string> methodList = request->getAllowMethods();
-
-	for (std::vector<std::string>::iterator it = methodList.begin(); it != methodList.end(); it++)
-	{
-		if (*it == method)
-			return true;
-	}
-	return false;
 }
