@@ -302,11 +302,6 @@ int Server::send(int socket, CGI &cgi)
 
 	std::string response;
 	ParsedRequest *parsed_req = this->_parsed_req;
-//	if (_request[socket]->_headers["Host"].empty())
-//	{
-//		parsed_req->setStateCode(400);
-//		response = response400(parsed_req);
-//	}
 	if (parsed_req->getStateCode() / 100 != 2){
 		response = response400(parsed_req);
 	}
