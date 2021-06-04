@@ -258,7 +258,7 @@ int Server::recv(int socket) {
 		}
 	}
 	if (this->_request[socket]->_length != -1 &&
-	this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length) {
+		this->_request[socket]->_buffer.substr(this->_request[socket]->_buffer.find("\r\n\r\n") + 4).length() >= this->_request[socket]->_length) {
 		ft::trim_space(this->_request[socket]->_buffer);
 
 		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
@@ -268,7 +268,7 @@ int Server::recv(int socket) {
 		RequestInspect inspect(this->_parsed_req);
 		inspect.isValid();
 		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
-
+		std::cout << "🔅 " << this->_parsed_req->getConfigedPath() << std::endl;
 		return (ALL_RECV);
 	}
 	if (this->_request[socket]->_length == -1 &&
@@ -288,6 +288,7 @@ int Server::recv(int socket) {
 
 		return (ALL_RECV);
 	}
+
 	return (WAIT_RECV);
 }
 
@@ -342,8 +343,8 @@ int Server::send(int socket) {
 		return (ERR_SEND);
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
 
-	// std::cout << std::endl << "SEND ▼" << std::endl;
-	// std::cout << "[" << buf << "]" << std::endl;
+	std::cout << std::endl << "SEND ▼" << std::endl;
+	std::cout << "[" << buf << "]" << std::endl;
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
@@ -421,6 +422,12 @@ std::string Server::runDelete(ParsedRequest *request)
 	ret += request->getBody() + "\r\n";
 	return (ret);
 }
+
+// std::string Server::runPut(ParsedRequest *request, int state) {
+// 	if (state == 404)
+// 		request->setStateCode(201);
+
+// }
 
 std::string Server::getServerHeader(ParsedRequest *request)
 {
