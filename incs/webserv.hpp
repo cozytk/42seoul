@@ -19,6 +19,7 @@
 # include <signal.h>
 # include <sys/stat.h>
 # include <dirent.h>
+# include <cstdio>
 
 /* network C */
 # include <sys/socket.h>
@@ -67,7 +68,7 @@ namespace ft {
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 			"abcdefghijklmnopqrstuvwxyz"
 			"0123456789+/";
-		
+
 		std::string encode(std::string const &str);
 		std::string decode(std::string const &str);
 	};

@@ -267,7 +267,7 @@ int Server::recv(int socket) {
 		RequestConfig req_conf(this->_parsed_req);
 		RequestInspect inspect(this->_parsed_req);
 		inspect.isValid();
-		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
+		// std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
 		std::cout << "🔅 " << this->_parsed_req->getConfigedPath() << std::endl;
 		return (ALL_RECV);
 	}
@@ -300,8 +300,15 @@ int Server::send(int socket) {
 	std::string response;
 	ParsedRequest *parsed_req = this->_parsed_req;
 
-	if (!isAllowedMethod(parsed_req, parsed_req->getHeaders()["Type"])) {
-		parsed_req->setStateCode(405);
+	/* test - autoindex */
+	std::string body;
+	std::string header;
+
+  //this->_parsed_req->isValid();
+	std::string stateCode = ft::to_string(this->_parsed_req->getStateCode());
+	std::string stateText = this->_parsed_req->getStateText();
+//	make response
+	if (parsed_req->getStateCode() / 100 == 4) {
 		response = response400(parsed_req);
 	}
 	else if (parsed_req->getHeaders()["Type"] == "GET") {
@@ -318,6 +325,35 @@ int Server::send(int socket) {
 		parsed_req->setStateCode(400);
 		response = response400(parsed_req);
 	}
+
+/*//	sayi test code
+	body = "hello world\nSocket: " + ft::to_string(this->_socket) + "\nPort: " + ft::to_string(this->_port) + "\n";
+	// if (this->_parsed_req->getHeaders()["Type"] == "GET") {
+	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	// 	// header = "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	// }
+	// if (this->_parsed_req->getHeaders()["Type"] == "POST")
+	// {
+	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	// }
+	// if (this->_parsed_req->getHeaders()["Type"] == "HEAD") {
+	// 	header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	// 	body = "";
+	// }
+		header = "HTTP/1.1 " + stateCode + " " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+	if (this->_parsed_req->getHeaders()["Type"] == "PUT") {
+		header = "HTTP/1.1 201 " + stateText +"\nServer: webserv\nContent-Type: text/plain\nContent-Length: " + ft::to_string(body.length()) + "\n\n";
+		body = "";
+		for (size_t i = 0; i < (size_t)1000; i++)
+		{
+			body += "e";
+		}
+		body += '0';
+	}
+	response = header + body;
+
+	//sayi test code when test comment below 1 line*/
+
 	response = "HTTP/1.1 " + std::to_string(parsed_req->getStateCode()) + " " + _status[parsed_req->getStateCode()] + "\r\n" + response;
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
 	           response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
@@ -330,7 +366,7 @@ int Server::send(int socket) {
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
 
 	std::cout << std::endl << "SEND ▼" << std::endl;
-	std::cout << "[" << buf << "]" << std::endl;
+	// std::cout << "[" << buf << "]" << std::endl;
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
@@ -379,12 +415,6 @@ std::string Server::runDelete(ParsedRequest *request)
 		return (response200(request));
 	return (response400(request));
 }
-
-// std::string Server::runPut(ParsedRequest *request, int state) {
-// 	if (state == 404)
-// 		request->setStateCode(201);
-
-// }
 
 std::string Server::getServerHeader(ParsedRequest *request)
 {
@@ -557,16 +587,4 @@ std::string Server::response400(ParsedRequest *request)
 	ret += "\r\n";
 	ret += this->getResponseBody(request);
 	return (ret);
-}
-
-bool Server::isAllowedMethod(ParsedRequest *request, std::string &method)
-{
-	std::vector<std::string> methodList = request->getAllowMethods();
-
-	for (std::vector<std::string>::iterator it = methodList.begin(); it != methodList.end(); it++)
-	{
-		if (*it == method)
-			return true;
-	}
-	return false;
 }
