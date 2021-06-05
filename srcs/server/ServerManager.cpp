@@ -72,7 +72,7 @@ void ServerManager::write(struct ft::fds &fds_loop) {
 		n_server++;
 		if (ft::fd_isset(server->first, &fds_loop.write))
 		{
-			tmp = (server->second)->send(server->first);
+			tmp = (server->second)->send(server->first, _cgi);
 			if (tmp == ALL_SEND) {
 				tmp = server->first;
 				delete (server->second)->_request[tmp];
