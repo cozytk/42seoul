@@ -269,7 +269,7 @@ int Server::recv(int socket) {
 		RequestConfig req_conf(this->_parsed_req);
 		RequestInspect inspect(this->_parsed_req);
 		inspect.isValid();
-		std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
+		// std::cout << "[" << this->_parsed_req->getBody() << "]" << std::endl;
 		std::cout << "🔅 " << this->_parsed_req->getConfigedPath() << std::endl;
 		return (ALL_RECV);
 	}
@@ -339,7 +339,7 @@ int Server::send(int socket, CGI &cgi)
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
 
 	std::cout << std::endl << "SEND ▼" << std::endl;
-	std::cout << "[" << buf << "]" << std::endl;
+	// std::cout << "[" << buf << "]" << std::endl;
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
@@ -373,12 +373,6 @@ std::string Server::runDelete(ParsedRequest *request)
 	unlink(request->getConfigedPath().c_str());
 	return (getDateHeader(request) + "\r\n\r\n<html><body>File deleted.</body></html>\r\n");
 }
-
-// std::string Server::runPut(ParsedRequest *request, int state) {
-// 	if (state == 404)
-// 		request->setStateCode(201);
-
-// }
 
 std::string Server::getServerHeader(ParsedRequest *request)
 {
