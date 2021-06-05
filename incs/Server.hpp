@@ -8,6 +8,7 @@
 # include "RequestInspect.hpp"
 # include "CGI.hpp"
 # include "AutoIndex.hpp"
+# include "Response.hpp"
 
 #define GET 0
 #define HEAD 1
@@ -48,8 +49,6 @@ private:
 	int							_port;
 	Config::node *				_server_conf;
 	ParsedRequest *				_parsed_req;
-	static std::map<std::string, std::string> _mime_types;
-	static std::map<int, std::string> _status;
 
 	size_t                      _uriLimitSize;
 	size_t                      __headerLimitSize;

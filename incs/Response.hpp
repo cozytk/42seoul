@@ -7,6 +7,7 @@
 # include <webserv.hpp>
 # include <cstdio>
 
+class Server;
 class Response
 {
 	private:
@@ -14,6 +15,8 @@ class Response
 		std::string		_response_header;
 		ParsedRequest	*_request;
 		Server			*_server;
+		static std::map<std::string, std::string> _mime_types;
+		static std::map<int, std::string> _status;
 	public:
 		Response();
 		Response(ParsedRequest *request, Server *server);
@@ -23,6 +26,14 @@ class Response
 
 		std::string	getResponseBody();
 		std::string getDefaultErrorPage(ParsedRequest* request);
+		std::string getServerHeader(ParsedRequest *request);
+		std::string getDateHeader(ParsedRequest *request);
+		std::string getContentTypeHeader(ParsedRequest *request);
+		std::string getContentLengthHeader(ParsedRequest *request);
+		std::string getLastModifiedHeader(ParsedRequest *request);
+		std::string getConnectionHeader(ParsedRequest *request);
+		std::string getStateText(int state);
+		std::string getResponse(AutoIndex &autoindex, CGI &cgi);
 
 		std::string	runPut(ParsedRequest *request, int state);
 		std::string	runGet(ParsedRequest *request);
@@ -31,6 +42,7 @@ class Response
 
 		void		setResponseBody(ParsedRequest *request);
 		void		setCommonHeadear(ParsedRequest *request);
+		void        setResponseHeadear(std::vector<std::string> &headers, ParsedRequest *request);
 
 		std::string	response200(ParsedRequest *request);
 		std::string	response400(ParsedRequest *request);

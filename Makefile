@@ -1,5 +1,6 @@
 CXX			= clang++
-CXXFLAGS	= -std=c++98 #-Wall -Wextra -Werror
+CXXFLAGS	= -std=c++98 #-Wall -Wextra -WerrorWerror
+
 
 MAIN		= main.cpp
 LIBFT		= libft.cpp
