@@ -29,7 +29,7 @@ CGI &CGI::operator=(CGI const &x) {
 }
 
 void CGI::setEnvs(ParsedRequest *request) {
-	envs["AUTH_TYPE"] = "CGI/1.1";
+	envs["AUTH_TYPE"] = "BASIC";
 	envs["CONTENT_LENGTH"] = request->getHeaders()["Content-Length"];
 	envs["CONTENT_TYPE"] = request->getHeaders()["Content-Type"];
 
@@ -39,12 +39,12 @@ void CGI::setEnvs(ParsedRequest *request) {
 	envs["PATH_TRANSLATED"] = request->getConfigedPath();
 	envs["QUERY_STRING"] = "";
 
-	envs["REMOTE_ADDR"] = "";
-	envs["REMOTE_IDENT"] = "";
-	envs["REMOTE_USER"] = "";
+	envs["REMOTE_ADDR"] = "127.0.0.1";
+	envs["REMOTE_IDENT"] = "unknown";
+	envs["REMOTE_USER"] = "unknown";
 
-	envs["REQUEST_METHOD"] = request->getHeaders()["Method"];
-	envs["REQUEST_URI"] = "";
+	envs["REQUEST_METHOD"] = request->getHeaders()["Type"];
+	envs["REQUEST_URI"] = request->getHeaders()["Path"];
 
 	envs["SCRIPT_NAME"] = "127.0.0.1";
 
@@ -56,11 +56,12 @@ void CGI::setEnvs(ParsedRequest *request) {
 
 char **CGI::getEnvs(ParsedRequest *request) {
 	std::map<std::string, std::string>::iterator it;
-	char **ret = new char*[envs.size() + 1];
+	char **ret;
 	std::string buf;
 	int i = 0;
 
 	setEnvs(request);
+	ret = new char*[envs.size() + 1];
 	for (it = envs.begin(); it != envs.end(); it++) {
 		buf = it->first + "=" + it->second;
 		ret[i] = new char[buf.length() + 1];

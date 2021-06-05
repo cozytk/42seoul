@@ -46,7 +46,7 @@ class Response
 
 		std::string	response200(ParsedRequest *request);
 		std::string	response400(ParsedRequest *request);
-		std::string	responseCGI(ParsedRequest *request, std::string body);
+		std::string responseCGI(ParsedRequest *request, std::string cgi_response);
 		std::string	erase_white_space(std::string &s);
 };
 

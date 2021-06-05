@@ -4,6 +4,14 @@
 CMakeFiles/webserv.dir/srcs/AutoIndex.cpp.o
  /Users/taekkim/webserv/srcs/AutoIndex.cpp
 CMakeFiles/webserv.dir/srcs/CGI.cpp.o
+ ../incs/CGI.hpp
+ ../incs/Config.hpp
+ ../incs/ConfigReader.hpp
+ ../incs/ConfigSyntax.hpp
+ ../incs/ParsedRequest.hpp
+ ../incs/RequestConfig.hpp
+ ../incs/WebServerConstant.hpp
+ ../incs/webserv.hpp
  /Users/taekkim/webserv/srcs/CGI.cpp
 CMakeFiles/webserv.dir/srcs/config/Config.cpp.o
  /Users/taekkim/webserv/srcs/config/Config.cpp

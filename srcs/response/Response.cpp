@@ -205,14 +205,14 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 		else
 			response = response400(_request);
 	}
-	else if (_request->getAutoIndex())
-	{
+	else if (_request->getAutoIndex()) {
 		_response_body = autoindex.make();
 		response = response200(_request);
 	}
-	else if (_request->getExtension() == "bla" || _request->getExtension() == "bad_extension") {
+	else if (_request->getCGIBool()){
 		cgi.execute(_request);
-		response = responseCGI(_request, cgi.getBuffer());
+		_response_body = responseCGI(_request, cgi.getBuffer());
+		response = response200(_request);
 	}
 	else if (_request->getHeaders()["Type"] == "GET") {
 		response = runGet(_request);
@@ -383,7 +383,12 @@ std::string Response::response400(ParsedRequest *request)
 
 std::string Response::responseCGI(ParsedRequest *request, std::string body)
 {
-	return ("Status: " + ft::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\nContent-length:12\r\n\r\n" + body.substr(body.find(':') + 2));
+/*
+	 * todo passing cgi info to request Class
+	 */
+	(void)request;
+	return (body.substr(body.find("\r\n\r\n") + 4));
+//	return ("Status: " + ft::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\nContent-length:12\r\n\r\n" + body.substr(body.find(':') + 2));
 }
 
 std::string Response::erase_white_space(std::string &s)

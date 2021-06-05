@@ -57,6 +57,8 @@ webserv.hpp
 -
 
 /Users/taekkim/webserv/incs/CGI.hpp
+ParsedRequest.hpp
+-
 webserv.hpp
 -
 

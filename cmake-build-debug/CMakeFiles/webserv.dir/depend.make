@@ -3,6 +3,14 @@
 
 CMakeFiles/webserv.dir/srcs/AutoIndex.cpp.o: ../srcs/AutoIndex.cpp
 
+CMakeFiles/webserv.dir/srcs/CGI.cpp.o: ../incs/CGI.hpp
+CMakeFiles/webserv.dir/srcs/CGI.cpp.o: ../incs/Config.hpp
+CMakeFiles/webserv.dir/srcs/CGI.cpp.o: ../incs/ConfigReader.hpp
+CMakeFiles/webserv.dir/srcs/CGI.cpp.o: ../incs/ConfigSyntax.hpp
+CMakeFiles/webserv.dir/srcs/CGI.cpp.o: ../incs/ParsedRequest.hpp
+CMakeFiles/webserv.dir/srcs/CGI.cpp.o: ../incs/RequestConfig.hpp
+CMakeFiles/webserv.dir/srcs/CGI.cpp.o: ../incs/WebServerConstant.hpp
+CMakeFiles/webserv.dir/srcs/CGI.cpp.o: ../incs/webserv.hpp
 CMakeFiles/webserv.dir/srcs/CGI.cpp.o: ../srcs/CGI.cpp
 
 CMakeFiles/webserv.dir/srcs/config/Config.cpp.o: ../srcs/config/Config.cpp
