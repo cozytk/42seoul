@@ -1,6 +1,0 @@
-cmake_minimum_required(VERSION 3.19)
-project(webserv)
-set(CMAKE_CXX_STANDARD 98)
-include_directories(incs)
-file(GLOB SOURCE_FILES srcs/*.cpp srcs/*/*.cpp)
-add_executable(webserv ${SOURCE_FILES})
