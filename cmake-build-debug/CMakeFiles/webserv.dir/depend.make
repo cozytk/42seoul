@@ -11,10 +11,25 @@ CMakeFiles/webserv.dir/srcs/config/ConfigReader.cpp.o: ../srcs/config/ConfigRead
 
 CMakeFiles/webserv.dir/srcs/config/ConfigSyntax.cpp.o: ../srcs/config/ConfigSyntax.cpp
 
+CMakeFiles/webserv.dir/srcs/connection/ParsedRequest.cpp.o: ../incs/Config.hpp
+CMakeFiles/webserv.dir/srcs/connection/ParsedRequest.cpp.o: ../incs/ConfigReader.hpp
+CMakeFiles/webserv.dir/srcs/connection/ParsedRequest.cpp.o: ../incs/ConfigSyntax.hpp
+CMakeFiles/webserv.dir/srcs/connection/ParsedRequest.cpp.o: ../incs/ParsedRequest.hpp
+CMakeFiles/webserv.dir/srcs/connection/ParsedRequest.cpp.o: ../incs/RequestConfig.hpp
+CMakeFiles/webserv.dir/srcs/connection/ParsedRequest.cpp.o: ../incs/WebServerConstant.hpp
+CMakeFiles/webserv.dir/srcs/connection/ParsedRequest.cpp.o: ../incs/webserv.hpp
 CMakeFiles/webserv.dir/srcs/connection/ParsedRequest.cpp.o: ../srcs/connection/ParsedRequest.cpp
 
 CMakeFiles/webserv.dir/srcs/connection/RequestConfig.cpp.o: ../srcs/connection/RequestConfig.cpp
 
+CMakeFiles/webserv.dir/srcs/connection/RequestInspect.cpp.o: ../incs/Config.hpp
+CMakeFiles/webserv.dir/srcs/connection/RequestInspect.cpp.o: ../incs/ConfigReader.hpp
+CMakeFiles/webserv.dir/srcs/connection/RequestInspect.cpp.o: ../incs/ConfigSyntax.hpp
+CMakeFiles/webserv.dir/srcs/connection/RequestInspect.cpp.o: ../incs/ParsedRequest.hpp
+CMakeFiles/webserv.dir/srcs/connection/RequestInspect.cpp.o: ../incs/RequestConfig.hpp
+CMakeFiles/webserv.dir/srcs/connection/RequestInspect.cpp.o: ../incs/RequestInspect.hpp
+CMakeFiles/webserv.dir/srcs/connection/RequestInspect.cpp.o: ../incs/WebServerConstant.hpp
+CMakeFiles/webserv.dir/srcs/connection/RequestInspect.cpp.o: ../incs/webserv.hpp
 CMakeFiles/webserv.dir/srcs/connection/RequestInspect.cpp.o: ../srcs/connection/RequestInspect.cpp
 
 CMakeFiles/webserv.dir/srcs/libft.cpp.o: ../srcs/libft.cpp

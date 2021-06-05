@@ -26,6 +26,7 @@ class ParsedRequest
 		std::string					_stateText;
 		bool						_isChunked;
 		int							_stateCode;
+
 		Config::node *				_config;
 		std::string					_root;
 		std::string					_configed_path;
@@ -36,6 +37,7 @@ class ParsedRequest
 		std::string					_cgi_pass;
 		int							_max_body;
 		bool						_autoindex;
+		bool						_cgi_bool;
 		std::vector<std::string>	_index;
 		std::vector<std::string>	_allow_methods;
 		ErrorPage					_error_page;
@@ -64,6 +66,7 @@ class ParsedRequest
 		std::string const &				getServerName();
 		int const &						getMaxBody();
 		bool const &					getAutoIndex();
+		bool const &					getCGIBool();
 		std::vector<std::string>		getIndex();
 		std::vector<std::string>		getAllowMethods();
 		ErrorPage						getErrorPage();
@@ -71,8 +74,10 @@ class ParsedRequest
 		void							setStateCode(int state);
 		void							setStateText(std::string text);
 		void							setConfigedPath(std::string path);
+		void							setCGIBool (bool is_run);
+		void							setAutoIndex (bool autoindex);
 
-		bool							isChunked();
+		bool const &					isChunked();
 		bool							isExistHeader(std::string in);
 };
 //Accept-Charsets

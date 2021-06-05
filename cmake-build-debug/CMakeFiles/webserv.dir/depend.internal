@@ -12,10 +12,25 @@ CMakeFiles/webserv.dir/srcs/config/ConfigReader.cpp.o
 CMakeFiles/webserv.dir/srcs/config/ConfigSyntax.cpp.o
  /Users/taekkim/webserv/srcs/config/ConfigSyntax.cpp
 CMakeFiles/webserv.dir/srcs/connection/ParsedRequest.cpp.o
+ ../incs/Config.hpp
+ ../incs/ConfigReader.hpp
+ ../incs/ConfigSyntax.hpp
+ ../incs/ParsedRequest.hpp
+ ../incs/RequestConfig.hpp
+ ../incs/WebServerConstant.hpp
+ ../incs/webserv.hpp
  /Users/taekkim/webserv/srcs/connection/ParsedRequest.cpp
 CMakeFiles/webserv.dir/srcs/connection/RequestConfig.cpp.o
  /Users/taekkim/webserv/srcs/connection/RequestConfig.cpp
 CMakeFiles/webserv.dir/srcs/connection/RequestInspect.cpp.o
+ ../incs/Config.hpp
+ ../incs/ConfigReader.hpp
+ ../incs/ConfigSyntax.hpp
+ ../incs/ParsedRequest.hpp
+ ../incs/RequestConfig.hpp
+ ../incs/RequestInspect.hpp
+ ../incs/WebServerConstant.hpp
+ ../incs/webserv.hpp
  /Users/taekkim/webserv/srcs/connection/RequestInspect.cpp
 CMakeFiles/webserv.dir/srcs/libft.cpp.o
  /Users/taekkim/webserv/srcs/libft.cpp
