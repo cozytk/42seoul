@@ -176,7 +176,11 @@ ParsedRequest::ErrorPage		ParsedRequest::getErrorPage()
 	return (this->_error_page);
 }
 
-bool							ParsedRequest::isChunked() {
+bool const &					ParsedRequest::getCGIBool() {
+	return (this->_cgi_bool);
+}
+
+bool const &					ParsedRequest::isChunked() {
 	return (this->_isChunked);
 }
 
@@ -194,7 +198,13 @@ void				ParsedRequest::setStateCode(int state)
 	this->_stateCode = state;
 }
 
+void				ParsedRequest::setCGIBool (bool is_run) {
+	this->_cgi_bool = is_run;
+}
 
+void				ParsedRequest::setAutoIndex(bool autoindex) {
+	this->_autoindex = autoindex;
+}
 void				ParsedRequest::setConfigedPath(std::string path)
 {
 	this->_configed_path = path;
@@ -219,3 +229,4 @@ std::string ParsedRequest::getPathTranslated() const
 }
 
 */
+
