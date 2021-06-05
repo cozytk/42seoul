@@ -10,8 +10,7 @@ CONFIG		= Config.cpp ConfigReader.cpp ConfigSyntax.cpp
 SERVER		= ServerManager.cpp Server.cpp
 
 CONNECTION	= ParsedRequest.cpp RequestInspect.cpp RequestConfig.cpp
-
-# RESPONSE	= Response.cpp
+RESPONSE	= Response.cpp
 
 CGI			= CGI.cpp
 
@@ -24,8 +23,7 @@ SRCS		= $(addprefix srcs/, $(MAIN)) \
 			  $(addprefix srcs/connection/, $(CONNECTION)) \
 			  $(addprefix srcs/, $(CGI)) \
 			  $(addprefix srcs/, $(AUTOINDEX)) \
-			#   $(addprefix srcs/response/, $(RESPONSE))
-
+			  $(addprefix srcs/response/, $(RESPONSE))
 INCS		= incs/
 
 OBJS		= $(SRCS:.cpp=.o)

@@ -87,7 +87,7 @@ void CGI::execute(ParsedRequest *request)
 		throw FileIOException();
 	write(fd_in, request->getBody().c_str(), request->getBody().length());
 	lseek(fd_in, 0, SEEK_SET);
-	argv = getEnvs();
+	argv = getEnvs(request);
 	if ((pid = fork()) == -1)
 		throw ForkException();
 	if (pid == 0) {
