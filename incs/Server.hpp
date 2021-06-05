@@ -7,6 +7,8 @@
 # include "ParsedRequest.hpp"
 # include "RequestInspect.hpp"
 # include "CGI.hpp"
+# include "AutoIndex.hpp"
+# include "Response.hpp"
 
 #define GET 0
 #define HEAD 1
@@ -40,14 +42,13 @@ private:
 		void clear();
 	};
 
+	AutoIndex                   _auto_index;
 	std::map<int, Request *>	_request;
 	sockaddr_in					_addr;
 	int							_socket;
 	int							_port;
 	Config::node *				_server_conf;
 	ParsedRequest *				_parsed_req;
-	static std::map<std::string, std::string> _mime_types;
-	static std::map<int, std::string> _status;
 
 	size_t                      _uriLimitSize;
 	size_t                      __headerLimitSize;
@@ -107,7 +108,6 @@ public:
 	std::string getDefaultErrorPage(ParsedRequest* request);
 	void        setResponseBody(ParsedRequest *request);
 	std::string erase_white_space(std::string &s);
-	bool        isAllowedMethod(ParsedRequest *request, std::string &method);
 	std::string response200(ParsedRequest *request);
 	std::string response400(ParsedRequest *request);
 	std::string responseCGI(ParsedRequest *request, const std::string & body);

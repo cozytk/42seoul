@@ -1,5 +1,6 @@
 CXX			= clang++
-CXXFLAGS	= -std=c++98 #-Wall -Wextra -Werror
+CXXFLAGS	= -std=c++98 #-Wall -Wextra -WerrorWerror
+
 
 MAIN		= main.cpp
 LIBFT		= libft.cpp
@@ -9,6 +10,7 @@ CONFIG		= Config.cpp ConfigReader.cpp ConfigSyntax.cpp
 SERVER		= ServerManager.cpp Server.cpp
 
 CONNECTION	= ParsedRequest.cpp RequestInspect.cpp RequestConfig.cpp
+RESPONSE	= Response.cpp
 
 CGI			= CGI.cpp
 
@@ -20,8 +22,8 @@ SRCS		= $(addprefix srcs/, $(MAIN)) \
 			  $(addprefix srcs/server/, $(SERVER)) \
 			  $(addprefix srcs/connection/, $(CONNECTION)) \
 			  $(addprefix srcs/, $(CGI)) \
-			  $(addprefix srcs/, $(AUTOINDEX))
-
+			  $(addprefix srcs/, $(AUTOINDEX)) \
+			  $(addprefix srcs/response/, $(RESPONSE))
 INCS		= incs/
 
 OBJS		= $(SRCS:.cpp=.o)

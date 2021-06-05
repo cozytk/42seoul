@@ -1,6 +1,7 @@
 #ifndef CGI_HPP
 # define CGI_HPP
 
+# include <ParsedRequest.hpp>
 # include <webserv.hpp>
 
 class CGI {
@@ -10,7 +11,6 @@ private:
 
 	int _stdin;
 	int _stdout;
-
 public:
 	/* exception */
 	class FileIOException : public std::exception {
@@ -28,9 +28,9 @@ public:
 	
 	CGI &operator=(CGI const &x);
 
-	void setEnvs();
-	char **getEnvs();
-	void execute(const std::string &file, const std::string &body);
+	void setEnvs(ParsedRequest *request);
+	char **getEnvs(ParsedRequest *request);
+	void execute(ParsedRequest *reqeust);
 
 	std::string &getBuffer();
 };

@@ -104,19 +104,22 @@ bool				RequestInspect::isExistResource(std::string path, std::string index) {
 		{
 			if (path[(int)path.length() - 1] != '/')
 				path = path + "/";
-			path = path + index;
-			if (isExistResource(path, ""))
+			if (!this->_req->getAutoIndex())
 			{
-				this->_req->setConfigedPath(path);
-				return (true);
+				path = path + index;
+				if (!isExistResource(path, ""))
+					return (false);
 			}
-			return (false);
+			this->_req->setConfigedPath(path);
 		}
 		else if(s.st_mode & S_IFREG)
 		{
+			if (this->_req->getAutoIndex())
+				this->_req->setAutoIndex(false);
 			if (path.find(".bla") != std::string::npos ||
-			path.find(".bad_extension") != std::string::npos)
-				std::cout << "need cgi run" << std::endl;
+			path.find(".bad_extension") != std::string::npos ||
+			path.find(".yahong") != std::string::npos )
+				this->_req->setCGIBool(true);
 		}
 		return true;
 	}
@@ -180,7 +183,6 @@ bool				RequestInspect::isValid() {
 		return false;
 	if (!isAuthorized())
 		return false;
-
 	return true;
 }
 
