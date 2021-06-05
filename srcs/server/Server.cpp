@@ -339,7 +339,7 @@ int Server::send(int socket, CGI &cgi)
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
 
 	std::cout << std::endl << "SEND ▼" << std::endl;
-	// std::cout << "[" << buf << "]" << std::endl;
+	std::cout << "[" << buf << "]" << std::endl;
 
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
