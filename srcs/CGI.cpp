@@ -14,11 +14,9 @@ const char *CGI::ForkException::what() const throw() {
 CGI::CGI() {
 	this->_stdin = dup(STDIN_FILENO);
 	this->_stdout = dup(STDOUT_FILENO);
-	setEnvs();
 }
 
 CGI::CGI(CGI const &x) {
-	setEnvs();
 }
 
 CGI::~CGI() {
@@ -30,38 +28,39 @@ CGI &CGI::operator=(CGI const &x) {
 	return (*this);
 }
 
-void CGI::setEnvs() {
-	envs["AUTH_TYPE"] = "";
-	envs["CONTENT_LENGTH"] = "";
-	envs["CONTENT_TYPE"] = "";
+void CGI::setEnvs(ParsedRequest *request) {
+	envs["AUTH_TYPE"] = "CGI/1.1";
+	envs["CONTENT_LENGTH"] = request->getHeaders()["Content-Length"];
+	envs["CONTENT_TYPE"] = request->getHeaders()["Content-Type"];
 
 	envs["GATEWAY_INTERFACE"] = "CGI/1.1";
 
-	envs["PATH_INFO"] = "";
-	envs["PATH_TRANSLATED"] = "";
+	envs["PATH_INFO"] = request->getHeaders()["Path"];
+	envs["PATH_TRANSLATED"] = request->getConfigedPath();
 	envs["QUERY_STRING"] = "";
 
 	envs["REMOTE_ADDR"] = "";
 	envs["REMOTE_IDENT"] = "";
 	envs["REMOTE_USER"] = "";
 
-	envs["REQUEST_METHOD"] = "";
+	envs["REQUEST_METHOD"] = request->getHeaders()["Method"];
 	envs["REQUEST_URI"] = "";
 
-	envs["SCRIPT_NAME"] = "";
+	envs["SCRIPT_NAME"] = "127.0.0.1";
 
-	envs["SERVER_NAME"] = "";
-	envs["SERVER_PORT"] = "";
+	envs["SERVER_NAME"] = request->getServerName();
+	envs["SERVER_PORT"] = (*(*request->getConfig())("listen", 0))[0];
 	envs["SERVER_PROTOCOL"] = "HTTP/1.1";
 	envs["SERVER_SOFTWARE"] = "webserv/1.0";
 }
 
-char **CGI::getEnvs() {
+char **CGI::getEnvs(ParsedRequest *request) {
 	std::map<std::string, std::string>::iterator it;
 	char **ret = new char*[envs.size() + 1];
 	std::string buf;
 	int i = 0;
-	
+
+	setEnvs(request);
 	for (it = envs.begin(); it != envs.end(); it++) {
 		buf = it->first + "=" + it->second;
 		ret[i] = new char[buf.length() + 1];
@@ -71,8 +70,8 @@ char **CGI::getEnvs() {
 	return (ret);
 }
 
-void CGI::execute(const std::string &file, const std::string &body) {
-
+void CGI::execute(ParsedRequest *request)
+{
 	/* example */
 	std::string &buffer = this->_buffer;
 	char buf[CGI_BUFFER_SIZE + 1];
@@ -86,7 +85,7 @@ void CGI::execute(const std::string &file, const std::string &body) {
 	if (((fd_in = open("/tmp/webserv.cache.in", O_RDWR | O_CREAT | O_TRUNC, 0777)) == -1) ||
 	((fd_out = open("/tmp/webserv.cache.out", O_RDWR | O_CREAT | O_TRUNC, 0777)) == -1))
 		throw FileIOException();
-	write(fd_in, body.c_str(), body.length());
+	write(fd_in, request->getBody().c_str(), request->getBody().length());
 	lseek(fd_in, 0, SEEK_SET);
 	argv = getEnvs();
 	if ((pid = fork()) == -1)
@@ -94,7 +93,7 @@ void CGI::execute(const std::string &file, const std::string &body) {
 	if (pid == 0) {
 		dup2(fd_in, STDIN_FILENO);
 		dup2(fd_out, STDOUT_FILENO);
-		execve(file.c_str(), NULL, argv);
+		execve(request->getCGIPass().c_str(), NULL, argv);
 		std::cout << "CGI Error: 500 Internal" << std::endl;
 		exit(0);
 	}

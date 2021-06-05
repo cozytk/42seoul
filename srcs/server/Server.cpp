@@ -211,8 +211,8 @@ int Server::send(int socket, CGI &cgi)
 	int len;
 	int buf_size;
 	std::string response;
-	ParsedRequest *parsed_req = this->_parsed_req;
 	Response _response(this->_parsed_req, this);
+
 	response = _response.getResponse(_auto_index, cgi);
 	buf_size = response.length() - this->_request[socket]->_sent < SEND_BUFFER_SIZE ?
 	           response.length() - this->_request[socket]->_sent : SEND_BUFFER_SIZE;
@@ -223,10 +223,8 @@ int Server::send(int socket, CGI &cgi)
 	if (len == 0)
 		return (ERR_SEND);
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
-
 	std::cout << std::endl << "SEND ▼" << std::endl;
 	std::cout << "[" << buf << "]" << std::endl;
-
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
 		response.clear();

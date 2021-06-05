@@ -35,7 +35,7 @@ class Response
 		std::string getStateText(int state);
 		std::string getResponse(AutoIndex &autoindex, CGI &cgi);
 
-		std::string	runPut(ParsedRequest *request, int state);
+		std::string	runPut(ParsedRequest *request);
 		std::string	runGet(ParsedRequest *request);
 		std::string	runPost(ParsedRequest *request);
 		std::string	runDelete(ParsedRequest *request);
@@ -46,7 +46,7 @@ class Response
 
 		std::string	response200(ParsedRequest *request);
 		std::string	response400(ParsedRequest *request);
-		std::string	responseCGI(ParsedRequest *request, const std::string & body);
+		std::string	responseCGI(ParsedRequest *request, std::string body);
 		std::string	erase_white_space(std::string &s);
 };
 

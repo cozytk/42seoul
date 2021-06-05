@@ -198,16 +198,21 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 	std::string response;
 
 	if (_request->getStateCode() / 100 != 2){
-		response = response400(_request);
+		if (_request->getStateCode() == 404 && \
+			_request->getHeaders()["Type"] == "PUT"){
+			response = runPut(_request);
+		}
+		else
+			response = response400(_request);
 	}
 	else if (_request->getAutoIndex())
 	{
 		_response_body = autoindex.make();
 		response = response200(_request);
 	}
-	else if (!_request->getCGIPass().empty()) {
-		cgi.execute(_request->getCGIPass(), _request->getBody());
-		responseCGI(_request, cgi.getBuffer());
+	else if (_request->getExtension() == "bla" || _request->getExtension() == "bad_extension") {
+		cgi.execute(_request);
+		response = responseCGI(_request, cgi.getBuffer());
 	}
 	else if (_request->getHeaders()["Type"] == "GET") {
 		response = runGet(_request);
@@ -217,6 +222,9 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 	}
 	else if (_request->getHeaders()["Type"] == "DELETE") {
 		response = runDelete(_request);
+	}
+	else if (_request->getHeaders()["Type"] == "PUT") {
+		response = runPut(_request);
 	}
 	else {
 		_request->setStateCode(400);
@@ -238,7 +246,7 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-std::string	Response::runPut(ParsedRequest *request, int state) {
+std::string	Response::runPut(ParsedRequest *request) {
 	ParsedRequest	*req = this->_request;
 	FILE	*file = fopen(req->getConfigedPath().c_str(), "w");
 
@@ -252,7 +260,7 @@ std::string	Response::runPut(ParsedRequest *request, int state) {
 		fputs(request->getBody().c_str(), file);
 		std::cout << "🔆 put file created" << std::endl;
 	}
-	if (state == 404)
+	if (_request->getStateCode() == 404)
 	{
 		request->setStateCode(201);
 		request->setStateText("Created");
@@ -274,7 +282,6 @@ std::string Response::runPost(ParsedRequest *request)
 {
 	if (request->getBody().length() == 0)
 		return (runGet(request));
-	request->setStateCode(400);
 	return (response400(request));
 }
 
@@ -374,9 +381,9 @@ std::string Response::response400(ParsedRequest *request)
 	return (ret);
 }
 
-std::string Response::responseCGI(ParsedRequest *request, const std::string & body)
+std::string Response::responseCGI(ParsedRequest *request, std::string body)
 {
-	return ("Status: " + ft::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\n" + body + "\r\n");
+	return ("Status: " + ft::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\nContent-length:12\r\n\r\n" + body.substr(body.find(':') + 2));
 }
 
 std::string Response::erase_white_space(std::string &s)
