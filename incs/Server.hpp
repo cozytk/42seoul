@@ -30,6 +30,8 @@ private:
 		int _length;
 		int _sent;
 
+		bool _chunked;
+
 	public:
 		Request();
 		Request(Request const &x);

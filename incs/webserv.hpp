@@ -40,7 +40,7 @@
 # define WAIT_RECV 0
 # define ALL_RECV 1
 
-# define SEND_BUFFER_SIZE 2048
+# define SEND_BUFFER_SIZE 65536
 # define ERR_SEND -1
 # define WAIT_SEND 0
 # define ALL_SEND 1
@@ -86,11 +86,14 @@ namespace ft {
 	/* func */
 	bool		isspace(char c);
 	int			atoi(char *str);
+	int			htod(char *str);
+	int			index(char c, const char *arr);
 	void		*memset(void *src, int val, size_t size);
 	size_t		strlcpy(char *dst, char *src, size_t size);
 	int			tolower(int c);
 
 	void trim_space(std::string &str);
+	void trim_chunked(std::string &str);
 
 	std::string	to_string(int n);
 

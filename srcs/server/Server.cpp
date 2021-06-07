@@ -9,6 +9,7 @@ Server::Request::Request() {
 	this->_response = "";
 	this->_length = -1;
 	this->_sent = 0;
+	this->_chunked = false;
 }
 
 Server::Request::Request(Server::Request const &x) :
@@ -123,7 +124,7 @@ void Server::socketBind() {
 }
 
 void Server::run() {
-	if (listen(this->_socket, 512) == -1)
+	if (listen(this->_socket, 1024) == -1)
 		throw ListenException();
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " is listening");
 }
@@ -162,6 +163,7 @@ int Server::recv(int socket) {
 		this->_request[socket]->parseHeader( this->_request[socket]->_buffer.substr(0, this->_request[socket]->_buffer.find("\r\n\r\n")) );
 		if (this->_request[socket]->_headers.find("transfer-encoding") != this->_request[socket]->_headers.end() &&
 			this->_request[socket]->_headers["transfer-encoding"] == "chunked") {
+			this->_request[socket]->_chunked = true;
 			this->_request[socket]->_length = -1;
 		}
 		else {
@@ -175,7 +177,7 @@ int Server::recv(int socket) {
 		ft::trim_space(this->_request[socket]->_buffer);
 
 		std::cout << std::endl << "RECV ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
-		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
+//		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		RequestConfig req_conf(this->_parsed_req);
 		RequestInspect inspect(this->_parsed_req);
@@ -189,9 +191,10 @@ int Server::recv(int socket) {
 		this->_request[socket]->_headers["transfer-encoding"] == "chunked" &&
 		this->_request[socket]->_buffer.find("\r\n0\r\n") != std::string::npos) {
 		ft::trim_space(this->_request[socket]->_buffer);
+		ft::trim_chunked(this->_request[socket]->_buffer);
 
 		std::cout << std::endl << "RECV chunked ▼ (size: " << this->_request[socket]->_length << ")" << std::endl;
-		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
+//		std::cout << "[" << this->_request[socket]->_buffer << "]" << std::endl;
 		this->_parsed_req = new ParsedRequest(this->_request[socket]->_buffer, this->_server_conf);
 		RequestInspect inspect(this->_parsed_req);
 		RequestConfig req_conf(this->_parsed_req);
@@ -224,15 +227,15 @@ int Server::send(int socket, CGI &cgi)
 		return (ERR_SEND);
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " => SEND => " + ft::to_string(len) + " bytes");
 	std::cout << std::endl << "SEND ▼" << std::endl;
-	std::cout << "[" << buf << "]" << std::endl;
+//	std::cout << "[" << buf << "]" << std::endl;
 	this->_request[socket]->_sent += len;
 	if (this->_request[socket]->_sent >= response.length()) {
 		response.clear();
 		buf.clear();
 		return (ALL_SEND);
 	}
-	delete this->_parsed_req;
-	response.clear();
-	buf.clear();
+//	delete this->_parsed_req;
+//	response.clear();
+//	buf.clear();
 	return (WAIT_SEND);
 }

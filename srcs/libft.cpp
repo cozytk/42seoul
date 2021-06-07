@@ -94,6 +94,42 @@ int			ft::atoi(char *str) {
 	return (minus * ret);
 }
 
+int			ft::htod(char *str) {
+	const char	*alphabet = "0123456789ABCDEF";
+	int			ret;
+	int			minus;
+
+	ret = 0;
+	minus = 1;
+	while ((9 <= *str && *str <= 13) || *str == 32)
+		str++;
+	if (*str == '+')
+		str++;
+	else if (*str == '-')
+	{
+		minus = -1;
+		str++;
+	}
+	while (ft::index(*str, alphabet) != -1)
+	{
+		ret *= 16;
+		ret += ft::index(*str, alphabet);
+		str++;
+	}
+	return (minus * ret);
+}
+
+int			ft::index(char c, const char *arr) {
+	int i = 0;
+
+	while (arr[i]) {
+		if (arr[i] == c)
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
 std::string	ft::to_string(int n)
 {
 	std::string ret = "";
@@ -115,6 +151,30 @@ std::string	ft::to_string(int n)
 void	ft::trim_space(std::string &str) {
 	while (9 <= str[0] && str[0] <= 13)
 		str.erase(str.begin());
+}
+
+void	ft::trim_chunked(std::string &str) {
+	std::string ret = "";
+	int cursor;
+	int chunked_length;
+	std::string chunked_buffer;
+	std::string chunked_length_buffer;
+
+	ret.reserve(str.length());
+	ret += str.substr(0, str.find("\r\n\r\n") + 4);
+	cursor = ret.length();
+
+	while (42) {
+		chunked_length_buffer = str.substr(cursor, str.find("\r\n", cursor) - cursor);
+		chunked_length = ft::htod(const_cast<char *>(chunked_length_buffer.c_str()));
+		if (chunked_length == 0)
+			break ;
+		cursor += chunked_length_buffer.length() + 2;
+		chunked_buffer = str.substr(cursor, chunked_length);
+		cursor += chunked_buffer.length() + 2;
+		ret += chunked_buffer;
+	}
+	str = ret;
 }
 
 void	*ft::memset(void *_src, int val, size_t size) {

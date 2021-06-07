@@ -17,9 +17,9 @@ int main()
 "Accept-Encoding: gzip\r\n\r\n";
 
 	std::string chunked0 = "5\r\nhello\r\n";
-	std::string chunked1 = "6\r\n world\r\n";
+	std::string chunked1 = "14\r\nthis is test message\r\n";
 
-	std::string chunked2 = "0\r\n"; //"1\r\n" //not finish
+	std::string chunked2 = "0\r\n\r\n"; //"1\r\n" //not finish
 
 	int socket;
 	sockaddr_in server_addr;
@@ -28,7 +28,7 @@ int main()
 
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(8082);
+	server_addr.sin_port = htons(8080);
 	server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	connect(socket, (sockaddr *)&server_addr, sizeof(server_addr));
