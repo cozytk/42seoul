@@ -13,6 +13,26 @@
  */
 
 namespace ft {
+	template<class T>
+	struct less
+	{
+	public:
+		bool
+		operator()(const T &lhs, const T &rhs) const
+		{
+			return (lhs < rhs);
+		}
+	};
+	template<class T>
+	struct equal_to
+	{
+	public:
+		bool
+		operator()(const T &lhs, const T &rhs) const
+		{
+			return (lhs == rhs);
+		}
+	};
 	template<bool, typename T = void>
 	struct enable_if
 	{

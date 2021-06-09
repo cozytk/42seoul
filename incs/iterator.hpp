@@ -3,6 +3,7 @@
 
 #include <cstddef>
 
+
 namespace ft
 {
 	struct input_iterator_tag
@@ -39,10 +40,6 @@ namespace ft
 		typedef Category iterator_category;
 	};
 
-	/*
-	 * todo T to Iterator, enable_if activate
-	 */
-//	template<typename Iterator, typename enable_if<!is_integral<Iterator>::value>::type* = NULL >
 	template<typename Iterator>
 	struct iterator_traits
 	{
@@ -54,7 +51,6 @@ namespace ft
 		typedef typename Iterator::reference reference;
 	};
 
-//	template<typename T, typename enable_if<is_integral<T>::value>::type* = NULL >
 	template<typename T>
 	struct iterator_traits<T*>
 	{
@@ -66,7 +62,6 @@ namespace ft
 		typedef T &reference;
 	};
 
-//	template<typename T, typename enable_if<is_integral<T>::value>::type* = NULL >
 	template<typename T>
 	struct iterator_traits<const T*>
 	{
@@ -77,6 +72,55 @@ namespace ft
 		typedef const T *pointer;
 		typedef const T &reference;
 	};
+
+	template<typename Iterator>
+	Iterator
+	next(Iterator iterator, unsigned long n = 1)
+	{
+		while (n--)
+			++iterator;
+		return (iterator);
+	}
+
+	template<typename Iterator>
+	Iterator
+	prev(Iterator iterator, unsigned long n = 1)
+	{
+		while (n--)
+			--iterator;
+		return (iterator);
+	}
+
+	template<class It>
+	typename ft::iterator_traits<It>::difference_type
+	do_distance(It first, It last, ft::input_iterator_tag)
+	{
+		typename ft::iterator_traits<It>::difference_type result = 0;
+
+		while (first != last)
+		{
+			++first;
+			++result;
+		}
+
+		return (result);
+	}
+
+	template<class It>
+	typename ft::iterator_traits<It>::difference_type
+	do_distance(It first, It last, ft::random_access_iterator_tag)
+	{
+		return (last - first);
+	}
+
+	template<class It>
+	typename ft::iterator_traits<It>::difference_type
+	distance(It first, It last)
+	{
+		return do_distance(first, last, typename ft::iterator_traits<It>::iterator_category());
+	}
+
+
 
 	template<class Iterator>
 	class reverse_iterator :
@@ -143,9 +187,11 @@ namespace ft
 		reverse_iterator
 		operator++(int)
 		{
-			reverse_iterator tmp(*this);
+			reverse_iterator copy = *this;
+
 			--_it;
-			return (tmp);
+
+			return (copy);
 		}
 
 		reverse_iterator&
@@ -266,4 +312,4 @@ namespace ft
 	}
 }
 
-#endif
+#endif /* ITERATOR_HPP_ */
