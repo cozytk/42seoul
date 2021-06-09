@@ -2,24 +2,29 @@
 #define FT_COTAINERS_VECTOR_HPP
 
 #include <ft_containers.hpp>
+#include <iterator.hpp>
 
 namespace ft
 {
 	template <typename T>
-	class vector_iterator
+	class vector_iterator : public ft::iterator<ft::random_access_iterator_tag, T>
 	{
+	private:
+		typedef typename ft::iterator_traits<T> traits;
 	public:
-		typedef ptrdiff_t difference_type;
-		typedef T value_type;
-		typedef T *pointer;
-		typedef T &reference;
+		typedef typename traits::iterator_category iterator_category;
+		typedef typename traits::value_type value_type;
+		typedef typename traits::difference_type difference_type;
+		typedef typename traits::reference reference;
+		typedef typename traits::pointer pointer;
 	private:
 		T *_p;
 	public:
 		vector_iterator()
 		{}
 
-		vector_iterator(pointer x) : _p(x)
+//		vector_iterator(pointer x) : _p(x)
+		explicit vector_iterator(const pointer &x) : _p(x)
 		{}
 
 		vector_iterator(const vector_iterator &bit) : _p(bit._p)
@@ -100,7 +105,7 @@ namespace ft
 			}
 			return (*this);
 		};
-		difference_type operator-(const vector_iterator &rhs)
+	difference_type operator-(const vector_iterator &rhs)
 		{
 			return (this->_p - rhs.base());
 		}
@@ -139,6 +144,7 @@ namespace ft
 	class reverse_vector_iterator
 	{
 	public:
+		typedef ptrdiff_t difference_type;
 		typedef T value_type;
 		typedef T *pointer;
 		typedef T &reference;
@@ -255,12 +261,12 @@ namespace ft
 		typedef typename allocator_type::const_pointer const_pointer;
 //		typedef typename ft::normal_iterator<pointer> iterator;
 //		typedef typename ft::normal_iterator<const_pointer> const_iterator;
-//		typedef typename ft::reverse_iterator<iterator> reverse_iterator;
-//		typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
-		typedef typename ft::vector_iterator<T> iterator;
-		typedef typename ft::vector_iterator<const T> const_iterator;
-		typedef typename ft::reverse_vector_iterator<T> reverse_iterator;
-		typedef typename ft::reverse_vector_iterator<const T> const_reverse_iterator;
+		typedef typename ft::vector_iterator<pointer> iterator;
+		typedef typename ft::vector_iterator<const_pointer> const_iterator;
+		typedef typename ft::reverse_iterator<iterator> reverse_iterator;
+		typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
+//		typedef typename ft::reverse_vector_iterator<T> reverse_iterator;
+//		typedef typename ft::reverse_vector_iterator<const T> const_reverse_iterator;
 		typedef ptrdiff_t difference_type;
 		typedef size_t size_type;
 
@@ -560,7 +566,7 @@ namespace ft
 		x.swap(y);
 	}
 }
-
+#endif
 
 //		bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
 //		bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
@@ -569,10 +575,3 @@ namespace ft
 //		bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
 //		bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
 //void std_print_vec(std::vector<int> vec)
-
-#endif //FT_COTAINERS_VECTOR_HPP
-
-/*
- * ft::Vector<int> my_vec;
- * int*
- */

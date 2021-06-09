@@ -39,6 +39,10 @@ namespace ft
 		typedef Category iterator_category;
 	};
 
+	/*
+	 * todo T to Iterator, enable_if activate
+	 */
+//	template<typename Iterator, typename enable_if<!is_integral<Iterator>::value>::type* = NULL >
 	template<typename Iterator>
 	struct iterator_traits
 	{
@@ -50,6 +54,7 @@ namespace ft
 		typedef typename Iterator::reference reference;
 	};
 
+//	template<typename T, typename enable_if<is_integral<T>::value>::type* = NULL >
 	template<typename T>
 	struct iterator_traits<T*>
 	{
@@ -61,6 +66,7 @@ namespace ft
 		typedef T &reference;
 	};
 
+//	template<typename T, typename enable_if<is_integral<T>::value>::type* = NULL >
 	template<typename T>
 	struct iterator_traits<const T*>
 	{
@@ -71,293 +77,6 @@ namespace ft
 		typedef const T *pointer;
 		typedef const T &reference;
 	};
-
-	template<typename Iterator>
-	Iterator
-	next(Iterator iterator, unsigned long n = 1)
-	{
-		while (n--)
-			++iterator;
-		return (iterator);
-	}
-
-	template<typename Iterator>
-	Iterator
-	prev(Iterator iterator, unsigned long n = 1)
-	{
-		while (n--)
-			--iterator;
-		return (iterator);
-	}
-
-	template<class It>
-	typename ft::iterator_traits<It>::difference_type
-	do_distance(It first, It last, ft::input_iterator_tag)
-	{
-		typename ft::iterator_traits<It>::difference_type result = 0;
-
-		while (first != last)
-		{
-			++first;
-			++result;
-		}
-
-		return (result);
-	}
-
-	template<class It>
-	typename ft::iterator_traits<It>::difference_type
-	do_distance(It first, It last, ft::random_access_iterator_tag)
-	{
-		return (last - first);
-	}
-
-	template<class It>
-	typename ft::iterator_traits<It>::difference_type
-	distance(It first, It last)
-	{
-		return do_distance(first, last, typename ft::iterator_traits<It>::iterator_category());
-	}
-
-	template<class T>
-	class normal_iterator :
-			public ft::iterator<ft::random_access_iterator_tag, T>
-	{
-	private:
-		typedef typename ft::iterator_traits<T> traits;
-
-	public:
-		typedef typename traits::iterator_category iterator_category;
-		typedef typename traits::value_type value_type;
-		typedef typename traits::difference_type difference_type;
-		typedef typename traits::reference reference;
-		typedef typename traits::pointer pointer;
-
-	private:
-		T _ptr;
-
-	public:
-		normal_iterator() :
-				_ptr(NULL)
-		{
-		}
-
-		explicit
-		normal_iterator(const T &ptr) :
-				_ptr(ptr)
-		{
-		}
-
-		template<typename U>
-		normal_iterator(const normal_iterator<U> &other) :
-				_ptr(other.base())
-		{
-		}
-
-		~normal_iterator()
-		{
-		}
-
-		normal_iterator&
-		operator=(const normal_iterator &rhs)
-		{
-			this->_ptr = rhs._ptr;
-
-			return (*this);
-		}
-
-		normal_iterator&
-		operator++()
-		{
-			this->_ptr++;
-
-			return (*this);
-		}
-
-		normal_iterator
-		operator++(int)
-		{
-			normal_iterator copy = *this;
-
-			this->_ptr++;
-
-			return (copy);
-		}
-
-		normal_iterator&
-		operator--()
-		{
-			this->_ptr--;
-
-			return (*this);
-		}
-
-		normal_iterator
-		operator--(int)
-		{
-			normal_iterator copy = *this;
-
-			this->_ptr--;
-
-			return (copy);
-		}
-
-		normal_iterator&
-		operator+=(difference_type n)
-		{
-			this->_ptr += n;
-
-			return (*this);
-		}
-
-		normal_iterator
-		operator+(difference_type n) const
-		{
-			return (normal_iterator(this->_ptr + n));
-		}
-
-		normal_iterator&
-		operator-=(difference_type n)
-		{
-			this->_ptr -= n;
-
-			return (*this);
-		}
-
-		normal_iterator
-		operator-(difference_type n) const
-		{
-			return (normal_iterator(this->_ptr - n));
-		}
-
-		difference_type
-		operator-(const normal_iterator &other)
-		{
-			return (this->_ptr - other.base());
-		}
-
-		reference
-		operator*() const
-		{
-			return (*this->_ptr);
-		}
-
-		pointer
-		operator->() const
-		{
-			return (this->_ptr);
-		}
-
-		reference
-		operator[](difference_type n) const
-		{
-			return (*(this->_ptr + n));
-		}
-
-		const T&
-		base() const
-		{
-			return (_ptr);
-		}
-	};
-
-	template<typename T>
-	inline bool
-	operator==(const normal_iterator<T> &lhs, const normal_iterator<T> &rhs)
-	{
-		return (lhs.base() == rhs.base());
-	}
-
-	template<typename T, typename U>
-	inline bool
-	operator==(const normal_iterator<T> &lhs, const normal_iterator<U> &rhs)
-	{
-		return (lhs.base() == rhs.base());
-	}
-
-	template<typename T>
-	inline bool
-	operator!=(const normal_iterator<T> &lhs, const normal_iterator<T> &rhs)
-	{
-		return (lhs.base() != rhs.base());
-	}
-
-	template<typename T, typename U>
-	inline bool
-	operator!=(const normal_iterator<T> &lhs, const normal_iterator<U> &rhs)
-	{
-		return (lhs.base() != rhs.base());
-	}
-
-	template<typename T>
-	inline bool
-	operator<(const normal_iterator<T> &lhs, const normal_iterator<T> &rhs)
-	{
-		return (lhs.base() < rhs.base());
-	}
-
-	template<typename T, typename U>
-	inline bool
-	operator<(const normal_iterator<T> &lhs, const normal_iterator<U> &rhs)
-	{
-		return (lhs.base() < rhs.base());
-	}
-
-	template<typename T>
-	inline bool
-	operator>(const normal_iterator<T> &lhs, const normal_iterator<T> &rhs)
-	{
-		return (lhs.base() > rhs.base());
-	}
-
-	template<typename T, typename U>
-	inline bool
-	operator>(const normal_iterator<T> &lhs, const normal_iterator<U> &rhs)
-	{
-		return (lhs.base() > rhs.base());
-	}
-
-	template<typename T>
-	inline bool
-	operator<=(const normal_iterator<T> &lhs, const normal_iterator<T> &rhs)
-	{
-		return (lhs.base() <= rhs.base());
-	}
-
-	template<typename T, typename U>
-	inline bool
-	operator<=(const normal_iterator<T> &lhs, const normal_iterator<U> &rhs)
-	{
-		return (lhs.base() <= rhs.base());
-	}
-
-	template<typename T>
-	inline bool
-	operator>=(const normal_iterator<T> &lhs, const normal_iterator<T> &rhs)
-	{
-		return (lhs.base() >= rhs.base());
-	}
-
-	template<typename T, typename U>
-	inline bool
-	operator>=(const normal_iterator<T> &lhs, const normal_iterator<U> &rhs)
-	{
-		return (lhs.base() >= rhs.base());
-	}
-
-	template<typename T>
-	inline normal_iterator<T>
-	operator+(typename normal_iterator<T>::difference_type n, const normal_iterator<T> &it)
-	{
-		return (normal_iterator<T>(it.base() + n));
-	}
-
-	template<typename T, typename U>
-	inline typename normal_iterator<T>::difference_type
-	operator-(const normal_iterator<T> &lhs, const normal_iterator<U> &rhs)
-	{
-		return (lhs.base() - rhs.base());
-	}
 
 	template<class Iterator>
 	class reverse_iterator :
@@ -424,11 +143,9 @@ namespace ft
 		reverse_iterator
 		operator++(int)
 		{
-			reverse_iterator copy = *this;
-
+			reverse_iterator tmp(*this);
 			--_it;
-
-			return (copy);
+			return (tmp);
 		}
 
 		reverse_iterator&
@@ -548,4 +265,5 @@ namespace ft
 		return (rhs.base() - lhs.base());
 	}
 }
+
 #endif
