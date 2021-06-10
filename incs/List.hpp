@@ -522,7 +522,7 @@ namespace ft
 		reference back() { return (*(--end())); }
 		const_reference back() const { return (*(--end())); }
 		template<class InputIterator>
-		void assign(InputIterator first, InputIterator last)
+		void assign(InputIterator first, InputIterator last, typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
 		{
 			list l;
 
@@ -803,5 +803,20 @@ namespace ft
 	{
 		x.swap(y);
 	}
+}
+
+template <class T>
+void print_list(std::list<T> list)
+{
+	for (typename std::list<T>::iterator it = list.begin(); it != list.end(); it++)
+		std::cout << *it << ' ';
+	std::cout << "\n";
+}
+template <class T>
+void print_list(ft::list<T> list)
+{
+	for (typename ft::list<T>::iterator it = list.begin(); it != list.end(); it++)
+		std::cout << *it << ' ';
+	std::cout << "ft \n";
 }
 #endif

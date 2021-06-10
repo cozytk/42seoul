@@ -13,6 +13,85 @@
  */
 
 namespace ft {
+	template<typename _Arg1, typename _Arg2, typename _Result>
+	struct binary_function
+	{
+		/** first_argument_type is the type of the first argument. */
+		typedef _Arg1 first_argument_type;
+
+		/** second_argument_type is the type of the second argument. */
+		typedef _Arg2 second_argument_type;
+
+		/**  result_type is the return type. */
+		typedef _Result result_type;
+	};
+	template<class T1, class T2>
+	struct pair
+	{
+	public:
+		/** The first template parameter (T1). */
+		typedef T1 first_type;
+
+		/** The second template parameter (T2). */
+		typedef T2 second_type;
+
+	public:
+		first_type first;
+		second_type second;
+
+	public:
+		/**
+		 * Constructs a pair object with its elements value-initialized.
+		 */
+		pair()
+		{
+		}
+
+		/**
+		 * The object is initialized with the contents of the pr pair object.
+		 *
+		 * @param pr Another pair object.
+		 */
+		template<class U, class V>
+		pair(const pair<U, V> &pr) :
+				first(pr.first),
+				second(pr.second)
+		{
+		}
+
+		/**
+		 *
+		 * @param a An object of the type of first, or some other type implicitly convertible to it.
+		 * @param b An object of the type of second, or some other type implicitly convertible to it.
+		 */
+		pair(const first_type &a, const second_type &b) :
+				first(a),
+				second(b)
+		{
+		}
+
+		pair&
+		operator=(const pair &pr)
+		{
+			first = pr.first;
+			second = pr.second;
+
+			return (*this);
+		}
+	};
+
+	template<class T1, class T2>
+	bool
+	operator==(const pair<T1, T2> &lhs, const pair<T1, T2> &rhs)
+	{
+		return (lhs.first == rhs.first && lhs.second == rhs.second);
+	}
+	template<class T1, class T2>
+	pair<T1, T2>
+	make_pair(T1 x, T2 y)
+	{
+		return (pair<T1, T2>(x, y));
+	}
 	template<class T>
 	struct less
 	{
