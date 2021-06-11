@@ -1,7 +1,3 @@
-//
-// Created by Taekyun Kim on 6/11/21.
-//
-
 #ifndef FT_COTAINERS_STACK_HPP
 #define FT_COTAINERS_STACK_HPP
 
@@ -115,3 +111,4 @@ namespace ft {
 		return (!(lhs < rhs));
 	}
 }
+#endif

@@ -2,3 +2,4 @@
 cmake-build-debug/
 CMakeLists.txt
 test/experiment/
+test/experiment/*
