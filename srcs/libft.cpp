@@ -251,5 +251,6 @@ std::pair<std::string, std::string> ft::headerPair(std::string str) {
 	int pos = str.find(": ");
 	std::string header = std::string(str, 0, pos);
 	ft::transform(header.begin(), header.end(), ft::tolower);
-	return (std::make_pair<std::string, std::string>(header, std::string(str, pos + 2)));
+	//return (std::make_pair<std::string, std::string>(header, std::string(str, pos + 2)));
+	return (std::make_pair(header, std::string(str, pos + 2)));
 }

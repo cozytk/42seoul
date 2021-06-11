@@ -4,14 +4,6 @@
 # include <webserv.hpp>
 
 # include "ServerManager.hpp"
-# include "ParsedRequest.hpp"
-# include "RequestInspect.hpp"
-# include "CGI.hpp"
-# include "AutoIndex.hpp"
-# include "Response.hpp"
-
-#define GET 0
-#define HEAD 1
 
 class ServerManager;
 
@@ -19,49 +11,49 @@ class Server {
 	friend class ServerManager;
 
 private:
-	class Request {
-	friend class ServerManager;
-	friend class Server;
-
-	private:
-		std::map<std::string, std::string> _headers;
-		std::string _buffer;
-		std::string _response;
-		int _length;
-		int _sent;
-
-		bool _chunked;
+	class Buffer {
+		friend class Server;
 
 	public:
-		Request();
-		Request(Request const &x);
-		~Request();
+		/* coplien */
+		Buffer();
+		Buffer(Buffer const &x);
+		~Buffer();
+		
+		Buffer &operator=(Buffer const &x);
 
-		Request &operator=(Request const &x);
+	private:
+		/* member */
+		std::string		_buffer;
+		int				_sent;
 
-		void parseHeader(std::string const &header);
+		bool			_chunked;
 
+		/* function */
 		void clear();
 	};
 
-	AutoIndex                   _auto_index;
-	std::map<int, Request *>	_request;
+	/* member */
+	ServerManager				*_manager;
+
 	sockaddr_in					_addr;
 	int							_socket;
 	int							_port;
-	Config::node *				_server_conf;
-	ParsedRequest *				_parsed_req;
 
-	size_t                      _uriLimitSize;
-	size_t                      __headerLimitSize;
-	size_t                      _limitClientBodySize;
-	std::string                 _defaultErrorPage;
-	std::string                 _response_body;
+	std::vector<int>			_readable;
+	std::vector<int>			_writable;
+
+	std::map<int, Buffer>		_buffer;
+
+	/* function */
+	void readPacket(int socket, std::vector<int>::iterator &socket_next);
+
+	/* coplien */
+	Server();
 
 public:
 	/* exception */
-	typedef std::vector<std::string> headers_t;
-		class CreateException : public std::exception {
+	class CreateException : public std::exception {
 		virtual const char *what() const throw();
 	};
 
@@ -82,36 +74,19 @@ public:
 	};
 
 	/* coplien */
-	Server();
+	Server(ServerManager *manager);
 	Server(Server const &other);
 	virtual ~Server();
 	Server &operator=(Server const &other);
 
-	int getPort();
+	void bind();
+	void listen();
 
-	void socketBind();
+	void send();
+	void receive();
+	void accept();
+
 	void run();
 
-	int accept();
-	int recv(int socket);
-	int send(int socket, CGI &cgi);
-
-	std::string runGet(ParsedRequest *request);
-	std::string runPost(ParsedRequest *request);
-	std::string runDelete(ParsedRequest *request);
-	std::string getServerHeader(ParsedRequest *request);
-	std::string getDateHeader(ParsedRequest *request);
-	std::string getContentTypeHeader(ParsedRequest *request);
-	std::string getContentLengthHeader(ParsedRequest *request);
-	std::string getLastModifiedHeader(ParsedRequest *request);
-	std::string getConnectionHeader(ParsedRequest *request);
-	std::string getStateText(int state);
-	std::string getResponseBody(ParsedRequest *request);
-	std::string getDefaultErrorPage(ParsedRequest* request);
-	void        setResponseBody(ParsedRequest *request);
-	std::string erase_white_space(std::string &s);
-	std::string response200(ParsedRequest *request);
-	std::string response400(ParsedRequest *request);
-	std::string responseCGI(ParsedRequest *request, const std::string & body);
 };
 #endif

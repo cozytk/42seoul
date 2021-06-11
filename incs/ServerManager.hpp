@@ -2,31 +2,25 @@
 # define SERVERMANAGER_HPP
 
 # include <webserv.hpp>
-
 # include "Server.hpp"
 # include "Config.hpp"
-# include "CGI.hpp"
 
 class Server;
 
 class ServerManager {
+	friend class Server;
+
 private:
 	/* member */
-	CGI                     _cgi;
 	Config					_config;
-	std::map<int, Server *>	_servers;
-	std::map<int, Server *>	_readable;
-	std::map<int, Server *>	_writable;
+	std::vector<Server *>	_servers;
 
-	ft::fds fds;
-	int inspect_range;
+	ft::fds					_fds;
+	ft::fds					_fds_out;
+	int						_max_fd;
 
 	/* func */
-	Server *newServer(Config::node *block);
-
-	void write(struct ft::fds &fds_loop);
-	void read(struct ft::fds &fds_loop);
-	void accept(struct ft::fds &fds_loop);
+	Server *createServer(Config::node *block);
 
 public:
 	/* static */
@@ -56,7 +50,7 @@ public:
 	void run();
 
 	/* signal */
-	void serverClose();
+	void close();
 };
 
 #endif

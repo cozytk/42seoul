@@ -12,5 +12,7 @@ int main(int argc, char *argv[])
 	catch (std::exception &e) {
 		ft::Log(Error, e.what());
 	}
-	manager.serverClose();
+	manager.close();
+
+	return (0);
 }
