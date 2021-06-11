@@ -1,6 +1,45 @@
 #include "../incs/Stack.hpp"
 #include <stack>
 
+
+template <typename T>
+void print_stack(std::stack<T> stk)
+{
+	if (stk.empty())
+	{
+		std::cout << "It's empty stack\n";
+		return ;
+	}
+	while (!stk.empty())
+	{
+		std::cout << stk.top() << ' ';
+		stk.pop();
+	}
+	std::cout << "\n";
+}
+
+template <typename T>
+void print_stack(ft::stack<T> stk)
+{
+	/*
+	 * empty
+	 */
+	if (stk.empty())
+	{
+		std::cout << "It's empty stack ft\n";
+		return;
+	}
+	/*
+	 * top, pop
+	 */
+	while (!stk.empty())
+	{
+		std::cout << stk.top() << ' ';
+		stk.pop();
+	}
+	std::cout << "ft \n";
+}
+
 int main()
 {
 	/*
@@ -45,7 +84,5 @@ int main()
 		std::cout << ">=";
 
 	return (0);
-}//
-// Created by Taekyun Kim on 6/11/21.
-//
+}
 

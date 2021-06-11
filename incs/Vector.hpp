@@ -256,12 +256,10 @@ namespace ft
 		typedef typename allocator_type::const_reference const_reference;
 		typedef typename allocator_type::pointer pointer;
 		typedef typename allocator_type::const_pointer const_pointer;
-		typedef typename ft::vector_iterator<pointer> iterator;
-		typedef typename ft::vector_iterator<const_pointer> const_iterator;
-		typedef typename ft::reverse_iterator<iterator> reverse_iterator;
-		typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
-//		typedef typename ft::reverse_iterator<pointer> reverse_iterator;
-//		typedef typename ft::reverse_iterator<const_pointer> const_reverse_iterator;
+		typedef ft::vector_iterator<pointer> iterator;
+		typedef ft::vector_iterator<const_pointer> const_iterator;
+		typedef ft::reverse_iterator<iterator> reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 		typedef ptrdiff_t difference_type;
 		typedef size_t size_type;
 
@@ -345,28 +343,19 @@ namespace ft
 
 		reverse_iterator rbegin()
 		{
-//			return (reverse_iterator(_p + _size - 1));
-			if (this->empty())
-				return (reverse_iterator(_p));
-			return (reverse_iterator(_p + _size - 1));
+			return (reverse_iterator(end()));
 		}
 		const_reverse_iterator rbegin() const
 		{
-			if (this->empty())
-				return (const_reverse_iterator(_p));
-			return (const_reverse_iterator(_p + _size - 1));
+			return (const_reverse_iterator(end()));
 		}
 		reverse_iterator rend()
 		{
-			if (this->empty())
-				return (reverse_iterator(_p));
-			return (reverse_iterator(_p - 1));
+			return (reverse_iterator(begin()));
 		}
 		const_reverse_iterator rend() const
 		{
-			if (this->empty())
-				return (const_reverse_iterator(_p));
-			return (const_reverse_iterator(_p - 1));
+			return (const_reverse_iterator(begin()));
 		}
 
 		size_type size() const
