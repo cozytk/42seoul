@@ -14,6 +14,7 @@ namespace ft
 		class const_iterator;
 		class reverse_iterator;
 		class const_reverse_iterator;
+	public:
 		typedef Key key_type;
 		typedef T mapped_type;
 		typedef ft::pair<const key_type, mapped_type>        value_type;
@@ -974,4 +975,32 @@ namespace ft
 		{ return ft::make_pair(lower_bound(k), upper_bound(k)); };
 	};
 }
+
+////template<class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<const Key, T> > >
+//template<class Key, class T>
+////void print_map(std::map<Key, T, Compare, Alloc> map)
+//void print_map(std::map<Key, T> map)
+//{
+//	if (map.empty())
+//	{
+//		std::cout << "It's empty map\n";
+//		return ;
+//	}
+////	for (typename std::map<Key, T, Compare, Alloc>::iterator it = map.begin(); it != map.end(); ++it)
+//	for (typename std::map<Key, T>::iterator it = map.begin(); it != map.end(); ++it)
+//		std::cout << "Key : " << it->first << ", Value : " << it->second << std::endl;
+//}
+//
+////template<class Key, class T, class Compare = ft::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
+//template<class Key, class T>
+////void print_map(ft::map<Key, T, Compare, Alloc> map)
+//void print_map(ft::map<Key, T> map)
+//{
+//	if (map.empty())
+//	{
+//		std::cout << "It's empty map\n";
+//		return ; } /*	for (typename ft::map<Key, T, Compare, Alloc>::iterator it = map.begin(); it != map.end(); ++it)*/ for (typename ft::map<Key, T>::iterator it = map.begin(); it != map.end(); ++it)std::cout << "Key : " << it->first << ", Value : " << it->second << " ft" << std::endl;
+//}
+
+
 #endif

@@ -260,6 +260,8 @@ namespace ft
 		typedef typename ft::vector_iterator<const_pointer> const_iterator;
 		typedef typename ft::reverse_iterator<iterator> reverse_iterator;
 		typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
+//		typedef typename ft::reverse_iterator<pointer> reverse_iterator;
+//		typedef typename ft::reverse_iterator<const_pointer> const_reverse_iterator;
 		typedef ptrdiff_t difference_type;
 		typedef size_t size_type;
 
@@ -343,6 +345,7 @@ namespace ft
 
 		reverse_iterator rbegin()
 		{
+//			return (reverse_iterator(_p + _size - 1));
 			if (this->empty())
 				return (reverse_iterator(_p));
 			return (reverse_iterator(_p + _size - 1));

@@ -804,19 +804,21 @@ namespace ft
 		x.swap(y);
 	}
 }
-
-template <class T>
-void print_list(std::list<T> list)
-{
-	for (typename std::list<T>::iterator it = list.begin(); it != list.end(); it++)
-		std::cout << *it << ' ';
-	std::cout << "\n";
-}
-template <class T>
-void print_list(ft::list<T> list)
-{
-	for (typename ft::list<T>::iterator it = list.begin(); it != list.end(); it++)
-		std::cout << *it << ' ';
-	std::cout << "ft \n";
-}
+//
+//#include <list>
+//
+//template <class T>
+//void print_list(std::list<T> list)
+//{
+//	for (typename std::list<T>::iterator it = list.begin(); it != list.end(); it++)
+//		std::cout << *it << ' ';
+//	std::cout << "\n";
+//}
+//template <class T>
+//void print_list(ft::list<T> list)
+//{
+//	for (typename ft::list<T>::iterator it = list.begin(); it != list.end(); it++)
+//		std::cout << *it << ' ';
+//	std::cout << "ft \n";
+//}
 #endif

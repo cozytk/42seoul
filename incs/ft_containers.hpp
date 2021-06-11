@@ -177,8 +177,6 @@ namespace ft {
 		}
 		return (true);
 	}
-
-
 }
 
 #endif
@@ -279,28 +277,3 @@ namespace ft {
 //template <>
 //struct is_integral<long long> { static const bool value = true; };
 //}
-//
-//void print_vec(const std::vector<int> &vec)
-//{
-//	std::cout << "first element address is " << &vec.front() << std::endl;
-//	std::cout << "size is " << vec.size() << std::endl;
-//	std::cout << "capacity is " << vec.capacity() << std::endl;
-//	std::cout << "--------element----------\n";
-//	for (std::vector<int>::const_iterator it = vec.begin(); it != vec.end(); it++)
-//		std::cout << *it << " ";
-//	std::cout << "\n--------------------------\n";
-//}
-//
-////void ft_print_vec(ft::vector<int> vec)
-//void print_vec(const ft::vector<int> &vec)
-//{
-//	std::cout << "first element address is " << &vec.front() << std::endl;
-//	std::cout << "size is " << vec.size() << std::endl;
-//	std::cout << "capacity is " << vec.capacity() << std::endl;
-//	std::cout << "--------element----------\n";
-//	for (ft::vector<int>::const_iterator it = vec.begin(); it != vec.end(); it++)
-////		for (ft::vector<int>::iterator it = vec.begin(); it != vec.end(); it++)
-//		std::cout << *it << " ";
-//	std::cout << "\n--------------------------\n";
-//}
-//
