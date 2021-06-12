@@ -75,6 +75,7 @@ void ServerManager::config(int argc, char **argv) {
 		_servers.push_back(createServer(&_config("http", 0)("server", i++)));
 }
 
+
 void ServerManager::run() {
 	
 	int listen_fd, listen_fd1, listen_fd2, client_fd;
@@ -94,10 +95,10 @@ void ServerManager::run() {
 	struct sockaddr_in server_addr, client_addr;
 
 	/* listen */
-	FD_ZERO(&readfds);
-	FD_ZERO(&writefds);
+	ft::fd_zero(&readfds);
+	ft::fd_zero(&writefds);
 	for (std::vector<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++) {
-		FD_SET((*it)->_socket, &readfds);
+		ft::fd_set((*it)->_socket, &readfds);
 		if (maxfd < (*it)->_socket)
 			maxfd = (*it)->_socket;
 	}
@@ -119,12 +120,12 @@ void ServerManager::run() {
 		{
 			sockfd = *it;
 			n_it = it + 1;
-			if (FD_ISSET(sockfd, &allfds_w))
+			if (ft::fd_isset(sockfd, &allfds_w))
 			{
 				std::string a = "HTTP/1.1 200 OK\nContent-Length: 1\n\na\n\n";
 				write(sockfd, a.c_str(), a.length());
 				n_it = _writable.erase(std::find(_writable.begin(), _writable.end(), sockfd));
-				FD_CLR(sockfd, &writefds);
+				ft::fd_clr(sockfd, &writefds);
 			}
 			it = n_it;
 		}
@@ -134,7 +135,7 @@ void ServerManager::run() {
 		{
 			sockfd = *it;
 			n_it = it + 1;
-			if (FD_ISSET(sockfd, &allfds_r))
+			if (ft::fd_isset(sockfd, &allfds_r))
 			{
 				if ((readn = read(sockfd, buf, 10000-1)) == -1)
 				{
@@ -149,11 +150,11 @@ void ServerManager::run() {
 					printf("close %d\n", sockfd);
 					n_it = _readable.erase(std::find(_readable.begin(), _readable.end(), sockfd));
 					::close(sockfd);
-					FD_CLR(sockfd, &readfds);
+					ft::fd_clr(sockfd, &readfds);
 				}
 				else {
 					_writable.push_back(sockfd);
-					FD_SET(sockfd, &writefds);
+					ft::fd_set(sockfd, &writefds);
 				}
 			}
 			it = n_it;
@@ -164,7 +165,7 @@ void ServerManager::run() {
 
 			listen_fd = (*it)->_socket;
 
-			if (FD_ISSET(listen_fd, &allfds_r))
+			if (ft::fd_isset(listen_fd, &allfds_r))
 			{
 				addrlen = sizeof(client_addr);
 				if ((client_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &addrlen)) == -1) {
@@ -174,7 +175,7 @@ void ServerManager::run() {
 					continue;
 				}
 
-				FD_SET(client_fd,&readfds);
+				ft::fd_set(client_fd,&readfds);
 				_readable.push_back(client_fd);
 				fcntl(client_fd, F_SETFL, O_NONBLOCK);
 
