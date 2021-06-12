@@ -99,10 +99,8 @@ void Server::readPacket(int socket, std::vector<int>::iterator &socket_next) {
 			std::cout << socket<< " -1" << std::endl;
 			ft::fd_clrs(socket, &this->_manager->_fds);
 			::close(socket);
-		/*
-		if (std::find(_writable.begin(), _writable.end(), socket) != _writable.end())
-			_writable.erase(std::find(_writable.begin(), _writable.end(), socket));
-			*/
+			if (std::find(_writable.begin(), _writable.end(), socket) != _writable.end())
+				_writable.erase(std::find(_writable.begin(), _writable.end(), socket));
 			socket_next = _readable.erase(std::find(_readable.begin(), _readable.end(), socket));
 		}
 		return ;
