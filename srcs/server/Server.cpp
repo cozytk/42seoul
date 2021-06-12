@@ -143,7 +143,12 @@ void Server::accept() {
 	if (ft::fd_isset(this->_socket, &this->_manager->_fds_out.read))
 	{
 		addrlen = sizeof(client_addr);
-		client_socket = ::accept(this->_socket, (struct sockaddr *)&client_addr, &addrlen);
+		if ((client_socket = ::accept(this->_socket, (struct sockaddr *)&client_addr, &addrlen)) == -1) {
+			if (errno != EAGAIN) {
+				std::cout << "sys err" << std::endl;
+			}
+			return ;
+		}
 		fcntl(client_socket, F_SETFL, O_NONBLOCK);
 		ft::fd_set(client_socket, &this->_manager->_fds.read);
 		_readable.push_back(client_socket);
@@ -153,7 +158,5 @@ void Server::accept() {
 }
 
 void Server::run() {
-	send();
-	receive();
-	accept();
+
 }
