@@ -95,10 +95,8 @@ void ServerManager::run() {
 	struct sockaddr_in server_addr, client_addr;
 
 	/* listen */
-	ft::fd_zero(&readfds);
-	ft::fd_zero(&writefds);
 	for (std::vector<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++) {
-		ft::fd_set((*it)->_socket, &readfds);
+		ft::fd_set((*it)->_socket, &this->_fds.read);
 		if (maxfd < (*it)->_socket)
 			maxfd = (*it)->_socket;
 	}
@@ -108,11 +106,9 @@ void ServerManager::run() {
 
 	while(ServerManager::alive)
 	{
-		allfds_r = readfds;
-		allfds_w = writefds;
+		this->_fds_out = this->_fds;
 		printf("Select Wait %d\n", maxfd);
-		fd_num = select(maxfd + 1 , &allfds_r, &allfds_w,
-					  (fd_set *)0, NULL);
+		fd_num = select(maxfd + 1 , &this->_fds_out.read, &this->_fds_out.write, NULL, NULL);
 
 		std::vector<int>::iterator it = _writable.begin();
 		std::vector<int>::iterator n_it;
@@ -120,12 +116,12 @@ void ServerManager::run() {
 		{
 			sockfd = *it;
 			n_it = it + 1;
-			if (ft::fd_isset(sockfd, &allfds_w))
+			if (ft::fd_isset(sockfd, &this->_fds_out.write))
 			{
 				std::string a = "HTTP/1.1 200 OK\nContent-Length: 1\n\na\n\n";
 				write(sockfd, a.c_str(), a.length());
 				n_it = _writable.erase(std::find(_writable.begin(), _writable.end(), sockfd));
-				ft::fd_clr(sockfd, &writefds);
+				ft::fd_clr(sockfd, &this->_fds.write);
 			}
 			it = n_it;
 		}
@@ -135,7 +131,7 @@ void ServerManager::run() {
 		{
 			sockfd = *it;
 			n_it = it + 1;
-			if (ft::fd_isset(sockfd, &allfds_r))
+			if (ft::fd_isset(sockfd, &this->_fds_out.read))
 			{
 				if ((readn = read(sockfd, buf, 10000-1)) == -1)
 				{
@@ -150,11 +146,11 @@ void ServerManager::run() {
 					printf("close %d\n", sockfd);
 					n_it = _readable.erase(std::find(_readable.begin(), _readable.end(), sockfd));
 					::close(sockfd);
-					ft::fd_clr(sockfd, &readfds);
+					ft::fd_clr(sockfd, &this->_fds.read);
 				}
 				else {
 					_writable.push_back(sockfd);
-					ft::fd_set(sockfd, &writefds);
+					ft::fd_set(sockfd, &this->_fds.write);
 				}
 			}
 			it = n_it;
@@ -165,7 +161,7 @@ void ServerManager::run() {
 
 			listen_fd = (*it)->_socket;
 
-			if (ft::fd_isset(listen_fd, &allfds_r))
+			if (ft::fd_isset(listen_fd, &this->_fds_out.read))
 			{
 				addrlen = sizeof(client_addr);
 				if ((client_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &addrlen)) == -1) {
@@ -175,7 +171,7 @@ void ServerManager::run() {
 					continue;
 				}
 
-				ft::fd_set(client_fd,&readfds);
+				ft::fd_set(client_fd, &this->_fds.read);
 				_readable.push_back(client_fd);
 				fcntl(client_fd, F_SETFL, O_NONBLOCK);
 
