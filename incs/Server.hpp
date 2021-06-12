@@ -22,15 +22,19 @@ private:
 		
 		Buffer &operator=(Buffer const &x);
 
+		/* function */
+		void clear();
+
 	private:
 		/* member */
+		bool			_checked;
+
 		std::string		_buffer;
+		int				_length;
+
 		int				_sent;
 
 		bool			_chunked;
-
-		/* function */
-		void clear();
 	};
 
 	/* member */
@@ -39,9 +43,6 @@ private:
 	sockaddr_in					_addr;
 	int							_socket;
 	int							_port;
-
-	std::vector<int>			_readable;
-	std::vector<int>			_writable;
 
 	std::map<int, Buffer>		_buffer;
 
@@ -82,11 +83,9 @@ public:
 	void bind();
 	void listen();
 
-	void send();
-	void receive();
-	void accept();
+	int recv(int socket, char *buf);
+	int send(int socket);
 
-	void run();
-
+	void process(int socket);
 };
 #endif

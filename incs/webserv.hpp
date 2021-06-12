@@ -98,6 +98,9 @@ namespace ft {
 	void trim_space(std::string &str);
 	void trim_chunked(std::string &str);
 
+	int getLength(std::string const &buffer);
+	bool getChunked(std::string const &buffer);
+
 	std::string	to_string(int n);
 
 	/* fd_set */

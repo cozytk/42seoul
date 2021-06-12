@@ -12,20 +12,22 @@ class ServerManager {
 
 private:
 	/* member */
-	Config					_config;
+	Config						_config;
 
-	std::vector<Server *>	_servers;
-	std::vector<int>		_readable;
-	std::vector<int>		_writable;
+	std::vector<Server *>		_servers;
+	std::vector<int>			_readable;
+	std::vector<int>			_writable;
 
-	ft::fds					_fds;
-	ft::fds					_fds_out;
-	int						_max_fd;
+	std::map<int, Server *>		_map;
+
+	ft::fds						_fds;
+	ft::fds						_fds_out;
+	int							_max_fd;
 
 	/* func */
 	Server *createServer(Config::node *block);
 
-	void accept(int socket);
+	void accept(int socket, Server *server);
 	void recv(int socket, std::vector<int>::iterator &socket_next);
 	void send(int socket, std::vector<int>::iterator &socket_next);
 

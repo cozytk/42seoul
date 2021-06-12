@@ -9,14 +9,16 @@
 
 int main()
 {
-	std::string header = "POST / HTTP/1.1\r\n"
+	std::string header0 = "POST / HTTP/1.1\r\n"
 "Host: 127.0.0.1:8081\r\n"
-"User-Agent: Go-http-client/1.1\r\n"
-"Content-Type: test/file\r\n"
-"Accept-Encoding: gzip\r\n"
-"Content-Length: 13\r\n\r\n";
+"User-Agent: Go-http-client/1.1\r\n";
 
-	std::string body = "hello world\r\n";
+	std::string header1 = "Content-Length: 0\r\n"
+"Transfer-Encoding: chunk";
+
+	std::string header2 = "ed\r\n"
+"Content-Type: test/file\r\n"
+"Accept-Encoding: gzip\r\n\r\n";
 
 	int socket;
 	sockaddr_in server_addr;
@@ -30,7 +32,12 @@ int main()
 
 	connect(socket, (sockaddr *)&server_addr, sizeof(server_addr));
 
-	write(socket, (header + body).c_str(), (header + body).length());
+	write(socket, header0.c_str(), header0.length());
+	sleep(1);
+	write(socket, header1.c_str(), header1.length());
+	sleep(1);
+	write(socket, header2.c_str(), header2.length());
+	sleep(1);
 
 	::close(socket);
 }

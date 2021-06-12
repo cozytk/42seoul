@@ -81,57 +81,49 @@ void ServerManager::config(int argc, char **argv) {
 		_servers.push_back(createServer(&_config("http", 0)("server", i++)));
 }
 
-void ServerManager::accept(int socket) {
+void ServerManager::accept(int socket, Server *server) {
 	struct sockaddr_in	client_addr;
 	socklen_t			client_addrlen;
 	int					client_socket;
 
 	client_addrlen = sizeof(client_addr);
-	if ((client_socket = ::accept(socket, (struct sockaddr *)&client_addr, &client_addrlen)) == -1) {
-		if (errno != EAGAIN) {
-			std::cout << "sys err" << std::endl;
-		}
+	if ((client_socket = ::accept(socket, (struct sockaddr *)&client_addr, &client_addrlen)) == -1)
 		return ;
-	}
-
 	ft::fd_set(client_socket, &this->_fds.read);
-	_readable.push_back(client_socket);
+	this->_map[client_socket] = server;
+	this->_map[client_socket]->_buffer[client_socket].clear();
+	this->_readable.push_back(client_socket);
 	fcntl(client_socket, F_SETFL, O_NONBLOCK);
-
 	if (client_socket > this->_max_fd)
 		this->_max_fd = client_socket;
-	std::cout << "Accept OK " << client_socket << std::endl;
 }
 
 void ServerManager::recv(int socket, std::vector<int>::iterator &next_socket) {
 	char	buf[RECV_BUFFER_SIZE + 1];
 	int		bytes;
 
-	if ((bytes = ::read(socket, buf, RECV_BUFFER_SIZE)) == -1) {
-		if (errno != EAGAIN) {
-			::close(socket);
-			next_socket = _readable.erase(std::find(_readable.begin(), _readable.end(), socket));
-			std::cout << "err " << socket << std::endl;
-		}
-	}
+	if ((bytes = ::read(socket, buf, RECV_BUFFER_SIZE)) == -1)
+		return ;
 	else if(bytes == 0) {
 		printf("close %d\n", socket);
 		next_socket = _readable.erase(std::find(_readable.begin(), _readable.end(), socket));
 		::close(socket);
 		ft::fd_clr(socket, &this->_fds.read);
+		return ;
 	}
-	else {
+	buf[bytes] = 0;
+	if (this->_map[socket]->recv(socket, buf) == ALL_RECV) {
 		_writable.push_back(socket);
 		ft::fd_set(socket, &this->_fds.write);
 	}
 }
 
 void ServerManager::send(int socket, std::vector<int>::iterator &next_socket) {
-	std::string a = "HTTP/1.1 200 OK\nContent-Length: 1\n\na\n\n";
-
-	write(socket, a.c_str(), a.length());
-	next_socket = _writable.erase(std::find(_writable.begin(), _writable.end(), socket));
-	ft::fd_clr(socket, &this->_fds.write);
+	if (this->_map[socket]->send(socket) == ALL_RECV) {
+		this->_map[socket]->_buffer[socket].clear();
+		next_socket = _writable.erase(std::find(_writable.begin(), _writable.end(), socket));
+		ft::fd_clr(socket, &this->_fds.write);
+	}
 }
 
 void ServerManager::run() {
@@ -161,10 +153,9 @@ void ServerManager::run() {
 		}
 		for (std::vector<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++) {
 			if (ft::fd_isset((*it)->_socket, &this->_fds_out.read))
-				accept((*it)->_socket);
+				accept((*it)->_socket, *it);
 		}
 	}
-
 }
 
 void ServerManager::close() {

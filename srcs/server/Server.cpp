@@ -15,6 +15,14 @@ Server::Buffer &Server::Buffer::operator=(Buffer const &x) {
 	return (*this);
 }
 
+/* function */
+void Server::Buffer::clear() {
+	this->_checked = false;
+	this->_buffer.clear();
+	this->_length = 0;
+	this->_sent = 0;
+	this->_chunked = false;
+}
 
 /* exception */
 const char *Server::CreateException::what() const throw() {
@@ -70,93 +78,51 @@ void Server::listen() {
 	ft::Log(Log, "Server: PORT " + ft::to_string(this->_port) + " is listening");
 }
 
-void Server::send() {
-	int sockfd;
-
-	std::vector<int>::iterator it = _writable.begin();
-	std::vector<int>::iterator n_it;
-	while (it != _writable.end())
-	{
-		sockfd = *it;
-		n_it = it + 1;
-		if (ft::fd_isset(sockfd, &this->_manager->_fds_out.write))
-		{
-			std::string a = "HTTP/1.1 200 OK\nContent-Length: 1\n\na\n\n";
-			write(sockfd, a.c_str(), a.length());
-			n_it = _writable.erase(std::find(_writable.begin(), _writable.end(), sockfd));
-			ft::fd_clr(sockfd, &this->_manager->_fds.write);
-		}
-		it = n_it;
+int Server::recv(int socket, char *buf) {
+	this->_buffer[socket]._buffer += buf;
+	std::cout << this->_buffer[socket]._buffer << std::endl;
+	if (this->_buffer[socket]._buffer.find("\r\n\r\n") == std::string::npos)
+		return (WAIT_RECV);
+	if (!this->_buffer[socket]._checked) {
+		this->_buffer[socket]._length = ft::getLength(this->_buffer[socket]._buffer);
+		this->_buffer[socket]._chunked = ft::getChunked(this->_buffer[socket]._buffer);
+		this->_buffer[socket]._checked = true;
 	}
+	if (!this->_buffer[socket]._chunked &&
+		static_cast<int>(this->_buffer[socket]._buffer.substr(this->_buffer[socket]._buffer.find("\r\n\r\n") + 4).length()) >= this->_buffer[socket]._length) {
+		ft::trim_space(this->_buffer[socket]._buffer);
+		this->process(socket);
+		return (ALL_RECV);
+	}
+	else if (this->_buffer[socket]._chunked && this->_buffer[socket]._buffer.find("\r\n0\r\n") != std::string::npos) {
+		ft::trim_space(this->_buffer[socket]._buffer);
+		ft::trim_chunked(this->_buffer[socket]._buffer);
+		this->process(socket);
+		return (ALL_RECV);
+	}
+	return (WAIT_RECV);
 }
 
-void Server::readPacket(int socket, std::vector<int>::iterator &socket_next) {
-	char	buf[RECV_BUFFER_SIZE + 1];
-	int		bytes;
+int Server::send(int socket) {
+	int				len;
+	std::string		buf;
+	int				buf_size;
 
-	if ((bytes = ::read(socket, buf, RECV_BUFFER_SIZE)) == -1) {
-		if (errno != EAGAIN) {
-			std::cout << socket<< " -1" << std::endl;
-			ft::fd_clrs(socket, &this->_manager->_fds);
-			::close(socket);
-			if (std::find(_writable.begin(), _writable.end(), socket) != _writable.end())
-				_writable.erase(std::find(_writable.begin(), _writable.end(), socket));
-			socket_next = _readable.erase(std::find(_readable.begin(), _readable.end(), socket));
-		}
-		return ;
-	}
-	else if(bytes == 0) {
-		std::cout << socket<< " 0" << std::endl;
-		ft::fd_clrs(socket, &this->_manager->_fds);
-		::close(socket);
-		if (std::find(_writable.begin(), _writable.end(), socket) != _writable.end())
-			_writable.erase(std::find(_writable.begin(), _writable.end(), socket));
-		socket_next = _readable.erase(std::find(_readable.begin(), _readable.end(), socket));
-		return ;
-	}
-	buf[bytes] = 0;
-	std::cout << socket << " " << buf << std::endl;
-
-	_writable.push_back(socket);
-	ft::fd_set(socket, &this->_manager->_fds.write);
+	buf_size = this->_buffer[socket]._buffer.length() - this->_buffer[socket]._sent < SEND_BUFFER_SIZE ?
+	           this->_buffer[socket]._buffer.length() - this->_buffer[socket]._sent : SEND_BUFFER_SIZE;
+	buf = std::string(this->_buffer[socket]._buffer, this->_buffer[socket]._sent, buf_size);
+	if ((len = write(socket, buf.c_str(), buf.length())) == -1)
+		return (WAIT_SEND);
+	this->_buffer[socket]._sent += len;
+	if (this->_buffer[socket]._sent >= this->_buffer[socket]._buffer.length())
+		return (ALL_SEND);
+	return (WAIT_SEND);
 }
 
-void Server::receive() {
-	std::vector<int>::iterator	socket;
-	std::vector<int>::iterator	socket_next;
+void Server::process(int socket) {
 
-	socket = _readable.begin();
-	while (socket != _readable.end())
-	{
-		socket_next = socket + 1;
-		if (ft::fd_isset(*socket, &this->_manager->_fds_out.read))
-			readPacket(*socket, socket_next);
-		socket = socket_next;
-	}
-}
+	// fill here
 
-void Server::accept() {
-	socklen_t			addrlen;
-	struct sockaddr_in	client_addr;
-	int					client_socket;
-
-	if (ft::fd_isset(this->_socket, &this->_manager->_fds_out.read))
-	{
-		addrlen = sizeof(client_addr);
-		if ((client_socket = ::accept(this->_socket, (struct sockaddr *)&client_addr, &addrlen)) == -1) {
-			if (errno != EAGAIN) {
-				std::cout << "sys err" << std::endl;
-			}
-			return ;
-		}
-		fcntl(client_socket, F_SETFL, O_NONBLOCK);
-		ft::fd_set(client_socket, &this->_manager->_fds.read);
-		_readable.push_back(client_socket);
-		if (client_socket > this->_manager->_max_fd)
-			this->_manager->_max_fd = client_socket;
-	}
-}
-
-void Server::run() {
-
+	// this->_buffer[socket]._buffer
+	this->_buffer[socket]._buffer = "HTTP/1.1 200 OK\nContent-Length: 1\n\na\n\n";
 }
