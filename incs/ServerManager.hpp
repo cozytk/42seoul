@@ -25,6 +25,10 @@ private:
 	/* func */
 	Server *createServer(Config::node *block);
 
+	void accept(int socket);
+	void recv(int socket, std::vector<int>::iterator &socket_next);
+	void send(int socket, std::vector<int>::iterator &socket_next);
+
 public:
 	/* static */
 	static bool alive;
@@ -50,10 +54,6 @@ public:
 	ServerManager &operator=(ServerManager const &x);
 
 	void config(int argc, char **argv);
-
-	void accept(int socket);
-	void recv(int socket, std::vector<int>::iterator &socket_next);
-
 	void run();
 
 	/* signal */

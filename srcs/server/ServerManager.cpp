@@ -71,6 +71,8 @@ void ServerManager::config(int argc, char **argv) {
 	ft::fd_zero(&this->_fds.read);
 	ft::fd_zero(&this->_fds.write);
 	ft::fd_zero(&this->_fds.except);
+	this->_fds.timeout.tv_sec = 0;
+	this->_fds.timeout.tv_usec = 0;
 	/* init config */
 	_config.file(path);
 	if (static_cast<int>(_config("http", 0).size("server")) == 0)
@@ -124,20 +126,18 @@ void ServerManager::recv(int socket, std::vector<int>::iterator &next_socket) {
 	}
 }
 
+void ServerManager::send(int socket, std::vector<int>::iterator &next_socket) {
+	std::string a = "HTTP/1.1 200 OK\nContent-Length: 1\n\na\n\n";
+
+	write(socket, a.c_str(), a.length());
+	next_socket = _writable.erase(std::find(_writable.begin(), _writable.end(), socket));
+	ft::fd_clr(socket, &this->_fds.write);
+}
+
 void ServerManager::run() {
-	
-	int listen_fd, listen_fd1, listen_fd2, client_fd;
-	int fd_num;
-	int sockfd;
-	int readn;
-	int i= 0;
-	char buf[10000];
-
-	struct sockaddr_in server_addr;
-
-	std::vector<int>::iterator it = _writable.begin();
-	std::vector<int>::iterator next_it;
-
+	std::vector<int>::iterator	it;
+	std::vector<int>::iterator	next_it;
+	int							fd_on;
 
 	/* listen */
 	for (std::vector<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++)
@@ -146,32 +146,19 @@ void ServerManager::run() {
 	while(ServerManager::alive)
 	{
 		this->_fds_out = this->_fds;
-		printf("Select Wait %d\n", this->_max_fd);
-		fd_num = select(this->_max_fd + 1 , &this->_fds_out.read, &this->_fds_out.write, NULL, NULL);
-		if (fd_num == 0)
+		fd_on = select(this->_max_fd + 1, &this->_fds_out.read, &this->_fds_out.write, NULL, &this->_fds_out.timeout);
+		if (fd_on == 0)
 			continue;
-
-		it = _writable.begin();
-		while (it != _writable.end())
-		{
-			sockfd = *it;
+		for (it = _writable.begin(); it != _writable.end(); it = next_it) {
 			next_it = it + 1;
-			if (ft::fd_isset(sockfd, &this->_fds_out.write))
-			{
-				std::string a = "HTTP/1.1 200 OK\nContent-Length: 1\n\na\n\n";
-				write(sockfd, a.c_str(), a.length());
-				next_it = _writable.erase(std::find(_writable.begin(), _writable.end(), sockfd));
-				ft::fd_clr(sockfd, &this->_fds.write);
-			}
-			it = next_it;
+			if (ft::fd_isset(*it, &this->_fds_out.write))
+				send(*it, next_it);
 		}
-
 		for (it = _readable.begin(); it != _readable.end(); it = next_it) {
 			next_it = it + 1;
 			if (ft::fd_isset(*it, &this->_fds_out.read))
 				recv(*it, next_it);
 		}
-
 		for (std::vector<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++) {
 			if (ft::fd_isset((*it)->_socket, &this->_fds_out.read))
 				accept((*it)->_socket);
