@@ -13,7 +13,10 @@ class ServerManager {
 private:
 	/* member */
 	Config					_config;
+
 	std::vector<Server *>	_servers;
+	std::vector<int>		_readable;
+	std::vector<int>		_writable;
 
 	ft::fds					_fds;
 	ft::fds					_fds_out;
@@ -47,6 +50,10 @@ public:
 	ServerManager &operator=(ServerManager const &x);
 
 	void config(int argc, char **argv);
+
+	void accept(int socket);
+	void recv(int socket, std::vector<int>::iterator &socket_next);
+
 	void run();
 
 	/* signal */

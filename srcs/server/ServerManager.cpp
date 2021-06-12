@@ -43,6 +43,10 @@ Server *ServerManager::createServer(Config::node *block) {
 	/* bind */
 	server->_port = ft::atoi( const_cast<char *>((*(*block)("listen", 0))[0].c_str()) );
 	server->bind();
+	/* reg */
+	ft::fd_set(server->_socket, &this->_fds.read);
+	if (this->_max_fd < server->_socket)
+		this->_max_fd = server->_socket;
 	/* ret */
 	return (server);
 }
@@ -75,112 +79,103 @@ void ServerManager::config(int argc, char **argv) {
 		_servers.push_back(createServer(&_config("http", 0)("server", i++)));
 }
 
+void ServerManager::accept(int socket) {
+	struct sockaddr_in	client_addr;
+	socklen_t			client_addrlen;
+	int					client_socket;
+
+	client_addrlen = sizeof(client_addr);
+	if ((client_socket = ::accept(socket, (struct sockaddr *)&client_addr, &client_addrlen)) == -1) {
+		if (errno != EAGAIN) {
+			std::cout << "sys err" << std::endl;
+		}
+		return ;
+	}
+
+	ft::fd_set(client_socket, &this->_fds.read);
+	_readable.push_back(client_socket);
+	fcntl(client_socket, F_SETFL, O_NONBLOCK);
+
+	if (client_socket > this->_max_fd)
+		this->_max_fd = client_socket;
+	std::cout << "Accept OK " << client_socket << std::endl;
+}
+
+void ServerManager::recv(int socket, std::vector<int>::iterator &next_socket) {
+	char	buf[RECV_BUFFER_SIZE + 1];
+	int		bytes;
+
+	if ((bytes = ::read(socket, buf, RECV_BUFFER_SIZE)) == -1) {
+		if (errno != EAGAIN) {
+			::close(socket);
+			next_socket = _readable.erase(std::find(_readable.begin(), _readable.end(), socket));
+			std::cout << "err " << socket << std::endl;
+		}
+	}
+	else if(bytes == 0) {
+		printf("close %d\n", socket);
+		next_socket = _readable.erase(std::find(_readable.begin(), _readable.end(), socket));
+		::close(socket);
+		ft::fd_clr(socket, &this->_fds.read);
+	}
+	else {
+		_writable.push_back(socket);
+		ft::fd_set(socket, &this->_fds.write);
+	}
+}
 
 void ServerManager::run() {
 	
 	int listen_fd, listen_fd1, listen_fd2, client_fd;
-	socklen_t addrlen;
 	int fd_num;
-	int maxfd = 0;
 	int sockfd;
 	int readn;
 	int i= 0;
 	char buf[10000];
-	fd_set readfds, writefds, allfds_r, allfds_w;
-	std::vector<int> _server;
-	std::vector<int> _readable;
-	std::vector<int> _writable;
-	maxfd = 0;
 
-	struct sockaddr_in server_addr, client_addr;
+	struct sockaddr_in server_addr;
+
+	std::vector<int>::iterator it = _writable.begin();
+	std::vector<int>::iterator next_it;
+
 
 	/* listen */
-	for (std::vector<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++) {
-		ft::fd_set((*it)->_socket, &this->_fds.read);
-		if (maxfd < (*it)->_socket)
-			maxfd = (*it)->_socket;
-	}
-
 	for (std::vector<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++)
 		(*it)->listen();
-
+	/* run */
 	while(ServerManager::alive)
 	{
 		this->_fds_out = this->_fds;
-		printf("Select Wait %d\n", maxfd);
-		fd_num = select(maxfd + 1 , &this->_fds_out.read, &this->_fds_out.write, NULL, NULL);
+		printf("Select Wait %d\n", this->_max_fd);
+		fd_num = select(this->_max_fd + 1 , &this->_fds_out.read, &this->_fds_out.write, NULL, NULL);
+		if (fd_num == 0)
+			continue;
 
-		std::vector<int>::iterator it = _writable.begin();
-		std::vector<int>::iterator n_it;
+		it = _writable.begin();
 		while (it != _writable.end())
 		{
 			sockfd = *it;
-			n_it = it + 1;
+			next_it = it + 1;
 			if (ft::fd_isset(sockfd, &this->_fds_out.write))
 			{
 				std::string a = "HTTP/1.1 200 OK\nContent-Length: 1\n\na\n\n";
 				write(sockfd, a.c_str(), a.length());
-				n_it = _writable.erase(std::find(_writable.begin(), _writable.end(), sockfd));
+				next_it = _writable.erase(std::find(_writable.begin(), _writable.end(), sockfd));
 				ft::fd_clr(sockfd, &this->_fds.write);
 			}
-			it = n_it;
+			it = next_it;
 		}
 
-		it = _readable.begin();
-		while (it != _readable.end())
-		{
-			sockfd = *it;
-			n_it = it + 1;
-			if (ft::fd_isset(sockfd, &this->_fds_out.read))
-			{
-				if ((readn = read(sockfd, buf, 10000-1)) == -1)
-				{
-					if (errno != EAGAIN) {
-					::close(sockfd);
-					n_it = _readable.erase(std::find(_readable.begin(), _readable.end(), sockfd));
-					std::cout << "err " << sockfd << std::endl;
-					}
-				}
-				else if(readn == 0)
-				{
-					printf("close %d\n", sockfd);
-					n_it = _readable.erase(std::find(_readable.begin(), _readable.end(), sockfd));
-					::close(sockfd);
-					ft::fd_clr(sockfd, &this->_fds.read);
-				}
-				else {
-					_writable.push_back(sockfd);
-					ft::fd_set(sockfd, &this->_fds.write);
-				}
-			}
-			it = n_it;
+		for (it = _readable.begin(); it != _readable.end(); it = next_it) {
+			next_it = it + 1;
+			if (ft::fd_isset(*it, &this->_fds_out.read))
+				recv(*it, next_it);
 		}
 
 		for (std::vector<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++) {
-			int listen_fd;
-
-			listen_fd = (*it)->_socket;
-
-			if (ft::fd_isset(listen_fd, &this->_fds_out.read))
-			{
-				addrlen = sizeof(client_addr);
-				if ((client_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &addrlen)) == -1) {
-					if (errno != EAGAIN) {
-						std::cout << "sys err" << std::endl;
-					}
-					continue;
-				}
-
-				ft::fd_set(client_fd, &this->_fds.read);
-				_readable.push_back(client_fd);
-				fcntl(client_fd, F_SETFL, O_NONBLOCK);
-
-				if (client_fd > maxfd)
-					maxfd = client_fd;
-				std::cout << "Accept OK " << client_fd << std::endl;
-			}
+			if (ft::fd_isset((*it)->_socket, &this->_fds_out.read))
+				accept((*it)->_socket);
 		}
-
 	}
 
 }
