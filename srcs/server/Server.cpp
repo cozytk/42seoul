@@ -80,7 +80,6 @@ void Server::listen() {
 
 int Server::recv(int socket, char *buf) {
 	this->_buffer[socket]._buffer += buf;
-	std::cout << this->_buffer[socket]._buffer << std::endl;
 	if (this->_buffer[socket]._buffer.find("\r\n\r\n") == std::string::npos)
 		return (WAIT_RECV);
 	if (!this->_buffer[socket]._checked) {

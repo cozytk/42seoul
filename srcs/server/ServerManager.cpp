@@ -105,7 +105,6 @@ void ServerManager::recv(int socket, std::vector<int>::iterator &next_socket) {
 	if ((bytes = ::read(socket, buf, RECV_BUFFER_SIZE)) == -1)
 		return ;
 	else if(bytes == 0) {
-		printf("close %d\n", socket);
 		next_socket = _readable.erase(std::find(_readable.begin(), _readable.end(), socket));
 		::close(socket);
 		ft::fd_clr(socket, &this->_fds.read);
