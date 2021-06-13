@@ -4,6 +4,7 @@
 bool ServerManager::alive = true;
 
 void interrupt(int i) {
+	ft::Log(Error, "Interrupt");
 	ServerManager::alive = false;
 }
 
@@ -25,117 +26,32 @@ ServerManager::ServerManager() {
 	signal(SIGINT, &interrupt);
 }
 
-ServerManager::ServerManager(ServerManager const &other) {
+ServerManager::ServerManager(ServerManager const &x) {
 }
 
 ServerManager::~ServerManager() {
-	std::multimap<int, Server *>::iterator it;
-	std::multimap<int, Server *>::iterator n_it;
-
-	it = this->_servers.begin();
-	while (it != this->_servers.end()) {
-		n_it = it;
-		++n_it;
-		delete it->second;
-		this->_servers.erase(it);
-		it = n_it;
-	}
+	this->close();
 }
 
 ServerManager &ServerManager::operator=(ServerManager const &x) {
 	return (*this);
 }
 
-Server *ServerManager::newServer(Config::node *block) {
-	Server *server = new Server;
+/* private */
+Server *ServerManager::createServer(Config::node *block) {
+	Server *server = new Server(this);
 	/* bind */
 	server->_port = ft::atoi( const_cast<char *>((*(*block)("listen", 0))[0].c_str()) );
-	server->_server_conf = block;
-	server->socketBind();
-	/* register */
-	ft::fd_set(server->_socket, &this->fds.read);
-	ft::fd_set(server->_socket, &this->fds.except);
-	this->inspect_range = server->_socket;
+	server->bind();
+	/* reg */
+	ft::fd_set(server->_socket, &this->_fds.read);
+	if (this->_max_fd < server->_socket)
+		this->_max_fd = server->_socket;
 	/* ret */
 	return (server);
 }
 
-void ServerManager::write(struct ft::fds &fds_loop) {
-	std::map<int, Server *>::iterator server;
-	std::map<int, Server *>::iterator n_server;
-	int tmp;
-
-	server = this->_writable.begin();
-	while (server != this->_writable.end())
-	{
-		n_server = server;
-		n_server++;
-		if (ft::fd_isset(server->first, &fds_loop.write))
-		{
-			tmp = (server->second)->send(server->first, _cgi);
-			if (tmp == ALL_SEND) {
-				tmp = server->first;
-				delete (server->second)->_request[tmp];
-				(server->second)->_request.erase(tmp);
-				(server->second)->_request.insert(std::make_pair<int, Server::Request *>(tmp, new Server::Request));
-				ft::fd_clr(server->first, &this->fds.write);
-				this->_writable.erase(server->first);
-			}
-			else if (tmp == ERR_SEND) {
-				ft::fd_clrs(server->first, &this->fds);
-				this->_writable.erase(server->first);
-				this->_readable.erase(server->first);
-			}
-		}
-		server = n_server;
-	}
-}
-
-void ServerManager::read(struct ft::fds &fds_loop) {
-	std::map<int, Server *>::iterator server;
-	std::map<int, Server *>::iterator n_server;
-	int tmp;
-
-	server = this->_readable.begin();
-	while (server != this->_readable.end())
-	{
-		n_server = server;
-		n_server++;
-		if (ft::fd_isset(server->first, &fds_loop.read))
-		{
-			tmp = (server->second)->recv(server->first);
-			if (tmp == ALL_RECV) {
-				this->_writable.insert(std::pair<int, Server *>(server->first, server->second));
-				ft::fd_set(server->first, &this->fds.write);
-			}
-			else if (tmp == ERR_RECV) {
-				(server->second)->_request.erase(server->first);
-				ft::fd_clrs(server->first, &this->fds);	
-				::close(server->first);
-				this->_readable.erase(server->first);
-			}
-		}
-		server = n_server;
-	}
-}
-
-void ServerManager::accept(struct ft::fds &fds_loop) {
-	std::map<int, Server *>::iterator server;
-	std::map<int, Server *>::iterator n_server;
-	int tmp;
-
-	for (server = this->_servers.begin(); server != this->_servers.end(); server++)
-	{
-		if (ft::fd_isset(server->first, &fds_loop.read))
-		{
-			tmp = (server->second)->accept();
-			this->_readable.insert(std::pair<int, Server *>(tmp, server->second));
-			ft::fd_set(tmp, &this->fds.read);
-			this->inspect_range = tmp > this->inspect_range ? tmp : this->inspect_range;
-		}
-	}
-}
-
+/* public */
 void ServerManager::config(int argc, char **argv) {
 	std::string path;
 	Server *tmp;
@@ -151,62 +67,97 @@ void ServerManager::config(int argc, char **argv) {
 	else
 		throw ArgvException();
 	/* init server */
-	this->inspect_range = 0;
-	ft::fd_zero(&this->fds.read);
-	ft::fd_zero(&this->fds.write);
-	ft::fd_zero(&this->fds.except);
+	this->_max_fd = 0;
+	ft::fd_zero(&this->_fds.read);
+	ft::fd_zero(&this->_fds.write);
+	ft::fd_zero(&this->_fds.except);
+	this->_fds.timeout.tv_sec = 0;
+	this->_fds.timeout.tv_usec = 0;
 	/* init config */
 	_config.file(path);
 	if (static_cast<int>(_config("http", 0).size("server")) == 0)
 		throw NoServerMemberException();
-	while (i < _config("http", 0).size("server")) {
-		tmp = newServer(&_config("http", 0)("server", i));
-		_servers.insert(std::pair<int, Server *>(tmp->_socket, tmp));
-		i++;
+	while (i < _config("http", 0).size("server"))
+		_servers.push_back(createServer(&_config("http", 0)("server", i++)));
+}
+
+void ServerManager::accept(int socket, Server *server) {
+	struct sockaddr_in	client_addr;
+	socklen_t			client_addrlen;
+	int					client_socket;
+
+	client_addrlen = sizeof(client_addr);
+	if ((client_socket = ::accept(socket, (struct sockaddr *)&client_addr, &client_addrlen)) == -1)
+		return ;
+	ft::fd_set(client_socket, &this->_fds.read);
+	this->_map[client_socket] = server;
+	this->_map[client_socket]->_buffer[client_socket].clear();
+	this->_readable.push_back(client_socket);
+	fcntl(client_socket, F_SETFL, O_NONBLOCK);
+	if (client_socket > this->_max_fd)
+		this->_max_fd = client_socket;
+}
+
+void ServerManager::recv(int socket, std::vector<int>::iterator &next_socket) {
+	char	buf[RECV_BUFFER_SIZE + 1];
+	int		bytes;
+
+	if ((bytes = ::read(socket, buf, RECV_BUFFER_SIZE)) == -1)
+		return ;
+	else if(bytes == 0) {
+		next_socket = _readable.erase(std::find(_readable.begin(), _readable.end(), socket));
+		::close(socket);
+		ft::fd_clr(socket, &this->_fds.read);
+		return ;
+	}
+	buf[bytes] = 0;
+	if (this->_map[socket]->recv(socket, buf) == ALL_RECV) {
+		_writable.push_back(socket);
+		ft::fd_set(socket, &this->_fds.write);
+	}
+}
+
+void ServerManager::send(int socket, std::vector<int>::iterator &next_socket) {
+	if (this->_map[socket]->send(socket) == ALL_RECV) {
+		this->_map[socket]->_buffer[socket].clear();
+		next_socket = _writable.erase(std::find(_writable.begin(), _writable.end(), socket));
+		ft::fd_clr(socket, &this->_fds.write);
 	}
 }
 
 void ServerManager::run() {
-	int select_ret;
-	struct ft::fds fds_loop;
+	std::vector<int>::iterator	it;
+	std::vector<int>::iterator	next_it;
+	int							fd_on;
 
-	/* init */
-	this->fds.timeout.tv_sec = 4;
-	this->fds.timeout.tv_usec = 0;
 	/* listen */
-	for (std::map<int, Server *>::iterator server = this->_servers.begin(); server != this->_servers.end(); server++)
-		(server->second)->run();
+	for (std::vector<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++)
+		(*it)->listen();
 	/* run */
-	while (ServerManager::alive) {
-		fds_loop = this->fds;
-		if ((select_ret = select(this->inspect_range + 1, &fds_loop.read, &fds_loop.write, NULL, &fds_loop.timeout)) == -1) {
-			if (ServerManager::alive)
-				throw NetFunctionException();
-			break ;
-		}
-		if (select_ret == 0) {
-			ft::Log(Log, "Time out");
+	while(ServerManager::alive)
+	{
+		this->_fds_out = this->_fds;
+		fd_on = select(this->_max_fd + 1, &this->_fds_out.read, &this->_fds_out.write, NULL, &this->_fds_out.timeout);
+		if (fd_on == 0)
 			continue;
+		for (it = _writable.begin(); it != _writable.end(); it = next_it) {
+			next_it = it + 1;
+			if (ft::fd_isset(*it, &this->_fds_out.write))
+				send(*it, next_it);
 		}
-		write(fds_loop);
-		read(fds_loop);
-		accept(fds_loop);
+		for (it = _readable.begin(); it != _readable.end(); it = next_it) {
+			next_it = it + 1;
+			if (ft::fd_isset(*it, &this->_fds_out.read))
+				recv(*it, next_it);
+		}
+		for (std::vector<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++) {
+			if (ft::fd_isset((*it)->_socket, &this->_fds_out.read))
+				accept((*it)->_socket, *it);
+		}
 	}
 }
 
-/* signal */
-void ServerManager::serverClose() {
-	ft::Log(Error, "Interrupt");
-	std::map<int, Server *>::iterator server;
-
-	/*
-	for (server = this->_servers.begin(); server != this->_servers.end(); server++)
-		::close(server->first);
-	for (server = this->_readable.begin(); server != this->_readable.end(); server++)
-		::close(server->first);
-	for (server = this->_writable.begin(); server != this->_writable.end(); server++)
-		::close(server->first);
-	*/
-	for (int i = 0; i < this->inspect_range + 1; i++)
+void ServerManager::close() {
+	for (int i = 0; i < this->_max_fd; i++)
 		::close(i);
 }

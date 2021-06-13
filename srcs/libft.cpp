@@ -177,6 +177,34 @@ void	ft::trim_chunked(std::string &str) {
 	str = ret;
 }
 
+int		ft::getLength(std::string const &buffer) {
+	int header_eof;
+	std::string header;
+	std::string length;
+
+	length = "";
+	header_eof = buffer.find("\r\n\r\n");
+	header = std::string(buffer, 0, header_eof);
+	if (header.find("Content-Length: ") != std::string::npos)
+		length = std::string(header, header.find("Content-Length: ") + 16);
+	if (header.find("content-length: ") != std::string::npos)
+		length = std::string(header, header.find("content-length: ") + 16);
+	if (length == "")
+		return (-1);
+	return (atoi(const_cast<char *>(length.c_str())));
+}
+
+bool	ft::getChunked(std::string const &buffer) {
+	int header_eof;
+	std::string header;
+
+	header_eof = buffer.find("\r\n\r\n");
+	header = std::string(buffer, 0, header_eof);
+	if (header.find("Transfer-Encoding: chunked") != std::string::npos)
+		return (true);
+	return (false);
+}
+
 void	*ft::memset(void *_src, int val, size_t size) {
 	unsigned char *src;
 	unsigned char *ptr;
@@ -251,5 +279,6 @@ std::pair<std::string, std::string> ft::headerPair(std::string str) {
 	int pos = str.find(": ");
 	std::string header = std::string(str, 0, pos);
 	ft::transform(header.begin(), header.end(), ft::tolower);
-	return (std::make_pair<std::string, std::string>(header, std::string(str, pos + 2)));
+	//return (std::make_pair<std::string, std::string>(header, std::string(str, pos + 2)));
+	return (std::make_pair(header, std::string(str, pos + 2)));
 }

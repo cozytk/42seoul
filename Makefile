@@ -1,5 +1,5 @@
 CXX			= clang++
-CXXFLAGS	= -std=c++98 #-Wall -Wextra -WerrorWerror
+CXXFLAGS	= #-std=c++98 #-Wall -Wextra -WerrorWerror
 
 
 MAIN		= main.cpp

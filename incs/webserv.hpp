@@ -3,6 +3,7 @@
 
 /* header CPP */
 # include <iostream>
+# include <algorithm>
 # include <vector>
 # include <map>
 # include <stack>
@@ -19,7 +20,9 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <signal.h>
+#include <string.h>
 # include <sys/stat.h>
+#include <sys/wait.h>
 # include <dirent.h>
 # include <cstdio>
 
@@ -94,6 +97,9 @@ namespace ft {
 
 	void trim_space(std::string &str);
 	void trim_chunked(std::string &str);
+
+	int getLength(std::string const &buffer);
+	bool getChunked(std::string const &buffer);
 
 	std::string	to_string(int n);
 

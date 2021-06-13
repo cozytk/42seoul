@@ -3,7 +3,9 @@
 
 # include <string>
 # include "ParsedRequest.hpp"
+# include "AutoIndex.hpp"
 # include "Server.hpp"
+# include "CGI.hpp"
 # include <webserv.hpp>
 # include <cstdio>
 
