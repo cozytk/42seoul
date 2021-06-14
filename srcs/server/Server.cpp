@@ -121,6 +121,10 @@ int Server::send(int socket) {
 void Server::process(int socket) {
 
 	// fill here
+	this->_parsed_request = new ParsedRequest(this->_buffer[socket]._buffer, this->_server_conf);
+	RequestConfig	req_conf(this->_parsed_request);
+	RequestInspect	insperct(this->_parsed_request);
+	insperct.isValid();
 
 	// this->_buffer[socket]._buffer
 	this->_buffer[socket]._buffer = "HTTP/1.1 200 OK\nContent-Length: 1\n\na\n\n";

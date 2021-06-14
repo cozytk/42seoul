@@ -4,6 +4,9 @@
 # include <webserv.hpp>
 
 # include "ServerManager.hpp"
+# include "ParsedRequest.hpp"
+# include "RequestInspect.hpp"
+# include "RequestConfig.hpp"
 
 class ServerManager;
 
@@ -19,7 +22,7 @@ private:
 		Buffer();
 		Buffer(Buffer const &x);
 		~Buffer();
-		
+
 		Buffer &operator=(Buffer const &x);
 
 		/* function */
@@ -46,6 +49,8 @@ private:
 
 	std::map<int, Buffer>		_buffer;
 
+	Config::node				*_server_conf;
+	ParsedRequest				*_parsed_request;
 	/* function */
 	void readPacket(int socket, std::vector<int>::iterator &socket_next);
 
