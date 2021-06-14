@@ -121,6 +121,25 @@ int Server::send(int socket) {
 void Server::process(int socket) {
 
 	// fill here
+	this->_parsed_request = new ParsedRequest(this->_buffer[socket]._buffer, this->_server_conf);
+	RequestConfig	req_conf(this->_parsed_request);
+	RequestInspect	insperct(this->_parsed_request);
+	insperct.isValid();
+
+	std::cout << "🔰 " << std::endl;
+	ParsedRequest::HeaderType::iterator	it = this->_parsed_request->getHeaders().begin();
+	while (it != this->_parsed_request->getHeaders().end())
+	{
+		std::cout << "🔅 " << (*it).first << " " << (*it).second << std::endl;
+		it++;
+	}
+
+	std::cout << "🔅 type: " << this->_parsed_request->getHeaders()["Type"] << std::endl;
+	std::cout << "🔅 path " << this->_parsed_request->getHeaders()["Path"] << std::endl;
+	std::cout << "🔅 body " << this->_parsed_request->getBody() << std::endl;
+	std::cout << "🔅 configed " << this->_parsed_request->getConfigedPath() << std::endl;
+
+	std::cout << "❗️ " << std::endl;
 
 	// this->_buffer[socket]._buffer
 	this->_buffer[socket]._buffer = "HTTP/1.1 200 OK\nContent-Length: 1\n\na\n\n";
