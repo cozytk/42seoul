@@ -193,11 +193,26 @@ std::string Response::getDefaultErrorPage(ParsedRequest* request)
 	return ("<html><body><h1>" + ft::to_string(request->getStateCode()) + " " + _status[request->getStateCode()] + "</h1></body></html>");
 }
 
+std::string Response::getState(ParsedRequest* request)
+{
+	return ("HTTP/1.1 " + ft::to_string(request->getStateCode()) + " " + request->getStateText() + "\r\n");
+}
+
 std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 {
 	std::string response;
+	std::string path = _request->getConfigedPath();
+	std::cout << "PATH is " << path << std::endl;
+	std::string extension = path.substr(path.rfind('.') + 1);
+	std::cout << "Extension is " << extension << std::endl;
 
-	if (_request->getStateCode() / 100 != 2){
+//	if (_request->getCGIBool())
+	if (extension == "bla" || extension == "bad_extension") {
+		cgi.execute(_request);
+		_response_body = runCGI(_request, cgi.getBuffer());
+		response = response200(_request);
+	}
+	else if (_request->getStateCode() / 100 != 2){
 		if (_request->getStateCode() == 404 && \
 			_request->getHeaders()["Type"] == "PUT"){
 			response = runPut(_request);
@@ -207,11 +222,6 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 	}
 	else if (_request->getAutoIndex()) {
 		_response_body = autoindex.make();
-		response = response200(_request);
-	}
-	else if (_request->getCGIBool()){
-		cgi.execute(_request);
-		_response_body = responseCGI(_request, cgi.getBuffer());
 		response = response200(_request);
 	}
 	else if (_request->getHeaders()["Type"] == "GET") {
@@ -230,8 +240,6 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 		_request->setStateCode(400);
 		response = response400(_request);
 	}
-	std::cout << "StateCode : " << _request->getStateCode() << std::endl;
-	response = "HTTP/1.1 " + ft::to_string(_request->getStateCode()) + " " + _request->getStateText() + "\r\n" + response;
 	return (response);
 }
 
@@ -344,7 +352,7 @@ std::string Response::response200(ParsedRequest *request)
 {
 	std::vector<std::string> headers;
 	std::string ret;
-
+	headers.push_back(getState(request));
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
 	headers.push_back(getContentTypeHeader(request));
@@ -366,6 +374,7 @@ std::string Response::response400(ParsedRequest *request)
 	std::vector<std::string> headers;
 	std::string ret;
 
+	headers.push_back(getState(request));
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
 	headers.push_back(getContentTypeHeader(request));
@@ -382,14 +391,25 @@ std::string Response::response400(ParsedRequest *request)
 	return (ret);
 }
 
-std::string Response::responseCGI(ParsedRequest *request, std::string body)
+std::string Response::runCGI(ParsedRequest *request, std::string &cgi_body)
 {
-/*
+	/*
 	 * todo passing cgi info to request Class
 	 */
+	std::cout << "CGI_BODY_SIZE IS " << cgi_body.size() << std::endl;
+//	std::string response_body = cgi_body.substr(cgi_body.find(':') + 2);
+	std::string response_body = cgi_body.substr(cgi_body.find("\r\n\r\n") + 4);
+	std::cout << "RESPONSE_BODY_SIZE IS " << response_body.size() << std::endl;
+//	std::cout << "------------cgi start-------------\n";
+//	std::cout << cgi_body;
+//	std::cout << "------------cgi end-------------\n";
+//	std::cout << "In CGI, std::string body\n" << body.substr(0, body.find("\r\n\r\n")) << "------------------------\n";
 //	std::cout << body.substr(body.find("\r\n\r\n") + 4).length() << std::endl;
 //	return (body.substr(body.find("\r\n\r\n") + 4));
-//	return ("Status: " + ft::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\nContent-length:12\r\n\r\n" + body.substr(body.find(':') + 2));
+//	return ("Status: " + ft::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\nContent-length:" + ft::to_string(response_body.length()) +"\r\n\r\n" + response_body);
+	request->setStateCode(200);
+	request->setStateText("OK");
+	return (response_body);
 }
 
 std::string Response::erase_white_space(std::string &s)

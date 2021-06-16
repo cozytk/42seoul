@@ -27,6 +27,7 @@ class Response
 		virtual ~Response();
 
 		std::string	getResponseBody();
+		std::string getState(ParsedRequest* request);
 		std::string getDefaultErrorPage(ParsedRequest* request);
 		std::string getServerHeader(ParsedRequest *request);
 		std::string getDateHeader(ParsedRequest *request);
@@ -41,6 +42,7 @@ class Response
 		std::string	runGet(ParsedRequest *request);
 		std::string	runPost(ParsedRequest *request);
 		std::string	runDelete(ParsedRequest *request);
+		std::string runCGI(ParsedRequest *request, std::string &cgi_body);
 
 		void		setResponseBody(ParsedRequest *request);
 		void		setCommonHeadear(ParsedRequest *request);
@@ -48,7 +50,6 @@ class Response
 
 		std::string	response200(ParsedRequest *request);
 		std::string	response400(ParsedRequest *request);
-		std::string responseCGI(ParsedRequest *request, std::string cgi_response);
 		std::string	erase_white_space(std::string &s);
 };
 
