@@ -90,13 +90,13 @@ int Server::recv(int socket, char *buf) {
 	if (!this->_buffer[socket]._chunked &&
 		static_cast<int>(this->_buffer[socket]._buffer.substr(this->_buffer[socket]._buffer.find("\r\n\r\n") + 4).length()) >= this->_buffer[socket]._length) {
 		ft::trim_space(this->_buffer[socket]._buffer);
-		this->process(socket);
+		this->process(socket, _cgi);
 		return (ALL_RECV);
 	}
 	else if (this->_buffer[socket]._chunked && this->_buffer[socket]._buffer.find("\r\n0\r\n") != std::string::npos) {
 		ft::trim_space(this->_buffer[socket]._buffer);
 		ft::trim_chunked(this->_buffer[socket]._buffer);
-		this->process(socket);
+		this->process(socket, _cgi);
 		return (ALL_RECV);
 	}
 	return (WAIT_RECV);
@@ -118,8 +118,16 @@ int Server::send(int socket) {
 	return (WAIT_SEND);
 }
 
-void Server::process(int socket) {
-
-	this->_buffer[socket]._buffer;
-	this->_buffer[socket]._buffer = "HTTP/1.1 200 OK\nContent-Length: 1\n\na\n\n";
+void Server::process(int socket, CGI &cgi) {
+	this->_parsed_request = new ParsedRequest(this->_buffer[socket]._buffer, this->_server_conf);
+	std::cout << "-----------------Header Start-----------------\n";
+	for (auto it = _parsed_request->getHeaders().begin();it != _parsed_request->getHeaders().end() ; it++)
+		std::cout << it->first<< " " << it->second << std::endl;
+	std::cout << "-----------------Header End-----------------\n";
+	RequestConfig	req_conf(this->_parsed_request);
+	RequestInspect	insperct(this->_parsed_request);
+	insperct.isValid();
+	Response _response(this->_parsed_request, this);
+	this->_buffer[socket]._buffer = _response.getResponse(_auto_index, _cgi);
+	delete this->_parsed_request;
 }

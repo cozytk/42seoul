@@ -41,6 +41,7 @@ ServerManager &ServerManager::operator=(ServerManager const &x) {
 Server *ServerManager::createServer(Config::node *block) {
 	Server *server = new Server(this);
 	/* bind */
+	server->_server_conf = block;
 	server->_port = ft::atoi( const_cast<char *>((*(*block)("listen", 0))[0].c_str()) );
 	server->bind();
 	/* reg */

@@ -4,6 +4,12 @@
 # include <webserv.hpp>
 
 # include "ServerManager.hpp"
+# include "ParsedRequest.hpp"
+# include "RequestInspect.hpp"
+# include "RequestConfig.hpp"
+# include "Response.hpp"
+# include "AutoIndex.hpp"
+# include "CGI.hpp"
 
 class ServerManager;
 
@@ -19,7 +25,7 @@ private:
 		Buffer();
 		Buffer(Buffer const &x);
 		~Buffer();
-		
+
 		Buffer &operator=(Buffer const &x);
 
 		/* function */
@@ -46,6 +52,10 @@ private:
 
 	std::map<int, Buffer>		_buffer;
 
+	Config::node				*_server_conf;
+	ParsedRequest				*_parsed_request;
+	AutoIndex                   _auto_index;
+	CGI                         _cgi;
 	/* function */
 	void readPacket(int socket, std::vector<int>::iterator &socket_next);
 
@@ -86,6 +96,6 @@ public:
 	int recv(int socket, char *buf);
 	int send(int socket);
 
-	void process(int socket);
+	void process(int socket, CGI &cgi);
 };
 #endif

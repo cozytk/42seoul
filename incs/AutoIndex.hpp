@@ -16,9 +16,7 @@ private:
 		/* enum */
 		enum type {
 			directory,
-			symbolic,
-			file
-		};
+			symbolic, file };
 
 		/* member */
 		type _type;

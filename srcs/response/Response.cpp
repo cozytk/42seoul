@@ -230,6 +230,7 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 		_request->setStateCode(400);
 		response = response400(_request);
 	}
+	std::cout << "StateCode : " << _request->getStateCode() << std::endl;
 	response = "HTTP/1.1 " + ft::to_string(_request->getStateCode()) + " " + _request->getStateText() + "\r\n" + response;
 	return (response);
 }
@@ -386,8 +387,8 @@ std::string Response::responseCGI(ParsedRequest *request, std::string body)
 /*
 	 * todo passing cgi info to request Class
 	 */
-	(void)request;
-	return (body.substr(body.find("\r\n\r\n") + 4));
+//	std::cout << body.substr(body.find("\r\n\r\n") + 4).length() << std::endl;
+//	return (body.substr(body.find("\r\n\r\n") + 4));
 //	return ("Status: " + ft::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\nContent-length:12\r\n\r\n" + body.substr(body.find(':') + 2));
 }
 
