@@ -52,7 +52,7 @@ void CGI::setEnvs(ParsedRequest *request) {
 	envs["SERVER_PORT"] = (*(*request->getConfig())("listen", 0))[0];
 	envs["SERVER_PROTOCOL"] = "HTTP/1.1";
 	envs["SERVER_SOFTWARE"] = "webserv/1.0";
-	envs["X_SECRET_HEADER_FOR_TEST"] = request->getHeaders()["X-Secret-Header-For-Test"];
+	envs["HTTP_X_SECRET_HEADER_FOR_TEST"] = request->getHeaders()["X-Secret-Header-For-Test"];
 	std::cout << request->getHeaders()["X-Secret-Header-For-Test"] << std::endl;
 }
 
