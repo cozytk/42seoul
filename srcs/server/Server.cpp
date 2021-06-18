@@ -128,6 +128,8 @@ void Server::process(int socket, CGI &cgi) {
 	RequestInspect	insperct(this->_parsed_request);
 	insperct.isValid();
 	Response _response(this->_parsed_request, this);
+	std::cout << "🔰 appended body: " << this->_parsed_request->getBody().length() << std::endl;
+	std::cout << "🔰 state: " << this->_parsed_request->getStateCode() << std::endl;
 	this->_buffer[socket]._buffer = _response.getResponse(_auto_index, _cgi);
 //	std::cout << "-----------------Response Start-----------------\n";
 //	std::cout << this->_buffer[socket]._buffer;

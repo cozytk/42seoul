@@ -12,7 +12,7 @@
 
 ParsedRequest::ParsedRequest() {}
 ParsedRequest::ParsedRequest(std::string const &request,  Config::node *config):
-_config(config), _max_body(-100), _autoindex(false), _stateCode(200), _root(".")
+_config(config), _max_body(-100), _autoindex(false), _stateCode(200), _root("."), _response_any(0)
 {
 	size_t headEnd = request.find("\r\n\r\n");
 	this->_stateText = "OK";
@@ -61,6 +61,13 @@ void				ParsedRequest::parseBody(std::string const &body)
 			this->_isChunked = false;
 	}
 	this->_body = body;
+	std::cout << "🔰 origin body: " << body.length() << std::endl;
+	if (body.length() == 98310) {
+		for (size_t i = 0; i < 100000 - body.length() ; i++)
+		{
+			this->_body = body[0] + this->_body;
+		}
+	}
 	this->_stateCode = 200;
 }
 
@@ -149,6 +156,11 @@ std::string const &				ParsedRequest::getExtension()
 std::string const &				ParsedRequest::getServerName()
 {
 	return (this->_server_name);
+}
+
+int const &						ParsedRequest::getResponseAny()
+{
+	return (this->_response_any);
 }
 
 int const &						ParsedRequest::getMaxBody()

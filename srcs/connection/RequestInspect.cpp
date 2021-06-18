@@ -104,6 +104,17 @@ bool				RequestInspect::isExistResource(std::string path, std::string index) {
 		{
 			if (path[(int)path.length() - 1] != '/')
 				path = path + "/";
+			if (this->_req->getResponseAny() > 0)
+			{
+	std::cout << "🔰 request any: " << this->_req->getResponseAny() << " body length " << this->_req->getBody().length() << std::endl;
+
+				if (this->_req->getResponseAny() < this->_req->getBody().length())
+				{
+					this->_req->setStateCode(400);
+					return false;
+				}
+				return true;
+			}
 			if (!this->_req->getAutoIndex())
 			{
 				path = path + index;
@@ -178,10 +189,22 @@ bool				RequestInspect::isAuthorized() {
 	return true;
 }
 
+bool				RequestInspect::isValidSize() {
+	if (this->_req->getMaxBody() >= 0 && this->_req->getMaxBody() < this->_req->getBody().length())
+	{
+		this->_req->setStateCode(400);
+		this->_req->setStateText("Bad requset");
+		return false;
+	}
+	return true;
+}
+
 bool				RequestInspect::isValid() {
 	if (!isValidStart())
 		return false;
 	if (!isAuthorized())
+		return false;
+	if (!isValidSize())
 		return false;
 	return true;
 }
