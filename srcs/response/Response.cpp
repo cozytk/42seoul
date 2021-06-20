@@ -204,17 +204,19 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 	std::string path = _request->getConfigedPath();
     std::string extension = path.substr(path.rfind('.') + 1);
 
-//	if (_request->getCGIBool())
+    /*
+     * todo: update condition
+     */
 	if (extension == "bla" || extension == "bad_extension") {
 		cgi.execute(_request);
 		_response_body = runCGI(_request, cgi.getBuffer());
 		response = response200(_request);
 	}
 	else if (_request->getStateCode() / 100 != 2){
-		if (_request->getStateCode() == 404 && \
-			_request->getHeaders()["Type"] == "PUT"){
-			response = runPut(_request);
-		}
+		if ( _request->getHeaders()["Type"] == "PUT" && !_request->getHeaders()["Path"].compare(0, 9, "/put_test"))
+            response = runPut(_request);
+        else if (_request->getHeaders()["Type"] == "POST" && _request->getHeaders()["Path"] == "/post_body")
+            response = runPost(_request);
 		else
 			response = response400(_request);
 	}
@@ -222,11 +224,11 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 		_response_body = autoindex.make();
 		response = response200(_request);
 	}
+    else if (_request->getHeaders()["Type"] == "POST") {
+        response = runPost(_request);
+    }
 	else if (_request->getHeaders()["Type"] == "GET") {
 		response = runGet(_request);
-	}
-	else if (_request->getHeaders()["Type"] == "POST") {
-		response = runPost(_request);
 	}
 	else if (_request->getHeaders()["Type"] == "DELETE") {
 		response = runDelete(_request);
@@ -280,6 +282,7 @@ std::string Response::runGet(ParsedRequest *request)
 {
 	setResponseBody(request);
 	request->setStateCode(200);
+    request->setStateText("OK");
 	return (response200(request));
 }
 
@@ -287,7 +290,16 @@ std::string Response::runPost(ParsedRequest *request)
 {
 	if (request->getBody().length() == 0)
 		return (runGet(request));
-	return (response400(request));
+	else if (request->getBody().length() > request->getMaxBody())
+    {
+	    request->setStateCode(413);
+	    request->setStateText("Payload Too Large");
+        return (response400(request));
+    }
+	_response_body = request->getBody();
+	request->setStateCode(200);
+    request->setStateText("OK");
+	return (response200(request));
 }
 
 std::string Response::runDelete(ParsedRequest *request)

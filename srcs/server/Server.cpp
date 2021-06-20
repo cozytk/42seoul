@@ -126,4 +126,5 @@ void Server::process(int socket, CGI &cgi) {
 	insperct.isValid();
 	Response _response(this->_parsed_request, this);
 	this->_buffer[socket]._buffer = _response.getResponse(_auto_index, _cgi);
-	delete this->_parsed_request;}
+	delete this->_parsed_request;
+}
