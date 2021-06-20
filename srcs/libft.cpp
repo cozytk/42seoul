@@ -1,3 +1,4 @@
+#include <arpa/inet.h>
 #include <webserv.hpp>
 
 void ft::Log(LogLevel lv, std::string const &log) {
@@ -95,7 +96,7 @@ int			ft::atoi(char *str) {
 }
 
 int			ft::htod(char *str) {
-	const char	*alphabet = "0123456789ABCDEF";
+	const char	*alphabet = "0123456789abcdef";
 	int			ret;
 	int			minus;
 
@@ -163,6 +164,7 @@ void	ft::trim_chunked(std::string &str) {
 	ret.reserve(str.length());
 	ret += str.substr(0, str.find("\r\n\r\n") + 4);
 	cursor = ret.length();
+
 
 	while (42) {
 		chunked_length_buffer = str.substr(cursor, str.find("\r\n", cursor) - cursor);

@@ -80,6 +80,7 @@ void Server::listen() {
 
 int Server::recv(int socket, char *buf) {
 	this->_buffer[socket]._buffer += buf;
+
 	if (this->_buffer[socket]._buffer.find("\r\n\r\n") == std::string::npos)
 		return (WAIT_RECV);
 	if (!this->_buffer[socket]._checked) {
@@ -129,8 +130,8 @@ void Server::process(int socket, CGI &cgi) {
 	insperct.isValid();
 	Response _response(this->_parsed_request, this);
 	this->_buffer[socket]._buffer = _response.getResponse(_auto_index, _cgi);
-//	std::cout << "-----------------Response Start-----------------\n";
-//	std::cout << this->_buffer[socket]._buffer;
-//	std::cout << "-----------------Response End-----------------\n";
+	std::cout << "-----------------Response Start-----------------\n";
+	std::cout << this->_buffer[socket]._buffer.substr(0, this->_buffer[socket]._buffer.find("\r\n\r\n") + 4);
+	std::cout << "-----------------Response End-----------------\n";
 	delete this->_parsed_request;
 }

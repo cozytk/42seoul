@@ -202,9 +202,7 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 {
 	std::string response;
 	std::string path = _request->getConfigedPath();
-	std::cout << "PATH is " << path << std::endl;
-	std::string extension = path.substr(path.rfind('.') + 1);
-	std::cout << "Extension is " << extension << std::endl;
+    std::string extension = path.substr(path.rfind('.') + 1);
 
 //	if (_request->getCGIBool())
 	if (extension == "bla" || extension == "bad_extension") {
