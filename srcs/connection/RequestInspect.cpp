@@ -106,7 +106,7 @@ bool				RequestInspect::isExistResource(std::string path, std::string index) {
 				path = path + "/";
 			if (this->_req->getResponseAny() > 0)
 			{
-	std::cout << "🔰 request any: " << this->_req->getResponseAny() << " body length " << this->_req->getBody().length() << std::endl;
+//	std::cout << "🔰 request any: " << this->_req->getResponseAny() << " body length " << this->_req->getBody().length() << std::endl;
 
 				if (this->_req->getResponseAny() < this->_req->getBody().length())
 				{
