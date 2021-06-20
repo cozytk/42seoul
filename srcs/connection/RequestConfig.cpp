@@ -152,6 +152,8 @@ void			RequestConfig::applyConfig(Config::node* node_ptr) {
 			this->_req->_pw = (*node("pw"))[0];
 		if (node.size("cgi_pass") > 0)
 			this->_req->_cgi_pass = (*node("cgi_pass"))[0];
+		if (node.size("response_any") > 0)
+			this->_req->_response_any = ft::atoi(const_cast<char *>((*node("response_any"))[0].c_str()));
 	}
 }
 
