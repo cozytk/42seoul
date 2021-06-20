@@ -121,19 +121,9 @@ int Server::send(int socket) {
 
 void Server::process(int socket, CGI &cgi) {
 	this->_parsed_request = new ParsedRequest(this->_buffer[socket]._buffer, this->_server_conf);
-	std::cout << "-----------------Header Start-----------------\n";
-	for (auto it = _parsed_request->getHeaders().begin();it != _parsed_request->getHeaders().end() ; it++)
-		std::cout << it->first<< " " << it->second << std::endl;
-	std::cout << "-----------------Header End-----------------\n";
 	RequestConfig	req_conf(this->_parsed_request);
 	RequestInspect	insperct(this->_parsed_request);
 	insperct.isValid();
 	Response _response(this->_parsed_request, this);
-	std::cout << "🔰 appended body: " << this->_parsed_request->getBody().length() << std::endl;
-	std::cout << "🔰 state: " << this->_parsed_request->getStateCode() << std::endl;
 	this->_buffer[socket]._buffer = _response.getResponse(_auto_index, _cgi);
-	std::cout << "-----------------Response Start-----------------\n";
-	std::cout << this->_buffer[socket]._buffer.substr(0, this->_buffer[socket]._buffer.find("\r\n\r\n") + 4);
-	std::cout << "-----------------Response End-----------------\n";
-	delete this->_parsed_request;
-}
+	delete this->_parsed_request;}

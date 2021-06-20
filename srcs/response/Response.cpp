@@ -260,12 +260,10 @@ std::string	Response::runPut(ParsedRequest *request) {
 	if (file != NULL)
 	{
 		fputs(request->getBody().c_str(), file);
-		std::cout << "♻️ put file update" << std::endl;
 	}
 	else
 	{
 		fputs(request->getBody().c_str(), file);
-		std::cout << "🔆 put file created" << std::endl;
 	}
 	if (_request->getStateCode() == 404)
 	{
@@ -394,17 +392,7 @@ std::string Response::runCGI(ParsedRequest *request, std::string &cgi_body)
 	/*
 	 * todo passing cgi info to request Class
 	 */
-	std::cout << "CGI_BODY_SIZE IS " << cgi_body.size() << std::endl;
-//	std::string response_body = cgi_body.substr(cgi_body.find(':') + 2);
 	std::string response_body = cgi_body.substr(cgi_body.find("\r\n\r\n") + 4);
-	std::cout << "RESPONSE_BODY_SIZE IS " << response_body.size() << std::endl;
-//	std::cout << "------------cgi start-------------\n";
-//	std::cout << cgi_body;
-//	std::cout << "------------cgi end-------------\n";
-//	std::cout << "In CGI, std::string body\n" << body.substr(0, body.find("\r\n\r\n")) << "------------------------\n";
-//	std::cout << body.substr(body.find("\r\n\r\n") + 4).length() << std::endl;
-//	return (body.substr(body.find("\r\n\r\n") + 4));
-//	return ("Status: " + ft::to_string(request->getStateCode()) + "\r\n" + "Content-type: text/html\r\nContent-length:" + ft::to_string(response_body.length()) +"\r\n\r\n" + response_body);
 	request->setStateCode(200);
 	request->setStateText("OK");
 	return (response_body);
