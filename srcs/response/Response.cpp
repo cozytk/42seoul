@@ -228,7 +228,7 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
     else if (_request->getHeaders()["Type"] == "POST") {
         response = runPost(_request);
     }
-	else if (_request->getHeaders()["Type"] == "GET") {
+	else if (_request->getHeaders()["Type"] == "GET" || _request->getHeaders()["Type"] == "HEAD") {
 		response = runGet(_request);
 	}
 	else if (_request->getHeaders()["Type"] == "DELETE") {
@@ -361,6 +361,7 @@ std::string Response::response200(ParsedRequest *request)
 {
 	std::vector<std::string> headers;
 	std::string ret;
+
 	headers.push_back(getState(request));
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
@@ -374,7 +375,9 @@ std::string Response::response200(ParsedRequest *request)
 		ret += *it + "\r\n";
 	}
 	ret += "\r\n";
-	ret += this->getResponseBody();
+	if (request->getHeaders()["Type"] == "HEAD")
+        return (ret);
+    ret += this->getResponseBody();
 	return (ret);
 }
 
