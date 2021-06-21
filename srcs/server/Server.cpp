@@ -120,11 +120,13 @@ int Server::send(int socket) {
 }
 
 void Server::process(int socket, CGI &cgi) {
+	// std::cout << "✅ request " << this->_buffer[socket]._buffer << std::endl;
 	this->_parsed_request = new ParsedRequest(this->_buffer[socket]._buffer, this->_server_conf);
 	RequestConfig	req_conf(this->_parsed_request);
 	RequestInspect	insperct(this->_parsed_request);
 	insperct.isValid();
 	Response _response(this->_parsed_request, this);
 	this->_buffer[socket]._buffer = _response.getResponse(_auto_index, _cgi);
+	// std::cout << "🔅 response " << this->_buffer[socket]._buffer << std::endl;
 	delete this->_parsed_request;
 }
