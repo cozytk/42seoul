@@ -212,7 +212,12 @@ std::string Response::getAllowHeader(ParsedRequest* request)
     return (ret);
 }
 
-std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
+std::string Response::getWWWAuthenticate(ParsedRequest *request)
+{
+    return ("WWW-Authenticate: Basic realm=\"Access to the staging site\", charset=\"UTF-8\"");
+}
+
+std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi, const std::string &origin_request)
 {
 	std::string response;
 	std::string path = _request->getConfigedPath();
@@ -221,7 +226,7 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
     /*
      * todo: update condition
      */
-	if (extension == "bla" || extension == "bad_extension") {
+	if (extension == "bla") {
 		cgi.execute(_request);
 		_response_body = runCGI(_request, cgi.getBuffer());
 		response = response200(_request);
@@ -254,6 +259,9 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 	else if (_request->getHeaders()["Type"] == "PUT") {
 		response = runPut(_request);
 	}
+    else if (_request->getHeaders()["Type"] == "TRACE") {
+        response = runTrace(_request, origin_request);
+    }
 	else {
 		_request->setStateCode(400);
 		response = response400(_request);
@@ -332,6 +340,20 @@ std::string Response::runDelete(ParsedRequest *request)
 	return (getDateHeader(request) + "\r\n\r\n<html><body>File deleted.</body></html>\r\n");
 }
 
+std::string Response::runTrace(ParsedRequest *request, const std::string &req)
+{
+    std::string &body = this->_response_body;
+
+    body = req;
+    body.erase(body.rfind('\n'));
+    body.erase(body.rfind('\r'));
+    if (request->getHeaders()["Connection"].empty())
+        body += getConnectionHeader(request) + "\r\n";
+    request->setStateCode(200);
+    request->setStateText("OK");
+    return (response200(request));
+}
+
 void		Response::setResponseHeadear(std::vector<std::string> &headers, ParsedRequest *request)
 {
 	headers.push_back(getServerHeader(request));
@@ -394,6 +416,8 @@ std::string Response::response200(ParsedRequest *request)
 	headers.push_back(getContentLengthHeader(request));
 	headers.push_back(getConnectionHeader(request));
 	headers.push_back(getLastModifiedHeader(request));
+	if (request->getStateCode() == 401)
+        headers.push_back(getWWWAuthenticate(request));
 	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
 	{
 		erase_white_space(*it);
@@ -417,6 +441,8 @@ std::string Response::response400(ParsedRequest *request)
 	headers.push_back(getContentTypeHeader(request));
 	headers.push_back(getContentLengthHeader(request));
 	headers.push_back(getConnectionHeader(request));
+    if (request->getStateCode() == 401)
+    	headers.push_back(getWWWAuthenticate(request));
 	setResponseBody(request);
 	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
 	{

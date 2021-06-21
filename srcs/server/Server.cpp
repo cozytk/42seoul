@@ -126,7 +126,7 @@ void Server::process(int socket, CGI &cgi) {
 	RequestInspect	insperct(this->_parsed_request);
 	insperct.isValid();
 	Response _response(this->_parsed_request, this);
-	this->_buffer[socket]._buffer = _response.getResponse(_auto_index, _cgi);
+	this->_buffer[socket]._buffer = _response.getResponse(_auto_index, _cgi, this->_buffer[socket]._buffer);
 	// std::cout << "🔅 response " << this->_buffer[socket]._buffer << std::endl;
 	delete this->_parsed_request;
 }

@@ -37,7 +37,8 @@ class Response
 		std::string getConnectionHeader(ParsedRequest *request);
 		std::string getStateText(int state);
         std::string getAllowHeader(ParsedRequest* request);
-        std::string getResponse(AutoIndex &autoindex, CGI &cgi);
+        std::string getResponse(AutoIndex &autoindex, CGI &cgi, const std::string &origin_request);
+        std::string getWWWAuthenticate(ParsedRequest *request);
 
 		std::string	runPut(ParsedRequest *request);
 		std::string	runGet(ParsedRequest *request);
@@ -45,6 +46,7 @@ class Response
 		std::string	runDelete(ParsedRequest *request);
 		std::string runCGI(ParsedRequest *request, std::string &cgi_body);
         std::string runOptions(ParsedRequest *request);
+        std::string runTrace(ParsedRequest *request, const std::string &req);
 
 		void		setResponseBody(ParsedRequest *request);
 		void		setCommonHeadear(ParsedRequest *request);
