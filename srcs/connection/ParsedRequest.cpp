@@ -61,12 +61,6 @@ void				ParsedRequest::parseBody(std::string const &body)
 			this->_isChunked = false;
 	}
 	this->_body = body;
-	if (body.length() == 98310) {
-		for (size_t i = 0; i < 100000 - body.length() ; i++)
-		{
-			this->_body = body[0] + this->_body;
-		}
-	}
 	this->_stateCode = 200;
 }
 
