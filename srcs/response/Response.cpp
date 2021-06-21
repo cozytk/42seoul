@@ -190,12 +190,26 @@ std::string Response::getConnectionHeader(ParsedRequest *request)
 
 std::string Response::getDefaultErrorPage(ParsedRequest* request)
 {
-	return ("<html><body><h1>" + ft::to_string(request->getStateCode()) + " " + _status[request->getStateCode()] + "</h1></body></html>");
+	return ("<html><body><h1>" + ft::to_string(request->getStateCode()) + " " + _status[request->getStateCode()] + "</h1></body></html>\r\n");
 }
 
 std::string Response::getState(ParsedRequest* request)
 {
 	return ("HTTP/1.1 " + ft::to_string(request->getStateCode()) + " " + request->getStateText() + "\r\n");
+}
+
+std::string Response::getAllowHeader(ParsedRequest* request)
+{
+    const std::vector<std::string> &allows = request->getAllowMethods();
+    std::string ret = "Allow:";
+
+    for (std::vector<std::string>::const_iterator it = allows.begin(); it != allows.end(); it++) {
+        ret += " ";
+        ret += *it;
+        ret += ",";
+    }
+    ret.erase(ret.end() - 1);
+    return (ret);
 }
 
 std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
@@ -225,6 +239,9 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 		else
 			response = response400(_request);
 	}
+    else if (_request->getHeaders()["Type"] == "OPTIONS") {
+        response = runOptions(_request);
+    }
     else if (_request->getHeaders()["Type"] == "POST") {
         response = runPost(_request);
     }
@@ -255,6 +272,12 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 /* ************************************************************************** */
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
+
+std::string Response::runOptions(ParsedRequest *request) {
+    if (request->getStateCode() / 100 == 2)
+        return (response200(request));
+    return (response400(request));
+}
 
 std::string	Response::runPut(ParsedRequest *request) {
 	ParsedRequest	*req = this->_request;
@@ -363,6 +386,8 @@ std::string Response::response200(ParsedRequest *request)
 	std::string ret;
 
 	headers.push_back(getState(request));
+	if (request->getHeaders()["Type"] == "OPTIONS")
+	    headers.push_back(getAllowHeader(request));
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
 	headers.push_back(getContentTypeHeader(request));

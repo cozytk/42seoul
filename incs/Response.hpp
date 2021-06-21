@@ -36,13 +36,15 @@ class Response
 		std::string getLastModifiedHeader(ParsedRequest *request);
 		std::string getConnectionHeader(ParsedRequest *request);
 		std::string getStateText(int state);
-		std::string getResponse(AutoIndex &autoindex, CGI &cgi);
+        std::string getAllowHeader(ParsedRequest* request);
+        std::string getResponse(AutoIndex &autoindex, CGI &cgi);
 
 		std::string	runPut(ParsedRequest *request);
 		std::string	runGet(ParsedRequest *request);
 		std::string	runPost(ParsedRequest *request);
 		std::string	runDelete(ParsedRequest *request);
 		std::string runCGI(ParsedRequest *request, std::string &cgi_body);
+        std::string runOptions(ParsedRequest *request);
 
 		void		setResponseBody(ParsedRequest *request);
 		void		setCommonHeadear(ParsedRequest *request);
