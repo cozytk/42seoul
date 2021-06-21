@@ -9,7 +9,6 @@ class RequestInspect
 		ParsedRequest	*_req;
 
 		RequestInspect();
-		bool			isValidStart();
 		bool			isValidType();
 		bool			isValidPath();
 		bool			isValidVersion();

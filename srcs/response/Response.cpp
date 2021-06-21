@@ -190,6 +190,7 @@ std::string Response::getConnectionHeader(ParsedRequest *request)
 
 std::string Response::getDefaultErrorPage(ParsedRequest* request)
 {
+	std::cout << "🚳 " << std::endl;
 	return ("<html><body><h1>" + ft::to_string(request->getStateCode()) + " " + _status[request->getStateCode()] + "</h1></body></html>");
 }
 
