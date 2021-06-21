@@ -157,7 +157,7 @@ std::string Response::getContentTypeHeader(ParsedRequest *request)
 	std::string mime_type = _mime_types[path.substr(path.rfind('.') + 1)];
 
 	if (mime_type.empty())
-		mime_type = "application/octet-stream";
+		mime_type = "text/html";
 	return ("Content-type: " + mime_type);
 }
 
@@ -212,6 +212,11 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 		_response_body = runCGI(_request, cgi.getBuffer());
 		response = response200(_request);
 	}
+	else if (_request->getAutoIndex()) {
+		autoindex.path(this->_request->getConfigedPath().substr(1));
+		_response_body = autoindex.make();
+		response = response200(_request);
+	}
 	else if (_request->getStateCode() / 100 != 2){
 		if ( _request->getHeaders()["Type"] == "PUT" && !_request->getHeaders()["Path"].compare(0, 9, "/put_test"))
             response = runPut(_request);
@@ -219,10 +224,6 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
             response = runPost(_request);
 		else
 			response = response400(_request);
-	}
-	else if (_request->getAutoIndex()) {
-		_response_body = autoindex.make();
-		response = response200(_request);
 	}
     else if (_request->getHeaders()["Type"] == "POST") {
         response = runPost(_request);
