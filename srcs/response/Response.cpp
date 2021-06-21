@@ -190,8 +190,7 @@ std::string Response::getConnectionHeader(ParsedRequest *request)
 
 std::string Response::getDefaultErrorPage(ParsedRequest* request)
 {
-	std::cout << "🚳 " << std::endl;
-	return ("<html><body><h1>" + ft::to_string(request->getStateCode()) + " " + _status[request->getStateCode()] + "</h1></body></html>");
+	return ("<html><body><h1>" + ft::to_string(request->getStateCode()) + " " + _status[request->getStateCode()] + "</h1></body></html>\r\n");
 }
 
 std::string Response::getState(ParsedRequest* request)
@@ -199,7 +198,26 @@ std::string Response::getState(ParsedRequest* request)
 	return ("HTTP/1.1 " + ft::to_string(request->getStateCode()) + " " + request->getStateText() + "\r\n");
 }
 
-std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
+std::string Response::getAllowHeader(ParsedRequest* request)
+{
+    const std::vector<std::string> &allows = request->getAllowMethods();
+    std::string ret = "Allow:";
+
+    for (std::vector<std::string>::const_iterator it = allows.begin(); it != allows.end(); it++) {
+        ret += " ";
+        ret += *it;
+        ret += ",";
+    }
+    ret.erase(ret.end() - 1);
+    return (ret);
+}
+
+std::string Response::getWWWAuthenticate(ParsedRequest *request)
+{
+    return ("WWW-Authenticate: Basic realm=\"Access to the staging site\", charset=\"UTF-8\"");
+}
+
+std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi, const std::string &origin_request)
 {
 	std::string response;
 	std::string path = _request->getConfigedPath();
@@ -208,7 +226,7 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
     /*
      * todo: update condition
      */
-	if (extension == "bla" || extension == "bad_extension") {
+	if (extension == "bla") {
 		cgi.execute(_request);
 		_response_body = runCGI(_request, cgi.getBuffer());
 		response = response200(_request);
@@ -226,10 +244,13 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 		else
 			response = response400(_request);
 	}
+    else if (_request->getHeaders()["Type"] == "OPTIONS") {
+        response = runOptions(_request);
+    }
     else if (_request->getHeaders()["Type"] == "POST") {
         response = runPost(_request);
     }
-	else if (_request->getHeaders()["Type"] == "GET") {
+	else if (_request->getHeaders()["Type"] == "GET" || _request->getHeaders()["Type"] == "HEAD") {
 		response = runGet(_request);
 	}
 	else if (_request->getHeaders()["Type"] == "DELETE") {
@@ -238,6 +259,9 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 	else if (_request->getHeaders()["Type"] == "PUT") {
 		response = runPut(_request);
 	}
+    else if (_request->getHeaders()["Type"] == "TRACE") {
+        response = runTrace(_request, origin_request);
+    }
 	else {
 		_request->setStateCode(400);
 		response = response400(_request);
@@ -256,6 +280,12 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi)
 /* ************************************************************************** */
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
+
+std::string Response::runOptions(ParsedRequest *request) {
+    if (request->getStateCode() / 100 == 2)
+        return (response200(request));
+    return (response400(request));
+}
 
 std::string	Response::runPut(ParsedRequest *request) {
 	ParsedRequest	*req = this->_request;
@@ -310,6 +340,20 @@ std::string Response::runDelete(ParsedRequest *request)
 	return (getDateHeader(request) + "\r\n\r\n<html><body>File deleted.</body></html>\r\n");
 }
 
+std::string Response::runTrace(ParsedRequest *request, const std::string &req)
+{
+    std::string &body = this->_response_body;
+
+    body = req;
+    body.erase(body.rfind('\n'));
+    body.erase(body.rfind('\r'));
+    if (request->getHeaders()["Connection"].empty())
+        body += getConnectionHeader(request) + "\r\n";
+    request->setStateCode(200);
+    request->setStateText("OK");
+    return (response200(request));
+}
+
 void		Response::setResponseHeadear(std::vector<std::string> &headers, ParsedRequest *request)
 {
 	headers.push_back(getServerHeader(request));
@@ -362,20 +406,27 @@ std::string Response::response200(ParsedRequest *request)
 {
 	std::vector<std::string> headers;
 	std::string ret;
+
 	headers.push_back(getState(request));
+	if (request->getHeaders()["Type"] == "OPTIONS")
+	    headers.push_back(getAllowHeader(request));
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
 	headers.push_back(getContentTypeHeader(request));
 	headers.push_back(getContentLengthHeader(request));
 	headers.push_back(getConnectionHeader(request));
 	headers.push_back(getLastModifiedHeader(request));
+	if (request->getStateCode() == 401)
+        headers.push_back(getWWWAuthenticate(request));
 	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
 	{
 		erase_white_space(*it);
 		ret += *it + "\r\n";
 	}
 	ret += "\r\n";
-	ret += this->getResponseBody();
+	if (request->getHeaders()["Type"] == "HEAD")
+        return (ret);
+    ret += this->getResponseBody();
 	return (ret);
 }
 
@@ -390,6 +441,8 @@ std::string Response::response400(ParsedRequest *request)
 	headers.push_back(getContentTypeHeader(request));
 	headers.push_back(getContentLengthHeader(request));
 	headers.push_back(getConnectionHeader(request));
+    if (request->getStateCode() == 401)
+    	headers.push_back(getWWWAuthenticate(request));
 	setResponseBody(request);
 	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
 	{

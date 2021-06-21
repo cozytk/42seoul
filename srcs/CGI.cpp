@@ -14,6 +14,7 @@ const char *CGI::ForkException::what() const throw() {
 CGI::CGI() {
 	this->_stdin = dup(STDIN_FILENO);
 	this->_stdout = dup(STDOUT_FILENO);
+	this->_buffer.reserve(100000000);
 }
 
 CGI::CGI(CGI const &x) {
