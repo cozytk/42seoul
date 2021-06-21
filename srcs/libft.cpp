@@ -165,7 +165,6 @@ void	ft::trim_chunked(std::string &str) {
 	ret += str.substr(0, str.find("\r\n\r\n") + 4);
 	cursor = ret.length();
 
-
 	while (42) {
 		chunked_length_buffer = str.substr(cursor, str.find("\r\n", cursor) - cursor);
 		chunked_length = ft::htod(const_cast<char *>(chunked_length_buffer.c_str()));
