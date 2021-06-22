@@ -38,7 +38,7 @@ void CGI::setEnvs(ParsedRequest *request) {
 
 	envs["PATH_INFO"] = request->getHeaders()["Path"];
 	envs["PATH_TRANSLATED"] = request->getConfigedPath();
-	envs["QUERY_STRING"] = "";
+	envs["QUERY_STRING"] = request->getQueryString();
 
 	envs["REMOTE_ADDR"] = "127.0.0.1";
 	envs["REMOTE_IDENT"] = "unknown";
