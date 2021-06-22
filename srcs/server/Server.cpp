@@ -110,13 +110,14 @@ int Server::send(int socket) {
 	std::string		buf;
 	int				buf_size;
 
-	buf_size = this->_buffer[socket]._buffer.length() - this->_buffer[socket]._sent < SEND_BUFFER_SIZE ?
-	           this->_buffer[socket]._buffer.length() - this->_buffer[socket]._sent : SEND_BUFFER_SIZE;
+	buf_size = this->_buffer[socket]._length - this->_buffer[socket]._sent < SEND_BUFFER_SIZE ?
+	           this->_buffer[socket]._length - this->_buffer[socket]._sent : SEND_BUFFER_SIZE;
 	buf = std::string(this->_buffer[socket]._buffer, this->_buffer[socket]._sent, buf_size);
 	if ((len = write(socket, buf.c_str(), buf.length())) == -1)
 		return (WAIT_SEND);
 	this->_buffer[socket]._sent += len;
-	if (this->_buffer[socket]._sent >= this->_buffer[socket]._buffer.length())
+//    if (this->_buffer[socket]._sent >= this->_buffer[socket]._buffer.length())
+	if (this->_buffer[socket]._sent >= this->_buffer[socket]._length)
 		return (ALL_SEND);
 	return (WAIT_SEND);
 }
@@ -128,7 +129,9 @@ void Server::process(int socket, CGI &cgi) {
 	RequestInspect	insperct(this->_parsed_request);
 	insperct.isValid();
 	Response _response(this->_parsed_request, this);
+
 	this->_buffer[socket]._buffer = _response.getResponse(_auto_index, _cgi, this->_buffer[socket]._buffer);
+    this->_buffer[socket]._length = _response.getContentLength();
     std::cout << this->_buffer[socket]._buffer << std::endl;
 	delete this->_parsed_request;
 	std::cout << this->_buffer[socket]._buffer << std::endl;

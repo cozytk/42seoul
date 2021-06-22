@@ -17,6 +17,7 @@ class Response
 		std::string		_response_header;
 		ParsedRequest	*_request;
 		Server			*_server;
+		int             _content_length;
 		static std::map<std::string, std::string> _mime_types;
 		static std::map<int, std::string> _status;
 	public:
@@ -26,6 +27,7 @@ class Response
 		Response& operator=(const Response& obj);
 		virtual ~Response();
 
+		int getContentLength();
 		std::string	getResponseBody();
 		std::string getState(ParsedRequest* request);
 		std::string getDefaultErrorPage(ParsedRequest* request);

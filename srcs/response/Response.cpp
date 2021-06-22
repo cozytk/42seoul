@@ -104,7 +104,7 @@ Response::Response()
 Response::Response(ParsedRequest *request, Server *server)
 : _request(request), _server(server)
 {
-
+    _content_length = -1;
 }
 
 /* ************************************************************************** */
@@ -163,7 +163,9 @@ std::string Response::getContentTypeHeader(ParsedRequest *request)
 
 std::string Response::getContentLengthHeader(ParsedRequest *request)
 {
-	return ("Content-Length: " + ft::to_string(int(getResponseBody().length())));
+    if (_content_length == -1)
+        _content_length = getResponseBody().length();
+	return ("Content-Length: " + ft::to_string(_content_length));
 }
 
 std::string Response::getLastModifiedHeader(ParsedRequest *request)
@@ -215,6 +217,12 @@ std::string Response::getAllowHeader(ParsedRequest* request)
 std::string Response::getWWWAuthenticate(ParsedRequest *request)
 {
     return ("WWW-Authenticate: Basic realm=\"Access to the staging site\", charset=\"UTF-8\"");
+}
+
+
+int Response::getContentLength()
+{
+    return (this->_content_length);
 }
 
 std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi, const std::string &origin_request)
@@ -368,40 +376,66 @@ void		Response::setResponseHeadear(std::vector<std::string> &headers, ParsedRequ
 
 void		Response::setResponseBody(ParsedRequest *request)
 {
-	/*
-	 * Use cstdio instead of fstream -> fstream is slower than cstdio.
-	 * todo (bonus) char to wchar for unicord
-	 */
-	FILE *file;
-	char *buf;
-	long max_body = request->getMaxBody();
+    /*
+     * Use cstdio instead of fstream -> fstream is slower than cstdio.
+     * todo (bonus) char to wchar for unicord
+     */
+    int fd;
+    char buf[65537];
+    int read_byte;
 
-	if (request->getStateCode() / 100 == 2)
-		file = fopen(request->getConfigedPath().c_str(), "r");
-	else if (!(file = fopen(request->getErrorPage()[ft::to_string(request->getStateCode())].c_str(), "r"))) {
-        file = fopen("html/default_error.html", "r");
+    this->_content_length = 0;
+    if (request->getStateCode() / 100 == 2)
+        fd = open(request->getConfigedPath().c_str(), O_RDONLY);
+    else if (!(fd = open(request->getErrorPage()[ft::to_string(request->getStateCode())].c_str(), O_RDONLY))) {
+        fd = open("html/default_error.html", O_RDONLY);
     }
-	if (max_body >= 0)
-	{
-		buf = new char[max_body + 1]();
-		fread(buf, 1, max_body, file);
-		buf[max_body] = '\0';
-	}
-	else
-	{
-		fseek(file, 0, SEEK_END);
-		max_body = ftell(file);
-		rewind(file);
-		buf = new char[max_body + 1]();
-		fread(buf, 1, max_body, file);
-		buf[max_body] = '\0';
-	}
-	this->_response_body = buf;
-	delete buf;
-	buf = 0;
-	fclose(file);
-	return ;
+    while ((read_byte = read(fd, buf, 65536)) > 0){
+        buf[read_byte] = '\0';
+        this->_response_body += buf;
+        this->_content_length += read_byte;
+    }
+    std::cout << this->_content_length << std::endl;
+    close(fd);
 }
+
+//void		Response::setResponseBody(ParsedRequest *request)
+//{
+//	/*
+//	 * Use cstdio instead of fstream -> fstream is slower than cstdio.
+//	 * todo (bonus) char to wchar for unicord
+//	 */
+//	FILE *file;
+//	char *buf;
+//	long max_body = request->getMaxBody();
+//
+//	if (request->getStateCode() / 100 == 2)
+//		file = fopen(request->getConfigedPath().c_str(), "r");
+//	else if (!(file = fopen(request->getErrorPage()[ft::to_string(request->getStateCode())].c_str(), "r"))) {
+//	    std::cout << "in here\n";
+//        file = fopen("html/default_error.html", "r");
+//    }
+//	if (max_body >= 0)
+//	{
+//		buf = new char[max_body + 1]();
+//		fread(buf, 1, max_body, file);
+//		buf[max_body] = '\0';
+//	}
+//	else
+//	{
+//		fseek(file, 0, SEEK_END);
+//		max_body = ftell(file);
+//		rewind(file);
+//		buf = new char[max_body + 1]();
+//		fread(buf, 1, max_body, file);
+//		buf[max_body] = '\0';
+//	}
+//	this->_response_body = buf;
+//	delete buf;
+//	buf = 0;
+//	fclose(file);
+//	return ;
+//}
 
 std::string Response::response200(ParsedRequest *request)
 {
@@ -436,6 +470,7 @@ std::string Response::response400(ParsedRequest *request)
 	std::vector<std::string> headers;
 	std::string ret;
 
+    setResponseBody(request);
 	headers.push_back(getState(request));
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
@@ -444,7 +479,6 @@ std::string Response::response400(ParsedRequest *request)
 	headers.push_back(getConnectionHeader(request));
     if (request->getStateCode() == 401)
     	headers.push_back(getWWWAuthenticate(request));
-	setResponseBody(request);
 	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
 	{
 		erase_white_space(*it);
