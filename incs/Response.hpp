@@ -54,7 +54,8 @@ class Response
 
 		std::string	response200(ParsedRequest *request);
 		std::string	response400(ParsedRequest *request);
-		std::string	erase_white_space(std::string &s);
+        std::string	redirect(ParsedRequest *request);
+        std::string	erase_white_space(std::string &s);
 };
 
 #endif

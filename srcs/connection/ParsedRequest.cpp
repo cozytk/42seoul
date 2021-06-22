@@ -12,9 +12,10 @@
 
 ParsedRequest::ParsedRequest() {}
 ParsedRequest::ParsedRequest(std::string const &request,  Config::node *config):
-_config(config), _max_body(-100), _autoindex(false), _stateCode(200), _root("."), _response_any(0)
+_config(config), _max_body(-100), _autoindex(false), _stateCode(200), _root("."), _response_any(0), _location_path("")
 {
 	size_t headEnd = request.find("\r\n\r\n");
+	this->_error_page["Default"] = "/html/error_page.html";
 	this->_stateText = "OK";
 	parseHead(request);
 	if (headEnd + 4 < request.length())
@@ -149,6 +150,11 @@ std::string const &				ParsedRequest::getExtension()
 std::string const &				ParsedRequest::getServerName()
 {
 	return (this->_server_name);
+}
+
+std::string const &				ParsedRequest::getLocationPath()
+{
+	return (this->_location_path);
 }
 
 int const &						ParsedRequest::getResponseAny()
