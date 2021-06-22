@@ -399,44 +399,6 @@ void		Response::setResponseBody(ParsedRequest *request)
     close(fd);
 }
 
-//void		Response::setResponseBody(ParsedRequest *request)
-//{
-//	/*
-//	 * Use cstdio instead of fstream -> fstream is slower than cstdio.
-//	 * todo (bonus) char to wchar for unicord
-//	 */
-//	FILE *file;
-//	char *buf;
-//	long max_body = request->getMaxBody();
-//
-//	if (request->getStateCode() / 100 == 2)
-//		file = fopen(request->getConfigedPath().c_str(), "r");
-//	else if (!(file = fopen(request->getErrorPage()[ft::to_string(request->getStateCode())].c_str(), "r"))) {
-//	    std::cout << "in here\n";
-//        file = fopen("html/default_error.html", "r");
-//    }
-//	if (max_body >= 0)
-//	{
-//		buf = new char[max_body + 1]();
-//		fread(buf, 1, max_body, file);
-//		buf[max_body] = '\0';
-//	}
-//	else
-//	{
-//		fseek(file, 0, SEEK_END);
-//		max_body = ftell(file);
-//		rewind(file);
-//		buf = new char[max_body + 1]();
-//		fread(buf, 1, max_body, file);
-//		buf[max_body] = '\0';
-//	}
-//	this->_response_body = buf;
-//	delete buf;
-//	buf = 0;
-//	fclose(file);
-//	return ;
-//}
-
 std::string Response::response200(ParsedRequest *request)
 {
 	std::vector<std::string> headers;
@@ -470,7 +432,11 @@ std::string Response::response400(ParsedRequest *request)
 	std::vector<std::string> headers;
 	std::string ret;
 
+<<<<<<< HEAD
     setResponseBody(request);
+=======
+	setResponseBody(request);
+>>>>>>> 8fa19a8691455fc684ec6e1ec2bb0642dbc11f0b
 	headers.push_back(getState(request));
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));

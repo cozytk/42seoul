@@ -76,7 +76,7 @@ class ParsedRequest
 		bool const &					getCGIBool();
 		std::vector<std::string>		getIndex();
 		std::vector<std::string>		getAllowMethods();
-		ErrorPage						getErrorPage();
+		ErrorPage const &						getErrorPage();
 
 		void							setStateCode(int state);
 		void							setStateText(std::string text);

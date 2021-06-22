@@ -117,8 +117,6 @@ void			RequestConfig::configErrorPage(Config::node* node_ptr)
 			error_code = (*node("error_page"))[i];
 			if (node.size(error_code) > 0)
 				error_page_path = (*node(error_code))[0];
-			else
-				error_page_path = this->_req->_root + "error.html";
 			this->_req->_error_page[error_code] = error_page_path;
 			i++;
 		}
