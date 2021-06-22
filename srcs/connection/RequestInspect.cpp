@@ -193,7 +193,15 @@ bool				RequestInspect::isValidSize() {
 	}
 	return true;
 }
-
+bool				RequestInspect::isRedirect() {
+	if (this->_req->getLocationPath() != "")
+	{
+		this->_req->setStateCode(301);
+		this->_req->setStateText("Moved Permanently");
+		return false;
+	}
+	return true;
+}
 bool				RequestInspect::isValid() {
 	if (!isValidType())
 		return false;
@@ -204,6 +212,8 @@ bool				RequestInspect::isValid() {
 	if (!isValidPath())
 		return false;
 	if (!isAuthorized())
+		return false;
+	if (!isRedirect())
 		return false;
 	return true;
 }
