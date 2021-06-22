@@ -115,10 +115,13 @@ void			RequestConfig::configErrorPage(Config::node* node_ptr)
 		while (i < (*node("error_page")).size())
 		{
 			error_code = (*node("error_page"))[i];
+			// std::cout << "😀 error_code: " << error_code << std::endl;
 			if (node.size(error_code) > 0)
+			{
 				error_page_path = (*node(error_code))[0];
-			else
-				error_page_path = this->_req->_root + "error.html";
+			// std::cout << "😀 error_page_path: " << error_page_path << std::endl;
+			}
+			// std::cout << "😍 error_page_path: " << error_page_path << std::endl;
 			this->_req->_error_page[error_code] = error_page_path;
 			i++;
 		}

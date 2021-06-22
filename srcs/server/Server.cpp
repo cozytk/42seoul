@@ -126,6 +126,8 @@ void Server::process(int socket, CGI &cgi) {
 	RequestConfig	req_conf(this->_parsed_request);
 	RequestInspect	insperct(this->_parsed_request);
 	insperct.isValid();
+	ParsedRequest::ErrorPage error = this->_parsed_request->getErrorPage();
+	ParsedRequest::ErrorPage::iterator it = error.begin();
 	Response _response(this->_parsed_request, this);
 	this->_buffer[socket]._buffer = _response.getResponse(_auto_index, _cgi, this->_buffer[socket]._buffer);
 	delete this->_parsed_request;

@@ -188,7 +188,7 @@ std::vector<std::string>		ParsedRequest::getAllowMethods()
 	return (this->_allow_methods);
 }
 
-ParsedRequest::ErrorPage		ParsedRequest::getErrorPage()
+ParsedRequest::ErrorPage const &		ParsedRequest::getErrorPage()
 {
 	return (this->_error_page);
 }
