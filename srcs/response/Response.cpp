@@ -375,12 +375,13 @@ void		Response::setResponseBody(ParsedRequest *request)
 	FILE *file;
 	char *buf;
 	long max_body = request->getMaxBody();
+	ParsedRequest::ErrorPage error_page = request->getErrorPage();
 
 	if (request->getStateCode() / 100 == 2)
 		file = fopen(request->getConfigedPath().c_str(), "r");
-	else if (!(file = fopen(request->getErrorPage()[ft::to_string(request->getStateCode())].c_str(), "r")))
+	else if (!(file = fopen(error_page[ft::to_string(request->getStateCode())].c_str(), "r")))
 	{
-        file = fopen(request->getErrorPage()["Default"].c_str(), "r");
+        file = fopen(error_page["Default"].c_str(), "r");
 		return ;
 	}
 	if (max_body >= 0)
@@ -438,6 +439,7 @@ std::string Response::response400(ParsedRequest *request)
 	std::vector<std::string> headers;
 	std::string ret;
 
+	setResponseBody(request);
 	headers.push_back(getState(request));
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
@@ -446,7 +448,6 @@ std::string Response::response400(ParsedRequest *request)
 	headers.push_back(getConnectionHeader(request));
     if (request->getStateCode() == 401)
     	headers.push_back(getWWWAuthenticate(request));
-	setResponseBody(request);
 	for (std::vector<std::string>::iterator it = headers.begin(); it != headers.end(); it++)
 	{
 		erase_white_space(*it);
