@@ -12,10 +12,10 @@
 
 ParsedRequest::ParsedRequest() {}
 ParsedRequest::ParsedRequest(std::string const &request,  Config::node *config):
-_config(config), _max_body(-100), _autoindex(false), _stateCode(200), _root("."), _response_any(0), _location_path("")
+_config(config), _max_body(-100), _autoindex(false), _stateCode(200), _root("."), _response_any(0), _location_path(""), _query_string("")
 {
 	size_t headEnd = request.find("\r\n\r\n");
-	this->_error_page["Default"] = "/html/error_page.html";
+	this->_error_page["Default"] = "/html/default_error.html";
 	this->_stateText = "OK";
 	parseHead(request);
 	if (headEnd + 4 < request.length())
@@ -36,6 +36,7 @@ void				ParsedRequest::parseHead(std::string const &request) {
 	head = tail + 1;
 	tail = request.find(" ", head);
 	this->_headers[ "Path" ] = request.substr(head, tail - head);
+	this->parseQueryString();
 
 	// Find HTTP version
 	head = tail + 1;
@@ -157,6 +158,11 @@ std::string const &				ParsedRequest::getLocationPath()
 	return (this->_location_path);
 }
 
+std::string const &				ParsedRequest::getQueryString()
+{
+	return (this->_query_string);
+}
+
 int const &						ParsedRequest::getResponseAny()
 {
 	return (this->_response_any);
@@ -233,11 +239,15 @@ bool				ParsedRequest::isExistHeader(std::string in) {
 		return false;
 	return true;
 }
-/*
-std::string ParsedRequest::getPathTranslated() const
+
+void				ParsedRequest::parseQueryString()
 {
-	return (_pathTranslated);
+	std::string	path = this->_headers["Path"];
+	size_t		pos = path.find("?");
+
+	if (pos > 0)
+	{
+		this->_headers["Path"] = path.substr(0, pos);
+		this->_query_string = path.substr(pos + 1);
+	}
 }
-
-*/
-

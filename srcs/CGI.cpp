@@ -38,7 +38,7 @@ void CGI::setEnvs(ParsedRequest *request) {
 
 	envs["PATH_INFO"] = request->getHeaders()["Path"];
 	envs["PATH_TRANSLATED"] = request->getConfigedPath();
-	envs["QUERY_STRING"] = "";
+	envs["QUERY_STRING"] = request->getQueryString();
 
 	envs["REMOTE_ADDR"] = "127.0.0.1";
 	envs["REMOTE_IDENT"] = "unknown";
@@ -97,7 +97,7 @@ void CGI::execute(ParsedRequest *request)
 		dup2(fd_in, STDIN_FILENO);
 		dup2(fd_out, STDOUT_FILENO);
 		execve(request->getCGIPass().c_str(), NULL, argv);
-		std::cout << "CGI Error: 500 Internal" << std::endl;
+		std::cout << "CGI Error: 500 Internal\r\n\r\n" << std::endl;
 		exit(0);
 	}
 	waitpid(pid, NULL, 0);

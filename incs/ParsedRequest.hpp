@@ -47,6 +47,7 @@ class ParsedRequest
 
 		void			parseBody(std::string const &body);
 		void			parseHead(std::string const &request);
+		void			parseQueryString();
 
 	public:
 		ParsedRequest();

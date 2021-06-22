@@ -41,13 +41,13 @@
 <body>
 	<div id="app">
 		<span class="title">CGI Input Form</span><br /><br /><br />
-		<form id="send" class="span" action="http://localhost:8081/cgi-bin/" method="post" onsubmit="return validCheck();">
+		<form id="send" class="span" action="/page/cgi_perl.perl" method="post" onsubmit="return validCheck();">
 			<span class="name">name</span><br /><input class="margin" type="text" name="name" required/><br /><br />
 			<span class="name">group</span><br /><select class="margin" name="group"><br /><br />
 				<option value="none" selected>--</option>
 				<option value="42 seoul">42 seoul</option>
 				<option value="42 paris">42 paris</option>
-				<option value="42 tekyo">42 tokyo</option>
+				<option value="42 tokyo">42 tokyo</option>
 			</select> <br /><br />
 			<span class="name">value</span><br /><input class="margin" type="text" name="value" required/><br /><br />
 			<input class="submit" type="submit" />

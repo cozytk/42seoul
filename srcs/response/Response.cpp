@@ -64,15 +64,15 @@ std::map<std::string, std::string> makeMimeType ()
 	type_map["htm"] = "text/html";
 	type_map["html"] = "text/html";
 	type_map["ico"] = "image/vnd.microsoft.icon";
-	type_map["jepg"] = "image/jepg";
-	type_map["jpg"] = "image/jepg";
+	type_map["jpeg"] = "image/jpeg";
+	type_map["jpg"] = "image/jpg";
 	type_map["js"] = "text/javascript";
 	type_map["json"] = "application/json";
 	type_map["mp3"] = "audio/mpeg";
 	type_map["mpeg"] = "video/mpeg";
 	type_map["png"] = "image/png";
 	type_map["pdf"] = "apllication/pdf";
-	type_map["php"] = "application/x-httpd-php";
+	type_map["php"] = "text/html";
 	type_map["ppt"] = "application/vnd.ms-powerpoint";
 	type_map["pptx"] = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
 	type_map["rar"] = "application/vnd.rar";
@@ -153,11 +153,11 @@ std::string Response::getDateHeader(ParsedRequest *request)
 
 std::string Response::getContentTypeHeader(ParsedRequest *request)
 {
-//	std::string path = request->getConfigedPath();
-//	std::string mime_type = _mime_types[path.substr(path.rfind('.') + 1)];
-//
-//	if (mime_type.empty())
-	std::string	mime_type = "text/html";
+	std::string path = request->getConfigedPath();
+	std::string mime_type = _mime_types[path.substr(path.rfind('.') + 1)];
+
+	if (mime_type == "")
+		mime_type = "text/html";
 	return ("Content-type: " + mime_type);
 }
 
