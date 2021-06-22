@@ -153,11 +153,11 @@ std::string Response::getDateHeader(ParsedRequest *request)
 
 std::string Response::getContentTypeHeader(ParsedRequest *request)
 {
-	std::string path = request->getConfigedPath();
-	std::string mime_type = _mime_types[path.substr(path.rfind('.') + 1)];
-
-	if (mime_type.empty())
-		mime_type = "text/html";
+//	std::string path = request->getConfigedPath();
+//	std::string mime_type = _mime_types[path.substr(path.rfind('.') + 1)];
+//
+//	if (mime_type.empty())
+	std::string	mime_type = "text/html";
 	return ("Content-type: " + mime_type);
 }
 
@@ -190,7 +190,7 @@ std::string Response::getConnectionHeader(ParsedRequest *request)
 
 std::string Response::getDefaultErrorPage(ParsedRequest* request)
 {
-	return ("<html><body><h1>" + ft::to_string(request->getStateCode()) + " " + _status[request->getStateCode()] + "</h1></body></html>\r\n");
+	return ("<html>\n<body>\n" + ft::to_string(request->getStateCode()) + " " + _status[request->getStateCode()] + "\n</body>\n</html>\r\n");
 }
 
 std::string Response::getState(ParsedRequest* request)
@@ -226,7 +226,10 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi, const std::str
     /*
      * todo: update condition
      */
-	if (extension == "bla") {
+    if (_request->getStateCode() == 301){
+        response = redirect(_request);
+    }
+	else if (extension == _request->getExtension()) {
 		cgi.execute(_request);
 		_response_body = runCGI(_request, cgi.getBuffer());
 		response = response200(_request);
@@ -377,7 +380,7 @@ void		Response::setResponseBody(ParsedRequest *request)
 		file = fopen(request->getConfigedPath().c_str(), "r");
 	else if (!(file = fopen(request->getErrorPage()[ft::to_string(request->getStateCode())].c_str(), "r")))
 	{
-		this->_response_body = getDefaultErrorPage(request);
+        file = fopen(request->getErrorPage()["Default"].c_str(), "r");
 		return ;
 	}
 	if (max_body >= 0)
@@ -463,6 +466,10 @@ std::string Response::runCGI(ParsedRequest *request, std::string &cgi_body)
 	request->setStateCode(200);
 	request->setStateText("OK");
 	return (response_body);
+}
+
+std::string	Response::redirect(ParsedRequest *request) {
+    return ("HTTP/1.1 301 Moved Parmanently\r\nLocation: " + request->getLocationPath() + "\r\n\r\n");
 }
 
 std::string Response::erase_white_space(std::string &s)
