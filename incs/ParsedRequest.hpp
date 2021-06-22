@@ -35,6 +35,8 @@ class ParsedRequest
 		std::string					_id;
 		std::string					_pw;
 		std::string					_cgi_pass;
+		std::string					_location_path;
+		std::string					_query_string;
 		int							_response_any;
 		int							_max_body;
 		bool						_autoindex;
@@ -65,6 +67,8 @@ class ParsedRequest
 		std::string const &				getRoot();
 		std::string const &				getExtension();
 		std::string const &				getServerName();
+		std::string const &				getLocationPath();
+		std::string const &				getQueryString();
 		int const &						getResponseAny();
 		int const &						getMaxBody();
 		bool const &					getAutoIndex();

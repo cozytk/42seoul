@@ -9,7 +9,6 @@ class RequestInspect
 		ParsedRequest	*_req;
 
 		RequestInspect();
-		bool			isValidStart();
 		bool			isValidType();
 		bool			isValidPath();
 		bool			isValidVersion();
@@ -18,6 +17,7 @@ class RequestInspect
 		bool			isExistResource(std::string path, std::string index);
 		bool			isAuthorized();
 		bool			isValidSize();
+		bool			isRedirect();
 	public:
 		RequestInspect(const RequestInspect& copy);
 		RequestInspect(RequestConfig con);

@@ -38,9 +38,6 @@ _req(req), _loc_node(NULL)
 		// non wildcard path
 		else if (path == config_loc)
 			replacePath(path, config_loc, &server_node("location", i), last);
-		// config extension
-		if (config_loc[0] == '.')
-			this->_req->_extension = config_loc.substr(1, config_loc.size() - (size_t)1);
 		i++;
 	}
 }
@@ -150,10 +147,14 @@ void			RequestConfig::applyConfig(Config::node* node_ptr) {
 			this->_req->_id = (*node("id"))[0];
 		if (node.size("pw") > 0)
 			this->_req->_pw = (*node("pw"))[0];
+		if (node.size("cgi_extension") > 0)
+			this->_req->_extension = (*node("cgi_extension"))[0];
 		if (node.size("cgi_pass") > 0)
 			this->_req->_cgi_pass = (*node("cgi_pass"))[0];
 		if (node.size("response_any") > 0)
 			this->_req->_response_any = ft::atoi(const_cast<char *>((*node("response_any"))[0].c_str()));
+		if (node.size("301") > 0)
+			this->_req->_location_path = (*node("301"))[0];
 	}
 }
 

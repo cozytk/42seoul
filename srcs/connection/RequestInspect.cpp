@@ -52,13 +52,6 @@ RequestInspect& RequestInspect::operator=(const RequestInspect& obj)
 /* ---------------------------- MEMBER FUNCTION ----------------------------- */
 /* ************************************************************************** */
 
-
-bool				RequestInspect::isValidStart() {
-	if (!isValidType() || !isValidPath() || !isValidVersion())
-		return false;
-	return true;
-}
-
 bool				RequestInspect::isValidType() {
 	ParsedRequest::HeaderType &header = _req->getHeaders();
 	size_t i = -1;
@@ -97,7 +90,11 @@ bool				RequestInspect::isValidPath() {
 
 bool				RequestInspect::isExistResource(std::string path, std::string index) {
 	struct stat	s;
+	size_t		extension_dot = path.find(".");
 
+	if (extension_dot != std::string::npos &&
+	path.substr(extension_dot) == this->_req->getExtension())
+		return true;
 	if(stat(path.c_str(),&s) == 0)
 	{
 		if(s.st_mode & S_IFDIR)
@@ -190,19 +187,33 @@ bool				RequestInspect::isAuthorized() {
 bool				RequestInspect::isValidSize() {
 	if (this->_req->getMaxBody() >= 0 && this->_req->getMaxBody() < this->_req->getBody().length())
 	{
-		this->_req->setStateCode(400);
-		this->_req->setStateText("Bad requset");
+		this->_req->setStateCode(413);
+		this->_req->setStateText("Payload Too Large");
 		return false;
 	}
 	return true;
 }
-
+bool				RequestInspect::isRedirect() {
+	if (this->_req->getLocationPath() != "")
+	{
+		this->_req->setStateCode(301);
+		this->_req->setStateText("Moved Permanently");
+		return false;
+	}
+	return true;
+}
 bool				RequestInspect::isValid() {
-	if (!isValidStart())
+	if (!isValidType())
+		return false;
+	if (!isValidSize())
+		return false;
+	if (!isValidVersion())
+		return false;
+	if (!isValidPath())
 		return false;
 	if (!isAuthorized())
 		return false;
-	if (!isValidSize())
+	if (!isRedirect())
 		return false;
 	return true;
 }
