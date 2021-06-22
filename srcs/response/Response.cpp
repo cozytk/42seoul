@@ -153,11 +153,11 @@ std::string Response::getDateHeader(ParsedRequest *request)
 
 std::string Response::getContentTypeHeader(ParsedRequest *request)
 {
-	std::string path = request->getConfigedPath();
-	std::string mime_type = _mime_types[path.substr(path.rfind('.') + 1)];
+//	std::string path = request->getConfigedPath();
+//	std::string mime_type = _mime_types[path.substr(path.rfind('.') + 1)];
 
-	if (mime_type.empty())
-		mime_type = "text/html";
+//	if (mime_type.empty())
+	std::string mime_type = "text/html";
 	return ("Content-type: " + mime_type);
 }
 
@@ -226,7 +226,7 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi, const std::str
     /*
      * todo: update condition
      */
-	if (extension == "bla") {
+	if (extension == _request->getExtension()) {
 		cgi.execute(_request);
 		_response_body = runCGI(_request, cgi.getBuffer());
 		response = response200(_request);

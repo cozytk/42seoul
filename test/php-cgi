@@ -1,4 +1,0 @@
-#! /usr/bin/php
-<?php
-echo 'username is ' . $_ENV["USER"];
-?>

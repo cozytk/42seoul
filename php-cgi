@@ -1,0 +1,7 @@
+#! /usr/bin/php
+<?php
+$jbexplode = explode( ' ', $jbstring );
+echo 'Status: 200';
+echo "\r\n\r\n";
+echo 'username is ' . $_ENV["USER"];
+?>
