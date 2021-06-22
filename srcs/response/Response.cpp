@@ -136,7 +136,7 @@ std::string	Response::getResponseBody() {
 
 std::string Response::getServerHeader(ParsedRequest *request)
 {
-	return ("Server: " + request->getServerName());
+	return ("Server: webserv");
 }
 
 std::string Response::getDateHeader(ParsedRequest *request)
@@ -378,11 +378,9 @@ void		Response::setResponseBody(ParsedRequest *request)
 
 	if (request->getStateCode() / 100 == 2)
 		file = fopen(request->getConfigedPath().c_str(), "r");
-	else if (!(file = fopen(request->getErrorPage()[ft::to_string(request->getStateCode())].c_str(), "r")))
-	{
-        file = fopen(request->getErrorPage()["Default"].c_str(), "r");
-		return ;
-	}
+	else if (!(file = fopen(request->getErrorPage()[ft::to_string(request->getStateCode())].c_str(), "r"))) {
+        file = fopen("html/default_error.html", "r");
+    }
 	if (max_body >= 0)
 	{
 		buf = new char[max_body + 1]();
