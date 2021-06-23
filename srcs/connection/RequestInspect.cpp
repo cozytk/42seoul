@@ -135,7 +135,7 @@ bool				RequestInspect::isExistResource(std::string path, std::string index) {
 bool				RequestInspect::isValidVersion() {
 	ParsedRequest::HeaderType &header = _req->getHeaders();
 
-	if (_req->isExistHeader("Version") && header["Version"] == "HTTP/1.1")
+	if (_req->isExistHeader("Version") && (header["Version"] == "HTTP/1.1" || header["Version"] == "HTTP/1.0"))
 		return true;
 	this->_req->setStateCode(505);
 	this->_req->setStateText("Version Not Supported");
