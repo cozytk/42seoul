@@ -458,7 +458,6 @@ std::string Response::runCGI(ParsedRequest *request, std::string &cgi_body)
 	/*
 	 * todo passing cgi info to request Class
 	 */
-	std::cout << "[" << cgi_body  << "]"<< std::endl;
     std::string::iterator it = cgi_body.begin();
 	std::string state_code = cgi_body.substr(cgi_body.find(':') + 2, 3);
     std::string state_text(it + cgi_body.find(':') + 6, it + cgi_body.find("\r\n"));
