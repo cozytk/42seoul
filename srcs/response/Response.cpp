@@ -392,7 +392,6 @@ void		Response::setResponseBody(ParsedRequest *request)
         this->_response_body += buf;
         this->_content_length += read_byte;
     }
-    std::cout << this->_content_length << std::endl;
     close(fd);
 }
 
