@@ -9,14 +9,17 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-static std::array<std::string, 6> methods = {
-        "PUT",
+#define	REGULAR "0"
+#define	AUTH "1"
+
+static std::array<std::string, 7> methods = {
+	"PUT",
 	"GET",
 	"HEAD",
 	"POST",
 	"OPTIONS",
 	"TRACE",
-   "DELETE"
+	"DELETE"
 };
 
 std::string createStartLine(std::string method, std::string path) {
@@ -63,13 +66,13 @@ void		readResponse(int socket) {
 
 void		runTest(int socket, char **argv) {
 	std::string request;
-	std::string mode = argv[3];
-
 	for (size_t i = 0; i < methods.size(); i++)
 	{
+		std::cout << " ****************" << i << std::endl;
 		request = createRequest(methods[i], argv);
-		std::cout << "🦊 " << request << std::endl;
+		std::cout << "❓ " << request << std::endl;
 		write(socket, request.c_str(), request.length());
+		request = "";
 		sleep(1);
 		readResponse(socket);
 	}
