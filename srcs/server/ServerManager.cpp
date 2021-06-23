@@ -31,6 +31,8 @@ ServerManager::ServerManager(ServerManager const &x) {
 
 ServerManager::~ServerManager() {
 	this->close();
+	for (int i = 0; i < this->_servers.size(); i++)
+		delete this->_servers[i];
 }
 
 ServerManager &ServerManager::operator=(ServerManager const &x) {
