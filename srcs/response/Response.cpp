@@ -192,6 +192,7 @@ std::string Response::getConnectionHeader(ParsedRequest *request)
 
 std::string Response::getDefaultErrorPage(ParsedRequest* request)
 {
+
 	return ("<html>\n<body>\n" + ft::to_string(request->getStateCode()) + " " + _status[request->getStateCode()] + "\n</body>\n</html>\r\n");
 }
 
@@ -299,31 +300,49 @@ std::string Response::runOptions(ParsedRequest *request) {
 }
 
 std::string	Response::runPut(ParsedRequest *request) {
-	ParsedRequest	*req = this->_request;
-	FILE	*file = fopen(req->getConfigedPath().c_str(), "w");
+    ParsedRequest	*req = this->_request;
+    FILE	*file = fopen(req->getConfigedPath().c_str(), "w");
 
-	if (file != NULL)
-	{
-		fputs(request->getBody().c_str(), file);
-	}
-	else
-	{
-		fputs(request->getBody().c_str(), file);
-	}
-	if (_request->getStateCode() == 404)
-	{
-		request->setStateCode(201);
-		request->setStateText("Created");
-	}
-	else
-		request->setStateCode(200);
-	// todo response200 return
-	return response200(request);
+    if (file != NULL)
+    {
+        fputs(request->getBody().c_str(), file);
+    }
+    else
+    {
+        fputs(request->getBody().c_str(), file);
+    }
+    if (_request->getStateCode() == 404)
+    {
+        request->setStateCode(201);
+        request->setStateText("Created");
+    }
+    else
+        request->setStateCode(200);
+    // todo response200 return
+    return response200(request);
 }
+//
+//std::string	Response::runPut(ParsedRequest *request) {
+//	int fd = open(request->getConfigedPath().c_str(), O_CREAT|O_WRONLY|O_TRUNC, 777);
+//
+//	write(fd, request->getBody().c_str(), request->getBody().length());
+//	if (_request->getStateCode() == 404)
+//	{
+//		request->setStateCode(201);
+//		request->setStateText("Created");
+//	}
+//	else {
+//        request->setStateCode(200);
+//        request->setStateText("OK");
+//    }
+//	 todo response200 return
+//	return response200(request);
+//}
 
 std::string Response::runGet(ParsedRequest *request)
 {
-	setResponseBody(request);
+    if (request->getHeaders()["Type"] == "GET")
+	    setResponseBody(request);
 	request->setStateCode(200);
     request->setStateText("OK");
 	return (response200(request));
@@ -432,12 +451,10 @@ std::string Response::response400(ParsedRequest *request)
 	std::vector<std::string> headers;
 	std::string ret;
 
-<<<<<<< HEAD
     setResponseBody(request);
-=======
-	setResponseBody(request);
->>>>>>> 8fa19a8691455fc684ec6e1ec2bb0642dbc11f0b
 	headers.push_back(getState(request));
+    if (request->getHeaders()["Type"] == "OPTIONS")
+        headers.push_back(getAllowHeader(request));
 	headers.push_back(getServerHeader(request));
 	headers.push_back(getDateHeader(request));
 	headers.push_back(getContentTypeHeader(request));
