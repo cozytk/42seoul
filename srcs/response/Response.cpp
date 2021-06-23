@@ -299,45 +299,23 @@ std::string Response::runOptions(ParsedRequest *request) {
     return (response400(request));
 }
 
-std::string	Response::runPut(ParsedRequest *request) {
-    ParsedRequest	*req = this->_request;
-    FILE	*file = fopen(req->getConfigedPath().c_str(), "w");
 
-    if (file != NULL)
-    {
-        fputs(request->getBody().c_str(), file);
-    }
-    else
-    {
-        fputs(request->getBody().c_str(), file);
-    }
-    if (_request->getStateCode() == 404)
-    {
-        request->setStateCode(201);
-        request->setStateText("Created");
-    }
-    else
+std::string	Response::runPut(ParsedRequest *request) {
+	int fd = open(request->getConfigedPath().c_str(), O_CREAT|O_WRONLY|O_TRUNC, 0777);
+
+	write(fd, request->getBody().c_str(), ft::atoi(const_cast<char *>(request->getHeaders()["Content-Length"].c_str())));
+	if (_request->getStateCode() == 404)
+	{
+		request->setStateCode(201);
+		request->setStateText("Created");
+	}
+	else {
         request->setStateCode(200);
-    // todo response200 return
-    return response200(request);
-}
-//
-//std::string	Response::runPut(ParsedRequest *request) {
-//	int fd = open(request->getConfigedPath().c_str(), O_CREAT|O_WRONLY|O_TRUNC, 777);
-//
-//	write(fd, request->getBody().c_str(), request->getBody().length());
-//	if (_request->getStateCode() == 404)
-//	{
-//		request->setStateCode(201);
-//		request->setStateText("Created");
-//	}
-//	else {
-//        request->setStateCode(200);
-//        request->setStateText("OK");
-//    }
+        request->setStateText("OK");
+    }
 //	 todo response200 return
-//	return response200(request);
-//}
+	return response200(request);
+}
 
 std::string Response::runGet(ParsedRequest *request)
 {
