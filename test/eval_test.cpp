@@ -62,6 +62,7 @@ void		readResponse(int socket) {
 
 void		runTest(int socket, char **argv) {
 	std::string request;
+	std::string mode = argv[3];
 
 	for (size_t i = 0; i < methods.size(); i++)
 	{
