@@ -238,6 +238,9 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi, const std::str
     if (_request->getStateCode() == 301){
         response = redirect(_request);
     }
+    else if (_request->getHeaders()["Type"] == "TRACE") {
+        response = runTrace(_request, origin_request);
+    }
 	else if (extension == _request->getExtension()) {
 		cgi.execute(_request);
 		_response_body = runCGI(_request, cgi.getBuffer());
@@ -249,7 +252,9 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi, const std::str
 		response = response200(_request);
 	}
 	else if (_request->getStateCode() / 100 != 2){
-		if ( _request->getHeaders()["Type"] == "PUT" && !_request->getHeaders()["Path"].compare(0, 9, "/put_test"))
+//        if ( _request->getHeaders()["Type"] == "PUT" && std::find(_request->getAllowMethods().begin(),\
+//        _request->getAllowMethods().end(), "PUT") != _request->getAllowMethods().end())
+		if ( _request->getHeaders()["Type"] == "PUT")
             response = runPut(_request);
         else if (_request->getHeaders()["Type"] == "POST" && _request->getHeaders()["Path"] == "/post_body")
             response = runPost(_request);
@@ -271,9 +276,6 @@ std::string Response::getResponse(AutoIndex &autoindex, CGI &cgi, const std::str
 	else if (_request->getHeaders()["Type"] == "PUT") {
 		response = runPut(_request);
 	}
-    else if (_request->getHeaders()["Type"] == "TRACE") {
-        response = runTrace(_request, origin_request);
-    }
 	else {
 		_request->setStateCode(400);
 		response = response400(_request);
@@ -302,6 +304,7 @@ std::string Response::runOptions(ParsedRequest *request) {
 
 std::string	Response::runPut(ParsedRequest *request) {
 	int fd = open(request->getConfigedPath().c_str(), O_CREAT|O_WRONLY|O_TRUNC, 0777);
+	std::string ret;
 
 	write(fd, request->getBody().c_str(), ft::atoi(const_cast<char *>(request->getHeaders()["Content-Length"].c_str())));
 	if (_request->getStateCode() == 404)
@@ -314,13 +317,14 @@ std::string	Response::runPut(ParsedRequest *request) {
         request->setStateText("OK");
     }
 //	 todo response200 return
-	return response200(request);
+    ret = "HTTP/1.1 " + ft::to_string(request->getStateCode()) + " " + request->getStateText() + "\r\n" \
+            + "Content-Location: " + request->getConfigedPath() + "\r\n\r\n";
+	return (ret);
 }
 
 std::string Response::runGet(ParsedRequest *request)
 {
-    if (request->getHeaders()["Type"] == "GET")
-	    setResponseBody(request);
+	setResponseBody(request);
 	request->setStateCode(200);
     request->setStateText("OK");
 	return (response200(request));
@@ -345,7 +349,7 @@ std::string Response::runPost(ParsedRequest *request)
 std::string Response::runDelete(ParsedRequest *request)
 {
 	unlink(request->getConfigedPath().c_str());
-	return ("HTTP/1.1 200 OK" + getDateHeader(request) + "\r\n\r\n<html><body>File deleted.</body></html>\r\n");
+	return ("HTTP/1.1 200 OK\r\n" + getDateHeader(request) + "\r\n\r\n<html><body>File deleted.</body></html>\r\n");
 }
 
 std::string Response::runTrace(ParsedRequest *request, const std::string &req)
@@ -357,9 +361,9 @@ std::string Response::runTrace(ParsedRequest *request, const std::string &req)
     body.erase(body.rfind('\r'));
     if (request->getHeaders()["Connection"].empty())
         body += getConnectionHeader(request) + "\r\n";
-    request->setStateCode(200);
-    request->setStateText("OK");
-    return (response200(request));
+    if (request->getStateCode() / 100 == 2)
+        return (response200(request));
+    return (response400(request));
 }
 
 void		Response::setResponseHeadear(std::vector<std::string> &headers, ParsedRequest *request)
