@@ -122,7 +122,6 @@ int Server::send(int socket) {
 }
 
 void Server::process(int socket, CGI &cgi) {
-	std::cout << this->_buffer[socket]._buffer << std::endl;
 	this->_parsed_request = new ParsedRequest(this->_buffer[socket]._buffer, this->_server_conf);
 	RequestConfig	req_conf(this->_parsed_request);
 	RequestInspect	insperct(this->_parsed_request);
