@@ -9,14 +9,14 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-static std::array<std::string, 6> methods = {
-        "PUT",
+static std::array<std::string, 7> methods = {
 	"GET",
 	"HEAD",
 	"POST",
 	"OPTIONS",
 	"TRACE",
-   "DELETE"
+   "DELETE",
+   "PUT"
 };
 
 std::string createStartLine(std::string method, std::string path) {

@@ -317,9 +317,9 @@ std::string	Response::runPut(ParsedRequest *request) {
         request->setStateText("OK");
     }
 //	 todo response200 return
-    ret = "HTTP/1.1 " + ft::to_string(request->getStateCode()) + " " + request->getStateText() + "\r\n" \
-            + "Content-Location: " + request->getConfigedPath() + "\r\n\r\n";
-	return (ret);
+//    ret = "HTTP/1.1 " + ft::to_string(request->getStateCode()) + " " + request->getStateText() + "\r\n" \
+//            + "Content-Location: " + request->getConfigedPath() + "\r\n\r\n";
+    return (response200(request));
 }
 
 std::string Response::runGet(ParsedRequest *request)
@@ -458,9 +458,15 @@ std::string Response::runCGI(ParsedRequest *request, std::string &cgi_body)
 	/*
 	 * todo passing cgi info to request Class
 	 */
+	std::cout << "[" << cgi_body  << "]"<< std::endl;
+    std::string::iterator it = cgi_body.begin();
+	std::string state_code = cgi_body.substr(cgi_body.find(':') + 2, 3);
+    std::string state_text(it + cgi_body.find(':') + 6, it + cgi_body.find("\r\n"));
 	std::string response_body = cgi_body.substr(cgi_body.find("\r\n\r\n") + 4);
-	request->setStateCode(200);
-	request->setStateText("OK");
+//    request->setStateCode(200);
+//    request->setStateText("OK");
+	request->setStateCode(ft::atoi(const_cast<char *>(state_code.c_str())));
+	request->setStateText(state_text);
 	return (response_body);
 }
 
