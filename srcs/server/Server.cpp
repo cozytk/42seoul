@@ -132,7 +132,7 @@ void Server::process(int socket, CGI &cgi) {
 	Response _response(this->_parsed_request, this);
 
 	this->_buffer[socket]._buffer = _response.getResponse(_auto_index, _cgi, this->_buffer[socket]._buffer);
-    std::cout << this->_buffer[socket]._buffer << std::endl;
+//    std::cout << this->_buffer[socket]._buffer << std::endl;
 	delete this->_parsed_request;
 	// std::cout << this->_buffer[socket]._buffer << std::endl;
 }

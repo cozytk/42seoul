@@ -345,7 +345,7 @@ std::string Response::runPost(ParsedRequest *request)
 std::string Response::runDelete(ParsedRequest *request)
 {
 	unlink(request->getConfigedPath().c_str());
-	return (getDateHeader(request) + "\r\n\r\n<html><body>File deleted.</body></html>\r\n");
+	return ("HTTP/1.1 200 OK" + getDateHeader(request) + "\r\n\r\n<html><body>File deleted.</body></html>\r\n");
 }
 
 std::string Response::runTrace(ParsedRequest *request, const std::string &req)
@@ -392,7 +392,6 @@ void		Response::setResponseBody(ParsedRequest *request)
         this->_response_body += buf;
         this->_content_length += read_byte;
     }
-    std::cout << this->_content_length << std::endl;
     close(fd);
 }
 
