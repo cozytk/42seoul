@@ -10,12 +10,12 @@
 #include <sys/socket.h>
 
 static std::array<std::string, 8> methods = {
+	"PUT",
 	"GET",
 	"HEAD",
 	"POST",
-	"PUT",
-	"DELETE",
-	"TRACE"
+	"TRACE",
+	"DELETE"
 };
 
 std::string createStartLine(std::string method, std::string path) {
@@ -36,12 +36,45 @@ std::string createHeader(std::string port) {
 	return start;
 }
 
-int	main(int argc, char **argv) {
+std::string createRequest(std::string method, char **argv) {
+	std::string request;
 	std::string port = argv[1];
 	std::string path = argv[2];
-	std::string request = "curl localhost:8082/index.html";
-	std::string command = "curl ";
+
+	request = createStartLine(method, path) + createHeader(port);
+	if (method == "POST" || method == "PUT")
+	{
+		request += "Content-Type: text/html\r\n"
+		"Content-Length: 5\r\n\r\n12345";
+	}
+	request += "\r\n";
+	return request;
+}
+
+void		readResponse(int socket) {
 	char response[10000];
+	int reade_size = 0;
+
+	reade_size = read(socket, response, 10000);
+	response[reade_size] = '\0';
+	std::cout << "✅ " << response << std::endl;
+}
+
+void		runTest(int socket, char **argv) {
+	std::string request;
+
+	for (size_t i = 0; i < methods.size(); i++)
+	{
+		request = createRequest(methods[i], argv);
+		std::cout << "🦊 " << request << std::endl;
+		write(socket, request.c_str(), request.length());
+		sleep(1);
+		readResponse(socket);
+	}
+}
+
+int	main(int argc, char **argv) {
+
 	int reade_size = 0;
 	int socket;
 	sockaddr_in server_addr;
@@ -52,25 +85,8 @@ int	main(int argc, char **argv) {
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(8082);
 	server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-
 	connect(socket, (sockaddr *)&server_addr, sizeof(server_addr));
-
-	for (size_t i = 0; i < methods.size(); i++)
-	{
-		request = createStartLine(methods[i], path) + createHeader(port);
-		std::cout << "🦊 " << request << std::endl;
-		if (methods[i] == "POST" || methods[i] == "PUT")
-		{
-			request += "Content-Type: text/html\r\n"
-			"Content-Length: 5\r\n\r\n12345";
-		}
-		request += "\r\n";
-		write(socket, request.c_str(), request.length());
-		sleep(1);
-		reade_size = read(socket, response, 10000);
-		response[reade_size] = '\0';
-		std::cout << "✅ " << response << std::endl;
-	}
+	runTest(socket, argv);
 	::close(socket);
 }
 
