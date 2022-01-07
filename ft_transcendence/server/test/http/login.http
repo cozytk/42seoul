@@ -1,0 +1,6 @@
+PATCH http://localhost:8080/log/out HTTP/1.1
+Content-Type: application/json
+
+{
+	"intra_id":"sayi"
+}
