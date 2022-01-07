@@ -1,0 +1,25 @@
+POST http://localhost:8080/admin HTTP/1.1
+Content-Type: application/json
+
+{
+	"intra_id": "jachoi",
+	"nickname": "jachoiNick",
+	"icon" : "gamer_boy",
+	"friend_list": ["taekkim", "jinkim"]
+}
+
+# PATCH http://localhost:8080/admin HTTP/1.1
+# Content-Type: application/json
+
+# {
+# 	"intra_id": "sayi",
+# 	"nickname": "aass",
+# 	"icon" : "gamer_keyboard",
+# 	"friend_list": ["taekkim"],
+# 	"chat_room":["a"]
+# }
+
+# DELETE http://localhost:8080/admin/clear HTTP/1.1
+
+GET http://localhost:8080/admin/all HTTP/1.1
+

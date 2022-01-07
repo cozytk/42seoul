@@ -1,0 +1,57 @@
+<html>
+<style>
+
+#app {
+	margin-top: 30px;
+	margin-left: 30px;
+}
+
+.title {
+	font-size: 26px;
+}
+
+.span {
+	max-width: 320px;
+}
+
+.name {
+	font-size: 18px;
+}
+
+.margin {
+	width: 300px;
+	padding: 10px;
+	margin: 10px;
+}
+
+.msg {
+	vertical-align: middle;
+}
+
+.submit {
+	padding: 10px;
+	margin: 10px;
+	float: right;
+}
+
+</style>
+<head>
+	<title></title>
+</head>
+<body>
+	<div id="app">
+		<span class="title">CGI Input Form</span><br /><br /><br />
+		<form id="send" class="span" action="/page/cgi_perl.perl" method="post" onsubmit="return validCheck();">
+			<span class="name">name</span><br /><input class="margin" type="text" name="name" required/><br /><br />
+			<span class="name">group</span><br /><select class="margin" name="group"><br /><br />
+				<option value="none" selected>--</option>
+				<option value="42 seoul">42 seoul</option>
+				<option value="42 paris">42 paris</option>
+				<option value="42 tokyo">42 tokyo</option>
+			</select> <br /><br />
+			<span class="name">value</span><br /><input class="margin" type="text" name="value" required/><br /><br />
+			<input class="submit" type="submit" />
+		</form>
+	</div>
+</body>
+</html>
