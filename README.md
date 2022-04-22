@@ -1,3 +1,7 @@
+# Status
+[![taekkim's 42 stats](https://badge42.vercel.app/api/v2/cl1ml1fv7001109l4ccpagelk/stats?cursusId=21&coalitionId=86)](https://github.com/JaeSeoKim/badge42)
+
+# Subjects
 | Duration            | Name                                                      | Keywords | Describe                                                                     |
 |---------------------|-----------------------------------------------------------|---------|------------------------------------------------------------------------------|
 | 20.02.24 ~ 20.04.14 | [Libft](https://github.com/cozytk/42seoul/tree/master/libft)                 | `algorithm`        | **Recode a few C standard libraries** to use during whole cursus. |
